@@ -1,0 +1,20 @@
+{
+  "name": "warwick_gg",
+  "authors": [
+    "David Richardson <david@tankski.co.uk>"
+  ],
+  "description": "",
+  "main": "",
+  "license": "MIT",
+  "homepage": "",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "devDependencies": {
+    "bulma": "^0.6.2"
+  }
+}
