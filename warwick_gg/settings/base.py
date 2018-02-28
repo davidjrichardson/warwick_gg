@@ -22,7 +22,6 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
-    'home',
     'seating',
 
     'django.contrib.admin',
@@ -54,7 +53,9 @@ ROOT_URLCONF = 'warwick_gg.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [
+            os.path.join(PROJECT_DIR, 'templates')
+        ],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -130,8 +131,7 @@ PROJECT_PATH = os.path.abspath(os.path.dirname(__file__))
 BOWER_COMPONENTS_ROOT = os.path.join(PROJECT_PATH, "../components")
 COMPRESS_PRECOMPILERS = (
     ('text/x-scss',
-     'sass --scss --style compressed -I "%s/bower_components/foundation-sites/scss" -I "%s/bower_components/motion-ui" "{infile}" "{outfile}"' % (
-         BOWER_COMPONENTS_ROOT, BOWER_COMPONENTS_ROOT)),
+     'sass --scss --style compressed -I "%s/bower_components/bulma" "{infile}" "{outfile}"' % BOWER_COMPONENTS_ROOT),
 )
 
 # Django-bower

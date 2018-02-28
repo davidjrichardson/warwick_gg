@@ -178,3 +178,5 @@ venv.bak/
 # End of https://www.gitignore.io/api/django,python,pycharm+iml
 
 warwick_gg/settings/production.py
+.sass-cache/
+static/CACHE/
