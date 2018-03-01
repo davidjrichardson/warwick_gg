@@ -1,0 +1,14 @@
+<svg width="835" height="816" xmlns="http://www.w3.org/2000/svg">
+  <g fill="none" fill-rule="evenodd">
+    <circle id="dot-1" fill="#979797" cx="12" cy="137" r="12"/>
+    <circle id="dot-2" fill="#5C5C5C" cx="104.5" cy="5.5" r="5.5"/>
+    <circle id="dot-3" fill="#979797" cx="743.5" cy="251.5" r="5.5"/>
+    <circle id="dot-4" fill="#494949" cx="383.5" cy="299.5" r="5.5"/>
+    <circle id="dot-5" fill="#4F4F4F" cx="417.5" cy="49.5" r="5.5"/>
+    <circle id="dot-6" fill="#6D6D6D" cx="823" cy="80" r="12"/>
+    <circle id="dot-7" fill="#6D6D6D" cx="36" cy="787" r="12"/>
+    <circle id="dot-8" fill="#979797" cx="812.5" cy="560.5" r="5.5"/>
+    <circle id="dot-9" fill="#494949" cx="447.5" cy="810.5" r="5.5"/>
+  </g>
+</svg>
+
