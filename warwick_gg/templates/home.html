@@ -1,7 +1,33 @@
 {% extends 'base.html' %}
+{% load svg %}
 
-{% block title %}Hello world{% endblock %}
+{% block template_classname %}warwickgg-home{% endblock %}
+
+{% block title %}Warwick.gg - LAN and Gaming app for the Uni of Warwick Computing Society{% endblock %}
 
 {% block content %}
-<h1>Hello world</h1>
+  <div class="svg-container">
+    {% svg 'combined' %}
+  </div>
+
+  <section class="hero">
+    <div class="hero-body">
+      <div class="container">
+        <div>
+          <h1 class="warwickgg-title has-text-centered">Warwick<span class="superscript">.gg</span></h1>
+          <h1 class="warwickgg-title is-underglow has-text-centered">Warwick<span class="superscript">.gg</span></h1>
+          <p class="has-text-centered">Warwick.gg is the all-in-one gaming application for the University of Warwick
+            Computing Society, managing things like LAN tournaments to pizza orders.</p>
+        </div>
+        <div class="button-container columns is-variable is-5 is-centered">
+          <div class="column is-narrow">
+            <a class="button">Learn more</a>
+          </div>
+          <div class="column is-narrow">
+            <a class="button is-primary">Open app</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
 {% endblock %}

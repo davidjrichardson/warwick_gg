@@ -1,0 +1,29 @@
+// WarwickGG font face
+@font-face {
+  font-family: "Jaapokki Subtract";
+  src: url("/static/fonts/jaapokkisubtract-regular.eot") format("eot"),
+        url("/static/fonts/jaapokkisubtract-regular.woff") format("woff"),
+        url("/static/fonts/jaapokkisubtract-regular.ttf") format("ttf"),
+        url("/static/fonts/jaapokkisubtract-regular.svg") format("svg");
+}
+
+// Custom variables
+$uwcs_yellow: #FDD835;
+$uwcs_blue: #3D5AFE;
+$warwickgg_black: #222528;
+$warwickgg_dark_grey: #2D3338;
+$warwickgg_blue_shadow: #162160;
+
+// Overrides
+$family-monospace: 'Ubuntu Mono', Consolas, 'Liberation Mono', Courier, monospace;
+$family-title: "Jaapokki Subtract", "Montserrat", sans-serif;
+$family-primary: $family-monospace;
+$text: white;
+$link: $uwcs_blue;
+
+//$desktop: 770px + (2 * $gap);
+//$fullhd: $desktop;
+//$widescreen: $desktop;
+
+// TODO: Handle hover states ($link_hover, $link-border, $link-actives)
+$body-background-color: $warwickgg_black;
