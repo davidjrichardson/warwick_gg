@@ -12,8 +12,12 @@
   {% compress css %}
     <link href="{% static 'scss/app.scss' %}" rel="stylesheet" type="text/x-scss"/>
   {% endcompress %}
+
+  {% block extra_css %}{% endblock %}
 </head>
 <body class="{% block template_classname %}{% endblock %}">
 {% block content %}{% endblock %}
+
+{% block extra_js %}{% endblock %}
 </body>
 </html>

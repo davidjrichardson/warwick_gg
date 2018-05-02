@@ -1,11 +1,16 @@
 {% extends 'base.html' %}
-{% load svg %}
+{% load svg static %}
 
 {% block template_classname %}warwickgg-home{% endblock %}
 
 {% block title %}Warwick.gg - LAN and Gaming app for the Uni of Warwick Computing Society{% endblock %}
 
 {% block content %}
+  <div class="notification is-warning is-radiusless is-hidden-tablet">
+    <button class="delete"></button>
+    This website has been developed to be used in a desktop browser. Use on a mobile phone or tablet may end up in strange behaviours with unforeseen consequences.
+  </div>
+
   <div class="svg-container">
     {% svg 'combined' %}
   </div>
@@ -19,11 +24,12 @@
           <p class="has-text-centered">Warwick.gg is the all-in-one gaming application for the University of Warwick
             Computing Society, managing things like LAN tournaments to pizza orders.</p>
         </div>
-        <div class="button-container columns is-variable is-5 is-centered">
+        <div class="button-container columns is-variable is-8 is-centered">
           <div class="column is-narrow">
             <a class="button">Learn more</a>
           </div>
           <div class="column is-narrow">
+            {# TODO: Handle with state about not being logged in #}
             <a class="button is-primary">Open app</a>
           </div>
         </div>

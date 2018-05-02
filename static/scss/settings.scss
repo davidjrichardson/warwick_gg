@@ -13,6 +13,8 @@ $uwcs_blue: #3D5AFE;
 $warwickgg_black: #222528;
 $warwickgg_dark_grey: #2D3338;
 $warwickgg_blue_shadow: #162160;
+$uwcs_blue_dark: #364CCD;
+$uwcs_yellow_dark: #D5B00B;
 
 // Overrides
 $family-monospace: 'Ubuntu Mono', Consolas, 'Liberation Mono', Courier, monospace;
@@ -20,6 +22,7 @@ $family-title: "Jaapokki Subtract", "Montserrat", sans-serif;
 $family-primary: $family-monospace;
 $text: white;
 $link: $uwcs_blue;
+$primary: $uwcs_blue;
 
 //$desktop: 770px + (2 * $gap);
 //$fullhd: $desktop;
