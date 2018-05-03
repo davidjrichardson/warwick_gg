@@ -6,13 +6,17 @@
 {% block title %}Warwick.gg - LAN and Gaming app for the Uni of Warwick Computing Society{% endblock %}
 
 {% block content %}
-  <div class="notification is-warning is-radiusless is-hidden-tablet">
-    <button class="delete"></button>
-    This website has been developed to be used in a desktop browser. Use on a mobile phone or tablet may end up in strange behaviours with unforeseen consequences.
+{#  <div class="notification is-warning is-radiusless is-hidden-tablet">#}
+{#    <button class="delete"></button>#}
+{#    This website has been developed to be used in a desktop browser. Use on a mobile phone or tablet may end up in strange behaviours with unforeseen consequences.#}
+{#  </div>#}
+
+  <div class="svg-container is-hidden-mobile">
+    {% svg 'combined' %}
   </div>
 
-  <div class="svg-container">
-    {% svg 'combined' %}
+  <div class="svg-container mobile is-hidden-tablet">
+    {% svg 'combined-mobile' %}
   </div>
 
   <section class="hero">
