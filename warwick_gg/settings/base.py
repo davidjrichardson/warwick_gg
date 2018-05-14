@@ -85,6 +85,20 @@ TEMPLATES = [
     },
 ]
 
+# Allauth config
+ACCOUNT_EMAIL_REQUIRED = True
+ACCOUNT_USERNAME_REQUIRED = False
+ACCOUNT_AUTHENTICATION_METHOD = 'email'
+ACCOUNT_EMAIL_VERIFICATION = 'mandatory'
+ACCOUNT_LOGIN_ON_EMAIL_CONFIRMATION = True
+
+ACCOUNT_SIGNUP_FORM_CLASS = 'uwcs_auth.forms.SignupForm'
+
+ACCOUNT_ADAPTER = 'uwcs_auth.adapter.WarwickGGUserAccountAdapter'
+SOCIALACCOUNT_ADAPTER = 'uwcs_auth.adapter.UWCSUserAccountAdapter'
+
+# SOCIALACCOUNT_AUTO_SIGNUP = False
+
 WSGI_APPLICATION = 'warwick_gg.wsgi.application'
 
 # Database
