@@ -1,0 +1,122 @@
+{% extends "base.html" %}
+
+{% load account socialaccount static svg %}
+
+{% block extra_css %}
+  <link href="https://fonts.googleapis.com/css?family=Montserrat:700" rel="stylesheet">
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.13/css/all.css"
+        integrity="sha384-DNOHZ68U8hZfKXOrtjWvjxusGo9WQnrNx2sqG0tfsghAvtVlRW3tvkXWZh58N9jp" crossorigin="anonymous">
+{% endblock %}
+
+{% block template_classname %}warwickgg-signin{% endblock %}
+
+{% block title %}Sign into warwick.gg{% endblock %}
+
+{% block content %}
+  <div class="level">
+    <div class="container">
+      <div class="columns">
+        <div class="column is-half-desktop is-offset-one-quarter-desktop">
+          <h1>Sign into <span class="title">warwick<span class="superscript">.gg</span></span></h1>
+          <p>Please sign in using your UWCS account or your warwick.gg account details below:</p>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="level">
+    <div class="container">
+      <div class="columns">
+        <div class="column is-half-desktop is-offset-one-quarter-desktop">
+          {% if form.non_field_errors %}
+            <div class="level">
+              <div class="notification is-danger">
+                <button class="delete"></button>
+                {% for error in form.non_field_errors %}
+                  {{ error }}
+                {% endfor %}
+              </div>
+            </div>
+          {% endif %}
+          <div class="level">
+            <form class="login" method="POST" action="{% url 'account_login' %}">
+              {% csrf_token %}
+              <div class="field">
+                <label class="label" for="{{ form.login.id_for_label }}">{{ form.login.label }}</label>
+                <div class="control has-icons-left">
+                  <input class="input {% if form.non_field_errors or form.login.errors %}is-danger{% endif %}"
+                         name="{{ form.login.name }}" id="{{ form.login.id_for_label }}"
+                         placeholder="E-mail address" type="email"
+                         {% if form.login.field.required %}required{% endif %}>
+                  <span class="icon is-small is-left">
+                    <i class="fas fa-envelope"></i>
+                  </span>
+                </div>
+                {% if form.login.help_text %}
+                  <p class="help">{{ form.login.help_text }}</p>
+                {% endif %}
+                {% if form.login.errors %}
+                  {% for error in form.login.errors %}
+                    <p class="help is-danger">{{ error }}</p>
+                  {% endfor %}
+                {% endif %}
+              </div>
+              <div class="field">
+                <label class="label" for="{{ form.password.id_for_label }}">{{ form.password.label }}</label>
+                <div class="control has-icons-left">
+                  <input class="input {% if form.non_field_errors or form.password.errors %}is-danger{% endif %}"
+                         name="{{ form.password.name }}" id="{{ form.password.id_for_label }}"
+                         placeholder="Password" type="password"
+                         {% if form.password.field.required %}required{% endif %}>
+                  <span class="icon is-small is-left">
+                    <i class="fas fa-lock"></i>
+                  </span>
+                </div>
+                {% if form.password.help_text %}
+                  <p class="help">{{ form.password.help_text }}</p>
+                {% endif %}
+                {% if form.password.errors %}
+                  {% for error in form.password.errors %}
+                    <p class="help is-danger">{{ error }}</p>
+                  {% endfor %}
+                {% endif %}
+                <a class="help" href="{% url 'account_reset_password' %}">Forgot your password?</a>
+              </div>
+              <div class="field">
+                <div class="control">
+                  <label class="checkbox">
+                    <input type="checkbox" name="{{ form.remember.name }}" id="{{ form.remember.id_for_label }}">
+                    Remember me?
+                  </label>
+                </div>
+              </div>
+              {% if redirect_field_value %}
+                <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}"/>
+              {% endif %}
+              <div class="field is-grouped is-grouped-centered">
+                <div class="control">
+                  <button class="button is-primary" type="button">Sign in</button>
+                </div>
+                <div class="control">
+                  {% get_providers as socialaccount_providers %}
+
+                  {# There should only ever be 1 account provider so this is fine #}
+                  {% for provider in socialaccount_providers %}
+                    <a class="button uwcs-signin"
+                       href="{% provider_login_url provider.id process="login" scope=scope auth_params=auth_params %}">
+                      <p>Sign in using UWCS</p>
+                      {% svg 'uwcs-dots' %}
+                    </a>
+                  {% endfor %}
+                </div>
+              </div>
+            </form>
+          </div>
+          <div class="level">
+            <hr/>
+            <p>Don't have a warwick.gg account? You can sign up <a href="{{ signup_url }}">here</a>.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}
