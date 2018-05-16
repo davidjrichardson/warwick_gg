@@ -38,6 +38,12 @@
 }
 
 .warwickgg-home {
+  padding: 0 1rem;
+
+  & .hero-body {
+    padding: 3rem 0;
+  }
+
   & .button-container {
     margin-top: 40px;
   }
@@ -60,7 +66,7 @@
     &:focus {
       top: 1px;
       color: white;
-      background: lighten($warwickgg_dark_grey, 5%);
+      background: lighten($warwickgg_dark_grey, 2.5%);
     }
 
     transition: all 0.2s ease-in-out;
@@ -74,7 +80,7 @@
       &:hover,
       &:focus {
         color: white;
-        background: lighten($uwcs_blue, 5%);
+        background: darken($uwcs_blue, 2.5%);
       }
     }
   }
@@ -211,6 +217,84 @@
     & circle#dot-8,
     & circle#dot-9 {
       animation: circle-float 10s ease-in-out -2s infinite, circle-fade 6s ease-in-out infinite
+    }
+  }
+}
+
+// Sign-in page
+input {
+  transition: all 0.2s ease-in-out;
+
+  & ~ .icon {
+    transition: all 0.2s ease-in-out;
+  }
+}
+
+a {
+  transition: color 0.2s ease-in-out;
+}
+
+.title-container.level.level.level {
+  margin-top: 4rem;
+  margin-bottom: 0;
+
+  @include mobile {
+    margin-top: 3rem;
+  }
+}
+
+.warwickgg-signin {
+  padding: 0 1rem;
+
+  & .button {
+    top: 0;
+    transition: all 0.2s ease-in-out;
+
+    position: relative;
+    color: rgba(255, 255, 255, 0.87);
+
+    box-shadow: 0px 0px 4px rgba(0, 0, 0, 0.23);
+
+    &.is-primary {
+      box-shadow: 0px 2px 4px $warwickgg_blue_shadow;
+    }
+
+    &.uwcs-signin {
+      background-color: $warwickgg_dark_grey;
+      border: 0px solid transparent;
+
+      &:hover {
+        background-color: lighten($warwickgg_dark_grey, 2.5%);
+      }
+    }
+  }
+
+  & .button:hover,
+  & .button:focus {
+    top: 1px;
+    color: white;
+  }
+
+  & hr {
+    background-color: lighten($warwickgg_dark_grey, 10%);
+  }
+
+  & form {
+    width: 100%;
+
+    .checkbox {
+      color: $text;
+
+      &:hover {
+        color: $text;
+      }
+    }
+
+    & span.uwcs-font {
+      font-family: 'Montserrat', Arial, sans-serif;
+      font-weight: 700;
+      margin-right: 6px;
+      margin-left: -2px;
     }
   }
 }

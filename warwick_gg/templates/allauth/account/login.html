@@ -13,12 +13,18 @@
 {% block title %}Sign into warwick.gg{% endblock %}
 
 {% block content %}
+  <div class="level title-container">
+    <div class="container">
+      <a href="/">
+        <h1 class="warwickgg-title has-text-centered">Warwick<span class="superscript">.gg</span></h1>
+      </a>
+    </div>
+  </div>
   <div class="level">
     <div class="container">
       <div class="columns">
-        <div class="column is-half-desktop is-offset-one-quarter-desktop">
-          <h1>Sign into <span class="title">warwick<span class="superscript">.gg</span></span></h1>
-          <p>Please sign in using your UWCS account or your warwick.gg account details below:</p>
+        <div class="column is-half-desktop is-4-fullhd is-offset-4-fullhd is-offset-one-quarter-desktop">
+          <p class="instructions has-text-centered">Please sign in using your UWCS account or your warwick.gg account details below:</p>
         </div>
       </div>
     </div>
@@ -26,7 +32,7 @@
   <div class="level">
     <div class="container">
       <div class="columns">
-        <div class="column is-half-desktop is-offset-one-quarter-desktop">
+        <div class="column is-half-desktop is-4-fullhd is-offset-4-fullhd is-offset-one-quarter-desktop">
           {% if form.non_field_errors %}
             <div class="level">
               <div class="notification is-danger">
@@ -103,8 +109,7 @@
                   {% for provider in socialaccount_providers %}
                     <a class="button uwcs-signin"
                        href="{% provider_login_url provider.id process="login" scope=scope auth_params=auth_params %}">
-                      <p>Sign in using UWCS</p>
-                      {% svg 'uwcs-dots' %}
+                      <p>Sign in using <span class="uwcs-font">UWCS</span></p>{% svg 'uwcs-dots' %}
                     </a>
                   {% endfor %}
                 </div>
@@ -112,8 +117,10 @@
             </form>
           </div>
           <div class="level">
-            <hr/>
-            <p>Don't have a warwick.gg account? You can sign up <a href="{{ signup_url }}">here</a>.</p>
+            <div class="container">
+              <hr/>
+              <p class="has-text-centered">Don't have a warwick.gg account? You can sign up <a href="{{ signup_url }}">here</a>.</p>
+            </div>
           </div>
         </div>
       </div>
