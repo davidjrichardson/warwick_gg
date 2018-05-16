@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+
+{% block template_classname %}warwickgg-signup{% endblock %}
+
+{% block title %}Sign up for a warwick.gg account{% endblock %}
+
+{% block content %}
+  <div class="level title-container">
+    <div class="container">
+      <a href="/">
+        <h1 class="warwickgg-title has-text-centered">Warwick<span class="superscript">.gg</span></h1>
+      </a>
+    </div>
+  </div>
+  <div class="level">
+    <div class="container">
+      <div class="columns">
+        <div class="column is-half-desktop is-4-fullhd is-offset-4-fullhd is-offset-one-quarter-desktop">
+          <p class="instructions has-text-centered">To sign up to warwick.gg, please fill out the form below:</p>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="level">
+    <div class="container">
+      <div class="columns">
+        <div class="column is-half-desktop is-4-fullhd is-offset-4-fullhd is-offset-one-quarter-desktop">
+          <form class="signup" id="signup_form" method="post" action="{% url 'account_signup' %}">
+            {% csrf_token %}
+            <div class="columns is-multiline">
+              <div class="column is-full">
+                {% include 'allauth/account/includes/form-field.html' with field=form.email %}
+              </div>
+              <div class="column is-half-tablet">
+                {% include 'allauth/account/includes/form-field.html' with field=form.first_name %}
+              </div>
+              <div class="column is-half-tablet">
+                {% include 'allauth/account/includes/form-field.html' with field=form.last_name %}
+              </div>
+              <div class="column is-half-tablet">
+                {% include 'allauth/account/includes/form-field.html' with field=form.uni_id custom_label='University ID' %}
+              </div>
+              <div class="column is-half-tablet">
+                {% include 'allauth/account/includes/form-field.html' with field=form.nickname %}
+              </div>
+              <div class="column is-half-tablet">
+                {% include 'allauth/account/includes/form-field.html' with field=form.password1 %}
+              </div>
+              <div class="column is-half-tablet">
+                {% include 'allauth/account/includes/form-field.html' with field=form.password2 %}
+              </div>
+            </div>
+            {% if redirect_field_value %}
+              <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}"/>
+            {% endif %}
+            <div class="field is-grouped is-grouped-right">
+              <div class="control">
+                <button class="button is-primary" type="submit">Sign in</button>
+              </div>
+            </div>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}
