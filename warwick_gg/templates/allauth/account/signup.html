@@ -27,6 +27,9 @@
         <div class="column is-half-desktop is-4-fullhd is-offset-4-fullhd is-offset-one-quarter-desktop">
           <form class="signup" id="signup_form" method="post" action="{% url 'account_signup' %}">
             {% csrf_token %}
+            {% if redirect_field_value %}
+              <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}"/>
+            {% endif %}
             <div class="columns is-multiline">
               <div class="column is-full">
                 {% include 'allauth/account/includes/form-field.html' with field=form.email %}
@@ -49,13 +52,16 @@
               <div class="column is-half-tablet">
                 {% include 'allauth/account/includes/form-field.html' with field=form.password2 %}
               </div>
-            </div>
-            {% if redirect_field_value %}
-              <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}"/>
-            {% endif %}
-            <div class="field is-grouped is-grouped-right">
-              <div class="control">
-                <button class="button is-primary" type="submit">Sign in</button>
+              <div class="column">
+                <p class="required-help">Asterisk (<span class="is-required">*</span>) denotes a required field</p>
+              </div>
+              {# TODO: Work out if we need a privacy policy here #}
+              <div class="column is-narrow">
+                <div class="field is-grouped is-grouped-right">
+                  <div class="control">
+                    <button class="button is-primary" type="submit">Sign up</button>
+                  </div>
+                </div>
               </div>
             </div>
         </div>
