@@ -4,8 +4,6 @@
 
 {% block extra_css %}
   <link href="https://fonts.googleapis.com/css?family=Montserrat:700" rel="stylesheet">
-  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.13/css/all.css"
-        integrity="sha384-DNOHZ68U8hZfKXOrtjWvjxusGo9WQnrNx2sqG0tfsghAvtVlRW3tvkXWZh58N9jp" crossorigin="anonymous">
 {% endblock %}
 
 {% block template_classname %}warwickgg-signin{% endblock %}
@@ -100,7 +98,7 @@
               {% endif %}
               <div class="field is-grouped is-grouped-centered">
                 <div class="control">
-                  <button class="button is-primary" type="button">Sign in</button>
+                  <button class="button is-primary" type="submit">Sign in</button>
                 </div>
                 <div class="control">
                   {% get_providers as socialaccount_providers %}
