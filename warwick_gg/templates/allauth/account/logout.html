@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+
+{% block template_classname %}warwickgg-signout{% endblock %}
+
+{% block title %}Log out of warwick.gg{% endblock %}
+
+{% block content %}
+  <div class="level title-container">
+    <div class="container">
+      <a href="/">
+        <h1 class="warwickgg-title has-text-centered">Warwick<span class="superscript">.gg</span></h1>
+      </a>
+    </div>
+  </div>
+  <div class="level">
+    <div class="container">
+      <div class="columns">
+        <div class="column is-half-desktop is-4-fullhd is-offset-4-fullhd is-offset-one-quarter-desktop">
+          <p class="instructions has-text-centered">You are about to log out of warwick.gg. Are you sure you want to log out?</p>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="level">
+    <div class="container">
+      <div class="columns">
+        <div class="column is-half-desktop is-4-fullhd is-offset-4-fullhd is-offset-one-quarter-desktop">
+          <form method="post" action="{% url 'account_logout' %}">
+            {% csrf_token %}
+            {% if redirect_field_value %}
+              <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}"/>
+            {% endif %}
+            <div class="field is-grouped is-grouped-centered">
+              <div class="control">
+                <button class="button is-primary" type="submit">Log out</button>
+              </div>
+              <div class="control">
+                <a class="button is-secondary" href="/dashboard/">Cancel</a>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}

@@ -98,7 +98,8 @@ ACCOUNT_SIGNUP_FORM_CLASS = 'uwcs_auth.forms.SignupForm'
 ACCOUNT_ADAPTER = 'uwcs_auth.adapter.WarwickGGUserAccountAdapter'
 SOCIALACCOUNT_ADAPTER = 'uwcs_auth.adapter.UWCSUserAccountAdapter'
 
-# SOCIALACCOUNT_AUTO_SIGNUP = False
+# TODO: Change this to a named url path
+# LOGIN_REDIRECT_URL = '/dashboard/'
 
 WSGI_APPLICATION = 'warwick_gg.wsgi.application'
 
