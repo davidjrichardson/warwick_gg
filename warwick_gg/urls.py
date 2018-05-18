@@ -20,6 +20,7 @@ from warwick_gg.views import HomePageView
 
 urlpatterns = [
     path('', HomePageView.as_view(), name='home'),
+    path('dashboard/', include('dashboard.urls')),
     path('accounts/', include('allauth.urls')),
     path('admin/', admin.site.urls),
 ]
