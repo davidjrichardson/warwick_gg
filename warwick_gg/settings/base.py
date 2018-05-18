@@ -24,6 +24,7 @@ ALLOWED_HOSTS = []
 INSTALLED_APPS = [
     'seating',
     'dashboard',
+    'events',
 
     'allauth',
     'allauth.account',
