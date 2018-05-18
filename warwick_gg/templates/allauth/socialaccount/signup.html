@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+
+{% block template_classname %}warwickgg-uwcs-signup{% endblock %}
+
+{% block title %}Sign up for a warwick.gg account{% endblock %}
+
+{% block content %}
+  <div class="level title-container">
+    <div class="container">
+      <a href="/">
+        <h1 class="warwickgg-title has-text-centered">Warwick<span class="superscript">.gg</span></h1>
+      </a>
+    </div>
+  </div>
+  <div class="level">
+    <div class="container">
+      <div class="columns">
+        <div class="column is-half-desktop is-4-fullhd is-offset-4-fullhd is-offset-one-quarter-desktop">
+          <p class="instructions has-text-centered">You are about to use your UWCS account to login to warwick.gg. As a
+            final step, please complete the following form:</p>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="container">
+    <div class="columns">
+      <div class="column is-half-desktop is-4-fullhd is-offset-4-fullhd is-offset-one-quarter-desktop">
+        <form class="signup" id="signup_form" method="post" action="{% url 'socialaccount_signup' %}">
+          {% csrf_token %}
+          {% if redirect_field_value %}
+            <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}"/>
+          {% endif %}
+          <div class="columns is-multiline">
+            <div class="column is-full">
+              {% include 'allauth/account/includes/form-field.html' with field=form.email %}
+            </div>
+            <div class="column is-half-tablet">
+              {% include 'allauth/account/includes/form-field.html' with field=form.first_name %}
+            </div>
+            <div class="column is-half-tablet">
+              {% include 'allauth/account/includes/form-field.html' with field=form.last_name %}
+            </div>
+            <div class="column is-half-tablet">
+              {% include 'allauth/account/includes/form-field.html' with field=form.uni_id custom_label='University ID' %}
+            </div>
+            <div class="column is-half-tablet">
+              {% include 'allauth/account/includes/form-field.html' with field=form.nickname %}
+            </div>
+            <div class="column">
+              <p class="required-help">Asterisk (<span class="is-required">*</span>) denotes a required field</p>
+            </div>
+            {# TODO: Work out if we need a privacy policy here #}
+            <div class="column is-narrow">
+              <div class="field is-grouped is-grouped-right">
+                <div class="control">
+                  <button class="button is-primary" type="submit">Sign up</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+{% endblock %}
