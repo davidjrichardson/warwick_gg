@@ -76,10 +76,11 @@ class Event(models.Model):
 
 
 class EventSignup(models.Model):
-    user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, primary_key=True)
-    event = models.OneToOneField(Event, on_delete=models.CASCADE, primary_key=True)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    event = models.ForeignKey(Event, on_delete=models.CASCADE)
     created_at = models.DateTimeField(default=timezone.now)
     comment = models.TextField(blank=True, max_length=1024)
 
     class Meta:
         ordering = ['created_at']
+        unique_together = ('user', 'event')
