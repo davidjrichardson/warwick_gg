@@ -10,6 +10,14 @@
 
 {% block title %}Sign into warwick.gg{% endblock %}
 
+{% block extra_js %}
+  <script type="text/javascript">
+  document.getElementById('notificationDelete').addEventListener('click', function (ev) {
+      ev.target.parentNode.remove();
+  })
+  </script>
+{% endblock %}
+
 {% block content %}
   <div class="level title-container">
     <div class="container">
@@ -33,8 +41,8 @@
         <div class="column is-half-desktop is-4-fullhd is-offset-4-fullhd is-offset-one-quarter-desktop">
           {% if form.non_field_errors %}
             <div class="level">
-              <div class="notification is-danger">
-                <button class="delete"></button>
+              <div class="notification is-danger has-text-centered">
+                <button id="notificationDelete" class="delete"></button>
                 {% for error in form.non_field_errors %}
                   {{ error }}
                 {% endfor %}

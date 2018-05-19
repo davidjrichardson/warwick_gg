@@ -29,8 +29,7 @@
           </div>
           <div class="column is-narrow">
             {% if request.user.is_authenticated %}
-              {# TODO: Add dashboard page #}
-              <a class="button is-primary">Open app</a>
+              <a class="button is-primary" href="{% url 'dashboard_index' %}">Open app</a>
             {% else %}
               <a class="button is-primary" href="{% url 'account_login' %}">Log in</a>
             {% endif %}

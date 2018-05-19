@@ -246,6 +246,10 @@ a {
 .warwickgg-signin {
   padding: 0 1rem;
 
+  & .notification {
+    width: 100%;
+  }
+
   & .button {
     top: 0;
     transition: all 0.2s ease-in-out;
