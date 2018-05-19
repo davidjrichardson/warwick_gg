@@ -1,7 +1,7 @@
 import json
-from datetime import timedelta
 from functools import reduce
 
+from django.conf import settings
 from django.db import models
 from django.utils import timezone
 from multiselectfield import MultiSelectField
@@ -75,3 +75,11 @@ class Event(models.Model):
         super().save(force_insert, force_update, using, update_fields)
 
 
+class EventSignup(models.Model):
+    user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, primary_key=True)
+    event = models.OneToOneField(Event, on_delete=models.CASCADE, primary_key=True)
+    created_at = models.DateTimeField(default=timezone.now)
+    comment = models.TextField(blank=True, max_length=1024)
+
+    class Meta:
+        ordering = ['created_at']

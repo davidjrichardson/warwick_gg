@@ -1,12 +1,8 @@
-import json
-from functools import reduce
-
 from django.conf import settings
 from django.db import models
 from django.utils import timezone
 
 from events.models import Event
-from uwcs_auth.models import WarwickGGUser
 
 
 class RevisionManager(models.Manager):
@@ -70,20 +66,3 @@ class Seating(models.Model):
     seat = models.IntegerField()
 
     objects = SeatingManager()
-
-
-class EventSignup(models.Model):
-    member = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
-    event = models.ForeignKey(Event, on_delete=models.CASCADE)
-    signup_created = models.DateTimeField(default=timezone.now)
-    comment = models.CharField(blank=True, max_length=1024)
-
-    def __str__(self):
-        try:
-            return self.member.warwickgguser.long_name()
-        except WarwickGGUser.DoesNotExist:
-            return self.member.get_full_name()
-
-    class Meta:
-        ordering = ['signup_created']
-        unique_together = ('event', 'member')
