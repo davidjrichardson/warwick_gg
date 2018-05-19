@@ -11,3 +11,9 @@ class WarwickGGUser(models.Model):
 
     def __str__(self):
         return f'{self.uni_id} - {self.nickname if self.nickname else "no nickname"} for user {self.user.id}'
+
+    def long_name(self):
+        if self.nickname.strip():
+            return self.nickname.strip()
+        else:
+            return self.user.get_full_name()
