@@ -67,12 +67,22 @@ class Event(models.Model):
     has_seating = models.BooleanField(default=True)
     seating_location = models.ForeignKey(SeatingRoom, on_delete=models.PROTECT, blank=True, null=True)
 
-    def save(self, force_insert=False, force_update=False, using=None, update_fields=None):
-        if self.has_seating:
-            pass
-            # TODO: Create the first seating revision
+    @property
+    def signups(self):
+        signups = EventSignup.objects.filter(event=self).all().order_by('-signup_created')
 
-        super().save(force_insert, force_update, using, update_fields)
+        return signups
+
+    @property
+    def signup_count(self):
+        return len(self.signups)
+
+    @property
+    def is_ongoing(self):
+        if self.start < timezone.now() <= self.end:
+            return True
+        else:
+            return False
 
 
 class EventSignup(models.Model):

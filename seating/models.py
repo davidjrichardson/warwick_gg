@@ -48,6 +48,7 @@ class SeatingRevision(models.Model):
 
     class Meta:
         unique_together = ('event', 'number')
+        ordering = ['-number']
 
 
 class SeatingManager(models.Manager):
