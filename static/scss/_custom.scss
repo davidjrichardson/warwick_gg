@@ -371,3 +371,100 @@ a {
     }
   }
 }
+
+a.navbar-burger {
+  transition: all 0.2s ease-in-out;
+
+  color: rgba(255, 255, 255, 0.87);
+
+  &:hover,
+  &:focus {
+    color: white;
+    background-color: $navbar-item-hover-background-color;
+  }
+}
+
+.navbar-item .navbar-link {
+  background-color: transparent;
+  transition: all 0.2s ease-in-out;
+
+  &::after {
+    border-width: 2px;
+  }
+}
+
+.navbar-item.is-active .navbar-link {
+  color: white;
+}
+
+div.navbar-dropdown {
+  border-top-color: $navbar-divider-background-color;
+
+  &.is-boxed {
+    transform: translateY(-2px);
+  }
+
+  & .navbar-item {
+    transition: all 0.2s ease-in-out;
+
+    background-color: transparent;
+
+    &.is-active {
+      background-color: $navbar-dropdown-item-active-background-color;
+
+      & a {
+        color: $navbar-dropdown-item-active-color;
+      }
+    }
+
+    & a {
+      color: rgba(255, 255, 255, 0.87);
+    }
+
+    &:hover,
+    &:focus {
+      background-color: $navbar-dropdown-item-hover-background-color;
+
+      & a {
+        color: $navbar-dropdown-item-hover-color;
+      }
+    }
+  }
+}
+
+.navbar-brand {
+  padding: 0 1rem;
+}
+
+.navbar-item {
+  transition: all $speed ease-in-out;
+
+  & a {
+    color: rgba(255, 255, 255, 0.87);
+  }
+
+  &:hover {
+    background-color: $navbar-item-hover-background-color;
+
+    & a {
+      color: white;
+    }
+  }
+}
+
+// Dashboard styling
+.warwickgg-dash {
+  & a {
+    & .warwickgg-title {
+      font-size: 2.2rem;
+      text-shadow: 0px 3px 6px transparentize($warwickgg_blue_shadow, 0.4);
+      padding-top: 8px;
+
+      transition: all $speed ease-in-out;
+    }
+
+    &:hover .warwickgg-title {
+      color: $link-hover;
+    }
+  }
+}
