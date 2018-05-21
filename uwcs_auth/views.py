@@ -4,8 +4,18 @@ from allauth.socialaccount.providers.oauth2.views import (
     OAuth2CallbackView,
     OAuth2LoginView,
 )
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.views import View
 
 from uwcs_auth.provider import UWCSProvider
+
+
+class UserProfileView(LoginRequiredMixin, View):
+    template_name = ''
+
+    def get(self, request):
+        # TODO
+        pass
 
 
 class UWCSOauth2Adapter(OAuth2Adapter):
