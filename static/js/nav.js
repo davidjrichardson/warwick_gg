@@ -17,4 +17,29 @@ document.addEventListener('DOMContentLoaded', function () {
             });
         });
     }
+
+    // POST logout request
+    var $logout = document.getElementById('logout');
+    $logout.addEventListener('click', function($ev) {
+        $ev.preventDefault();
+        $ev.stopImmediatePropagation();
+
+        var $csrf = Cookies.get('csrftoken');
+        var $http = new XMLHttpRequest();
+
+        console.log($csrf);
+
+        $http.open('POST', '/accounts/logout/', true);
+        $http.setRequestHeader('X-CSRFToken', $csrf);
+        $http.onreadystatechange = function () {
+            if ($http.readyState === 4 && $http.status === 200) {
+                window.location.replace('/');
+            }
+
+            console.log($http.statusText);
+        };
+        $http.send('submit=true');
+
+        return false;
+    });
 });
