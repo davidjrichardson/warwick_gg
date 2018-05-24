@@ -23,4 +23,6 @@ urlpatterns = [
     path('dashboard/', include('dashboard.urls')),
     path('accounts/', include('allauth.urls')),
     path('admin/', admin.site.urls),
+    # TODO: Make this a child of events?
+    path('seating/', include('seating.urls')),
 ]
