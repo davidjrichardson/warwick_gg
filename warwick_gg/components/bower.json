@@ -17,6 +17,5 @@
   "devDependencies": {
     "bulma": "^0.6.2",
     "d3": "^4.13.0",
-    "offside": "^1.4.0"
   }
 }

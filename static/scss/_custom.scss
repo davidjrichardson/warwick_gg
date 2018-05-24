@@ -461,10 +461,81 @@ div.navbar-dropdown {
       padding-top: 8px;
 
       transition: all $speed ease-in-out;
+
+      & span {
+        transition: all $speed ease-in-out;
+        position: relative;
+        top: 0;
+      }
     }
 
     &:hover .warwickgg-title {
-      color: $link-hover;
+      color: lighten($uwcs_blue, 3%);
+
+      & span {
+        color: $warwickgg_light_blue;
+        top: 1px;
+        text-shadow: 0px 3px 6px transparentize($warwickgg_light_blue_shadow, 0.4);
+      }
     }
+  }
+}
+
+.title {
+  font-family: 'Titillium Web', sans-serif;
+  font-weight: 700;
+}
+
+h1.section-title {
+  display: inline-block;
+  line-height: 1.5em;
+  border-bottom: 2px solid $uwcs-blue;
+
+  margin-left: -2px;
+  padding: 0 2px;
+}
+
+.warwickgg-dash {
+  .hero {
+    & h1.title {
+      margin-bottom: 2.5rem;
+    }
+
+    & a {
+      text-decoration: none;
+
+      &:hover {
+        text-decoration: underline;
+      }
+    }
+  }
+
+  & .level .level-left .title {
+    margin-bottom: 1rem;
+  }
+}
+
+.tournament-box.column {
+  box-shadow: 0 0 0 rgba(black, 0);
+  background-color: transparent;
+
+  padding: 1.25rem;
+
+  transition: all $speed ease-in-out;
+
+  border-radius: $radius-large;
+
+  color: rgba(255, 255, 255, 0.87);
+
+  &:hover,
+  &:focus {
+    box-shadow: 0 3px 6px rgba(black, 0.1);
+    background-color: $warwickgg_dark_grey;
+
+    color: white;
+  }
+
+  & span.signed-up {
+    color: rgba($green, 0.87);
   }
 }

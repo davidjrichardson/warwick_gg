@@ -13,17 +13,22 @@ $uwcs_blue: #3D5AFE;
 $warwickgg_black: #222528;
 $warwickgg_dark_grey: #2D3338;
 $warwickgg_blue_shadow: #162160;
+$warwickgg_light_blue: #E4E8FF;
+$warwickgg_light_blue_shadow: #383A46;
 $uwcs_blue_dark: #364CCD;
 $uwcs_yellow_dark: #D5B00B;
 
 // Overrides
 $family-monospace: 'Ubuntu Mono', Consolas, 'Liberation Mono', Courier, monospace;
-$family-title: "Jaapokki Subtract", "Montserrat", sans-serif;
+$family-title: 'Titillium Web', 'Montserrat', sans-serif;
 $family-primary: $family-monospace;
 $text: white;
 $link: $uwcs_blue;
 $link-hover: darken($link, 5%);
 $link-focus: $link-hover;
+$title-color: rgba(255, 255, 255, 0.87);
+$title-weight: 700;
+$subtitle-color: rgba(255, 255, 255, 0.54);
 
 $primary: $uwcs_blue;
 
@@ -58,3 +63,8 @@ $navbar-dropdown-item-hover-background-color: lighten($navbar-dropdown-backgroun
 $navbar-dropdown-item-active-background-color: lighten($navbar-dropdown-background-color, 5%);
 $speed: 0.2s;
 $navbar-dropdown-offset: -4px;
+
+// Box
+$box-background-color: $warwickgg_dark_grey;
+$box-link-hover-shadow: 0 2px 3px rgba($black, 0.1);
+$box-link-active-shadow: 0 2px 3px rgba($black, 0.1);

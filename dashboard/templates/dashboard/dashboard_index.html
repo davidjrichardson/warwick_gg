@@ -6,52 +6,72 @@
 
 {% block template_classname %}warwickgg-dash{% endblock %}
 
+{% block extra_js %}
+  <script type="text/javascript" src="{% static 'js/nav.js' %}"></script>
+  <script type="text/javascript" src="{% static 'js/countdown.en.min.js' %}"></script>
+  <script type="text/javascript">
+      document.addEventListener('DOMContentLoaded', function () {
+          var output_target = document.getElementById('countdown-output'),
+              event_status = document.getElementById('event-status'),
+              countdown_date = Date.parse(output_target.getAttribute('data-countdown-to')),
+              label_builder = Countdown.Helper.Pluralize.label_builder_factory('en'),
+              countdown = new Countdown({
+                  progress: function (seconds) {
+                      output_target.innerHTML = label_builder(seconds);
+                  }, complete: function () {
+                      output_target.innerHTML = 'This event has now finished. Come back soon for information about the next one!';
+                      event_status.innerHTML = 'Just Finished';
+                  }
+              });
+
+          countdown.start_to(Math.floor(countdown_date / 1000));
+      });
+  </script>
+{% endblock %}
+
 {% block content %}
-  <div id="is-page-wrapper">
-    <nav class="navbar" role="navigation" aria-label="main navigation">
-      <div class="navbar-brand">
-        <a href="{% url 'dashboard_index' %}">
-          <h1 class="warwickgg-title has-text-centered">Warwick<span class="superscript">.gg</span></h1>
-        </a>
-        <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false">
-          <span aria-hidden="true"></span>
-          <span aria-hidden="true"></span>
-          <span aria-hidden="true"></span>
-        </a>
+  {% include 'dashboard/includes/navbar.html' %}
+  <section class="hero is-primary is-bold is-large">
+    <div class="hero-body">
+      <div class="container">
+        {#        <h1 class="title has-text-centered">#}
+        {#          <span id="event-status">Ongoing Event</span>: <a href="#">ALAN Turing (UWCS LAN 2 2018)</a>#}
+        {#        </h1>#}
+        <h1 class="title has-text-centered is-2">
+          Next Event: <a href="#">BFL 2018</a>
+        </h1>
+        {# TODO: Handle case where the event has finished (in the day after the event) - countdown doesn't like it #}
+        {#          Event finishes in <span id="countdown-output" data-countdown-to="2018-06-29T18:00:00"></span> (29th June 2018, 18:00)#}
+        <h2 class="subtitle is-6 has-text-centered">
+          Signups open in <span id="countdown-output" data-countdown-to="2018-06-11T10:00:00"></span> (11th June 2018, 10:00)
+        </h2>
       </div>
-      <div class="navbar-menu">
-        <div class="navbar-start">
-          <div class="navbar-item">
-            <a href="#">Events</a>
+    </div>
+  </section>
+  <section class="section">
+    <div class="container">
+      <div class="level">
+        <div class="level-left">
+          <div class="level-item">
+            <h1 class="title section-title">
+              Upcoming tournaments
+            </h1>
           </div>
-          <div class="navbar-item">
-            <a href="#">Tournaments</a>
-          </div>
-          <div class="navbar-item has-dropdown is-hoverable">
-            <a href="#" class="navbar-link">Links</a>
-            <div class="navbar-dropdown is-boxed">
-              <div class="navbar-item">
-                <a href="https://discord.gg/uwcs">Discord</a>
-              </div>
-            </div>
-          </div>
-          {# TODO: Menu items #}
         </div>
-        <div class="navbar-end">
-          <div class="navbar-item has-dropdown is-hoverable">
-            <a href="#" class="navbar-link">{{ request.user.warwickgguser.long_name }}</a>
-            <div class="navbar-dropdown is-right is-boxed">
-              <div class="navbar-item">
-                <a href="{% url 'user_profile' %}">View profile</a>
-              </div>
-              <hr class="navbar-divider">
-              <div class="navbar-item">
-                <a id="logout" href="{% url 'account_logout' %}{# TODO: Transform request into a POST #}">Logout</a>
-              </div>
-            </div>
+        <div class="level-right">
+          <div class="level-item">
+            <a href="{# TODO: Add link here #}">See more <i class="fas fa-chevron-right"></i></a>
           </div>
         </div>
       </div>
-    </nav>
-  </div>
+      <div class="level">
+        {% comment %}<h1>You have not signed up to any tournaments yet. You can see upcoming tournaments <a href="# {# TODO: Replace this link #}">here</a>.</h1>{% endcomment %}
+        <div class="columns">
+          {% include 'dashboard/includes/tournament-partial.html' %}
+          {% include 'dashboard/includes/tournament-partial.html' %}
+          {% include 'dashboard/includes/tournament-partial.html' %}
+        </div>
+      </div>
+    </div>
+  </section>
 {% endblock %}
