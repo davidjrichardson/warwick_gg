@@ -179,3 +179,4 @@ venv.bak/
 
 warwick_gg/settings/production.py
 .sass-cache/
+*.swp
