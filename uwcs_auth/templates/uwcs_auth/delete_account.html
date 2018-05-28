@@ -2,7 +2,7 @@
 
 {% load static %}
 
-{% block title %}Delete My Warwick.gg Profile{% endblock %}
+{% block title %}Delete my Warwick.gg Profile{% endblock %}
 
 {% block extra_js %}
   <script type="text/javascript" src="{% static 'js/js.cookie.js' %}"></script>
@@ -14,11 +14,7 @@
           var $submit = document.getElementById('submit');
 
           $input.addEventListener('input', function () {
-              if (this.value === $form.dataset.email) {
-                  $submit.disabled = false;
-              } else {
-                  $submit.disabled = true;
-              }
+              $submit.disabled = this.value !== $form.dataset.email;
           })
       });
   </script>

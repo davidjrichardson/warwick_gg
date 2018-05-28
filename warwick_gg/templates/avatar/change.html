@@ -1,0 +1,125 @@
+{% extends 'base.html' %}
+
+{% load static avatar_tags %}
+
+{% block title %}Change my Warwick.gg Avatar{% endblock %}
+
+{% block extra_js %}
+  <script type="text/javascript" src="{% static 'js/js.cookie.js' %}"></script>
+  <script type="text/javascript" src="{% static 'js/nav.js' %}"></script>
+  <script type="text/javascript">
+    document.addEventListener('DOMContentLoaded', function () {
+        var $fileInput = document.getElementById('id_avatar');
+        var $fileContainer = document.getElementById('file-container');
+        var $fileName = document.getElementById('file-name');
+
+        $fileInput.addEventListener('change', function () {
+            if ($fileInput.files.length > 0) {
+                $fileContainer.classList.add('has-name');
+                $fileName.classList.remove('is-hidden');
+                $fileName.innerText = $fileInput.files[0].name;
+            } else {
+                $fileContainer.classList.remove('has-name');
+                $fileName.classList.add('is-hidden');
+            }
+        });
+    });
+  </script>
+{% endblock %}
+
+{% block content %}
+  {% include 'dashboard/includes/navbar.html' %}
+
+  <nav class="breadcrumb" aria-label="breadcrumbs">
+    <div class="container">
+      <ul>
+        <li><a href="{% url 'user_profile' %}">My Profile</a></li>
+        <li class="is-active"><a href="#">Change Avatar</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <div class="section">
+    <div class="container">
+      <div class="level">
+        <div class="level-left">
+          <div class="level-item">
+            <h2 class="is-2 title">
+              Your avatar
+            </h2>
+          </div>
+        </div>
+      </div>
+      <div class="columns is-row-reverse-order">
+        <div class="column is-4">
+          <aside class="menu">
+            <p class="menu-label">
+              Account controls
+            </p>
+            <ul class="menu-list">
+              {% if not social_account %}
+                <li>
+                  <a href="{% url 'account_change_password' %}">
+                    Change your password
+                  </a>
+                </li>
+              {% endif %}
+              <li>
+                <a class="has-text-danger" href="{% url 'account_delete' %}">
+                  Delete your account
+                </a>
+              </li>
+            </ul>
+          </aside>
+        </div>
+        <div class="column is-8">
+          <div class="columns is-multiline is-centered">
+            {% if not avatars %}
+              <div class="column is-narrow">
+                <figure class="is-128x128 image">
+                  {% avatar user 256 class='rounded-image' %}
+                </figure>
+              </div>
+              <div class="column is-full content">
+                <p>You haven't uploaded your own avatar yet so we have generated one for you (seen above). To upload a
+                  new one just use the form below:<br/><br/></p>
+                <form enctype="multipart/form-data" method="POST" action="{% url 'avatar_add' %}">
+                  <div class="columns is-centered is-multiline">
+                    {% csrf_token %}
+                    <div class="column is-narrow">
+                      <div class="field">
+                        <div class="file is-boxed" id="file-container">
+                          <label class="file-label">
+                            <input class="file-input" type="file" name="{{ upload_avatar_form.avatar.name }}"
+                                   id="{{ upload_avatar_form.avatar.id_for_label }}">
+                            <span class="file-cta">
+                              <span class="file-icon">
+                                <i class="fas fa-upload"></i>
+                              </span>
+                              <span class="file-label">Choose a file...</span>
+                            </span>
+                            <span class="file-name is-hidden" id="file-name"></span>
+                          </label>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="column is-full">
+                      <div class="field is-grouped is-grouped-right">
+                        <div class="control">
+                          <button class="button is-primary" type="submit">Upload avatar</button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </form>
+              </div>
+            {% else %}
+
+            {% endif %}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+{% endblock %}

@@ -520,7 +520,7 @@ div.navbar-dropdown {
   font-weight: 700;
 }
 
-h1.section-title {
+.section-title {
   display: inline-block;
   line-height: 1.5em;
   border-bottom: 2px solid $uwcs-blue;
@@ -622,11 +622,63 @@ a.button.is-primary {
   }
 }
 
-
 .is-full-width {
   width: 100%;
 }
 
 .rounded-image {
   border-radius: $radius-large;
+}
+
+// Change avatar/password
+.breadcrumb {
+  background-color: darken($warwickgg_dark_grey, 3.5%);
+
+  & ul a {
+    padding-top: 1rem;
+    padding-bottom: 1rem;
+  }
+}
+
+.file-label {
+  &:hover,
+  &:focus {
+    & span.file-cta {
+      background-color: lighten($warwickgg_dark_grey, 2.5%);
+      border-color: $input-hover-border-color;
+      color: white;
+    }
+
+    & span.file-name {
+      border-color: $input-border-color;
+    }
+  }
+
+  & span.file-name {
+    transition: all $speed ease-in-out;
+
+    border-color: $input-border-color;
+    color: rgba(white, 0.7);
+  }
+
+  & span.file-cta {
+    transition: all $speed ease-in-out;
+
+    background-color: $warwickgg_dark_grey;
+    border-color: $input-border-color;
+
+    color: rgba(white, 0.87);
+
+    &:hover,
+    &:focus {
+      background-color: lighten($warwickgg_dark_grey, 2.5%);
+      border-color: $input-hover-border-color;
+      color: white;
+    }
+
+    &:hover + span.file-name,
+    &:focus + span.file-name {
+      border-color: $input-border-color;
+    }
+  }
 }
