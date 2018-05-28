@@ -9,14 +9,16 @@ from allauth.socialaccount.providers.oauth2.views import (
 )
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import JsonResponse
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.utils.decorators import method_decorator
 from django.views import View
 from django.views.decorators.csrf import csrf_protect
 
-from uwcs_auth.forms import UserForm, ProfileForm
+from uwcs_auth.forms import UserForm, ProfileForm, DeleteUserForm
 from uwcs_auth.models import WarwickGGUser
 from uwcs_auth.provider import UWCSProvider
+
+from django.contrib.auth import logout
 
 
 class UserProfileView(LoginRequiredMixin, View):
@@ -73,10 +75,24 @@ class UserDeleteView(LoginRequiredMixin, View):
     login_url = '/accounts/login/'
 
     def get(self, request):
-        return render(request, self.template_name)
+        user_form = DeleteUserForm(instance=request.user)
 
+        ctx = {
+            'user_form': user_form
+        }
+
+        return render(request, self.template_name, context=ctx)
+
+    @method_decorator(csrf_protect, name='dispatch')
     def post(self, request):
-        pass
+        user_form = DeleteUserForm(request.POST, instance=request.user)
+
+        if user_form.is_valid():
+            user = request.user
+            logout(request)
+            user.delete()
+
+            return redirect('/')
 
 
 class UWCSOauth2Adapter(OAuth2Adapter):

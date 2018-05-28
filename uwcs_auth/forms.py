@@ -22,6 +22,16 @@ class UserForm(forms.ModelForm):
         fields = ['first_name', 'last_name', 'email']
 
 
+class DeleteUserForm(forms.ModelForm):
+    def __init__(self, *args, **kwargs):
+        super(DeleteUserForm, self).__init__(*args, **kwargs)
+        self.fields['email'].required = True
+
+    class Meta:
+        model = User
+        fields = ['email']
+
+
 class SignupForm(forms.Form):
     first_name = forms.CharField(max_length=50)
     last_name = forms.CharField(max_length=50)

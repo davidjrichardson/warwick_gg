@@ -1,0 +1,81 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block title %}Delete My Warwick.gg Profile{% endblock %}
+
+{% block extra_js %}
+  <script type="text/javascript" src="{% static 'js/js.cookie.js' %}"></script>
+  <script type="text/javascript" src="{% static 'js/nav.js' %}"></script>
+  <script type="text/javascript">
+      document.addEventListener('DOMContentLoaded', function () {
+          var $form = document.getElementById('account-delete');
+          var $input = document.getElementById('id_email');
+          var $submit = document.getElementById('submit');
+
+          $input.addEventListener('input', function () {
+              if (this.value === $form.dataset.email) {
+                  $submit.disabled = false;
+              } else {
+                  $submit.disabled = true;
+              }
+          })
+      });
+  </script>
+{% endblock %}
+
+{% block content %}
+  {% include 'dashboard/includes/navbar.html' %}
+
+  <div class="level title-container">
+    <div class="container">
+      <a href="{% url 'dashboard_index' %}">
+        <h1 class="warwickgg-title has-text-centered">Warwick<span class="superscript">.gg</span></h1>
+      </a>
+    </div>
+  </div>
+  <div class="level">
+    <div class="container">
+      <div class="columns">
+        <div class="column is-half-desktop is-4-fullhd is-offset-4-fullhd is-offset-one-quarter-desktop">
+          <p class="instructions has-text-centered">You are about to delete your Warwick.gg account. This will delete
+            <em>all</em> of your data and is an irreversible process.<br/><br/>
+            To delete your account, please enter your account's email address in the input below:</p>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="level">
+    <div class="container">
+      <div class="columns">
+        <div class="column is-half-desktop is-4-fullhd is-offset-4-fullhd is-offset-one-quarter-desktop">
+          <form method="post" action="{% url 'account_delete' %}" id="account-delete" data-email="{{ user_form.email.value }}">
+            {% csrf_token %}
+
+            <div class="field">
+              <label class="label" for="{{ user_form.email.id_for_label }}">Email address</label>
+              <div class="control has-icons-left">
+                <input class="input"
+                       name="{{ user_form.email.name }}" id="{{ user_form.email.id_for_label }}"
+                       placeholder="Your account email address"
+                       type="email" required>
+                <span class="icon is-small is-left">
+                <i class="fas fa-envelope"></i>
+              </span>
+              </div>
+            </div>
+            <div class="field is-grouped is-grouped-centered">
+              <div class="control">
+                <button class="button is-danger" type="submit" id="submit" disabled>Delete account</button>
+              </div>
+              <div class="control">
+                <a class="button is-primary" href="{% url 'user_profile' %}">Cancel</a>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+{% endblock %}

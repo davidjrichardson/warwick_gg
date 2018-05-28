@@ -597,7 +597,20 @@ p.menu-label {
   transition: all $speed ease-in-out;
 }
 
-button.is-primary.is-primary.is-primary.is-primary {
+button.is-primary.is-primary.is-primary.is-primary,
+button.is-danger.is-danger.is-danger.is-danger {
+  top: 0;
+  position: relative;
+
+  transition: all $speed ease-in-out;
+
+  &:enabled:hover,
+  &:enabled:focus {
+    top: 1px;
+  }
+}
+
+a.button.is-primary {
   top: 0;
   position: relative;
 
@@ -608,6 +621,7 @@ button.is-primary.is-primary.is-primary.is-primary {
     top: 1px;
   }
 }
+
 
 .is-full-width {
   width: 100%;
