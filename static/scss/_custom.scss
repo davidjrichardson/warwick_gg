@@ -453,6 +453,32 @@ div.navbar-dropdown {
 }
 
 // Dashboard styling
+.navbar-brand {
+  & .warwickgg-title {
+    font-size: 2.2rem;
+    text-shadow: 0px 3px 6px transparentize($warwickgg_blue_shadow, 0.4);
+    padding-top: 8px;
+
+    transition: all $speed ease-in-out;
+
+    & span {
+      transition: all $speed ease-in-out;
+      position: relative;
+      top: 0;
+    }
+  }
+
+  &:hover .warwickgg-title {
+    color: lighten($uwcs_blue, 3%);
+
+    & span {
+      color: $warwickgg_light_blue;
+      top: 1px;
+      text-shadow: 0px 3px 6px transparentize($warwickgg_light_blue_shadow, 0.4);
+    }
+  }
+}
+
 .warwickgg-dash {
   & a {
     & .warwickgg-title {
@@ -537,5 +563,40 @@ h1.section-title {
 
   & span.signed-up {
     color: rgba($green, 0.87);
+  }
+}
+
+// Profile
+#edit-button {
+  margin-left: 0.5rem;
+}
+
+.is-hidden {
+  display: none;
+}
+
+.is-row-reverse-order {
+  flex-direction: row-reverse;
+}
+
+p.menu-label {
+  font-family: $family-title;
+  color: rgba(white, 0.7);
+  margin-bottom: 1rem;
+}
+
+.menu-list li a {
+  transition: all $speed ease-in-out;
+}
+
+button.is-primary.is-primary.is-primary.is-primary {
+  top: 0;
+  position: relative;
+
+  transition: all $speed ease-in-out;
+
+  &:hover,
+  &:focus {
+    top: 1px;
   }
 }

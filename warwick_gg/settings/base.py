@@ -25,6 +25,7 @@ INSTALLED_APPS = [
     'seating',
     'dashboard',
     'events',
+    'avatar',
 
     'allauth',
     'allauth.account',
@@ -173,3 +174,7 @@ COMPRESS_PRECOMPILERS = (
 BOWER_INSTALLED_APPS = [
     'bulma~0.6.2',
 ]
+
+# Django-avatar
+AVATAR_CLEANUP_DELETED = True
+AVATAR_GRAVATAR_DEFAULT = 'identicon'

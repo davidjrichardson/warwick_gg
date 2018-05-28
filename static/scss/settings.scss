@@ -23,6 +23,7 @@ $family-monospace: 'Ubuntu Mono', Consolas, 'Liberation Mono', Courier, monospac
 $family-title: 'Titillium Web', 'Montserrat', sans-serif;
 $family-primary: $family-monospace;
 $text: white;
+$text-strong: rgba(white, 0.7);
 $link: $uwcs_blue;
 $link-hover: darken($link, 5%);
 $link-focus: $link-hover;
@@ -68,3 +69,10 @@ $navbar-dropdown-offset: -4px;
 $box-background-color: $warwickgg_dark_grey;
 $box-link-hover-shadow: 0 2px 3px rgba($black, 0.1);
 $box-link-active-shadow: 0 2px 3px rgba($black, 0.1);
+
+//Sidenav
+$menu-item-color: rgba(white, 0.87);
+$menu-item-hover-color: white;
+$menu-item-active-color: white;
+$menu-item-hover-background-color: $warwickgg_dark_grey;
+$menu-item-active-background-color: $warwickgg_dark_grey;

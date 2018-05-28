@@ -1,0 +1,184 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block title %}My Warwick.gg Profile{% endblock %}
+
+{% block extra_js %}
+  <script type="text/javascript" src="{% static 'js/nav.js' %}"></script>
+  <script type="text/javascript" src="{% static 'js/js.cookie.js' %}"></script>
+  <script type="text/javascript">
+      document.addEventListener('DOMContentLoaded', function () {
+          var $editButton = document.getElementById('edit-button');
+          var $submitButton = document.getElementById('form-submit');
+          var $cancelButton = document.getElementById('form-cancel');
+          var $notificationDelete = document.getElementById('notification-delete');
+
+          $notificationDelete.addEventListener('click', function (ev) {
+              ev.preventDefault();
+              ev.stopImmediatePropagation();
+
+              $notificationDelete.parentNode.parentNode.remove();
+
+              return false;
+          });
+
+          $editButton.addEventListener('click', function (ev) {
+              ev.preventDefault();
+              ev.stopImmediatePropagation();
+
+              document.getElementById('account-edit').classList.remove('is-hidden');
+              document.getElementById('account-info').classList.add('is-hidden');
+              $editButton.classList.add('is-hidden');
+
+              return false;
+          });
+
+          $cancelButton.addEventListener('click', function (ev) {
+              ev.preventDefault();
+              ev.stopImmediatePropagation();
+
+              document.getElementById('account-edit').classList.add('is-hidden');
+              document.getElementById('account-info').classList.remove('is-hidden');
+              $editButton.classList.remove('is-hidden');
+
+              return false;
+          });
+
+          $submitButton.addEventListener('click', function (ev) {
+              ev.preventDefault();
+              ev.stopImmediatePropagation();
+
+              document.getElementById('account-edit').classList.add('is-hidden');
+              document.getElementById('account-info').classList.remove('is-hidden');
+              $editButton.classList.remove('is-hidden');
+
+              // TODO: POST form and add responses
+
+              return false;
+          });
+      });
+  </script>
+{% endblock %}
+
+{% block content %}
+  {% include 'dashboard/includes/navbar.html' %}
+
+  <div class="section">
+    <div class="container">
+      <div class="level is-hidden">
+        <div id="response-notification" class="notification">
+          <button id="notification-delete" class="delete"></button>
+        </div>
+      </div>
+      <div class="level">
+        <div class="level-left">
+          <div class="level-item">
+            <h2 class="is-2 title">
+              Your profile
+            </h2>
+            <a href="#" title="Edit your profile" id="edit-button"> <i class="fas fa-edit"></i></a>
+          </div>
+        </div>
+      </div>
+      <div class="columns is-row-reverse-order">
+        <div class="column is-4">
+          <aside class="menu">
+            <p class="menu-label">
+              Account controls
+            </p>
+            <ul class="menu-list">
+              {% if not social_account %}
+                <li>
+                  <a href="{% url 'account_change_password' %}">
+                    Change your password
+                  </a>
+                </li>
+              {% endif %}
+              <li>
+                <a href="{% url 'avatar_change' %}">Change your avatar</a>
+              </li>
+              <li>
+                <a class="has-text-danger" href="{% url 'account_delete' %}">
+                  Delete your account
+                </a>
+              </li>
+            </ul>
+          </aside>
+        </div>
+        <div class="column is-8">
+          <div class="level" id="account-info">
+            <div class="columns is-multiline">
+              <div class="column is-half">
+                <p>
+                  <strong>Nickname: </strong><br/>
+                  {% if profile_form.nickname.value %}
+                    {{ profile_form.nickname.value }}
+                  {% else %}
+                    No nickname set
+                  {% endif %}
+                </p>
+              </div>
+              <div class="column is-half">
+                <p>
+                  <strong>University ID: </strong><br/>
+                  {{ profile_form.uni_id.value }}
+                </p>
+              </div>
+              <div class="column is-half">
+                <p>
+                  <strong>First name: </strong><br/>
+                  {{ user_form.first_name.value }}
+                </p>
+              </div>
+              <div class="column is-half">
+                <p>
+                  <strong>Last name: </strong><br/>
+                  {{ user_form.last_name.value }}
+                </p>
+              </div>
+              <div class="column is-full">
+                <p>
+                  <strong>Email address: </strong><br/>
+                  {{ user_form.email.value }}
+                </p>
+              </div>
+            </div>
+          </div>
+          <div class="level is-hidden" id="account-edit">
+            <form method="post">
+              {% csrf_token %}
+              <div class="columns is-multiline">
+                <div class="column is-half">
+                  {% include 'allauth/account/includes/form-field.html' with field=profile_form.nickname %}
+                </div>
+                <div class="column is-half">
+                  {% include 'allauth/account/includes/form-field.html' with field=profile_form.uni_id custom_label='University ID' %}
+                </div>
+                <div class="column is-half">
+                  {% include 'allauth/account/includes/form-field.html' with field=user_form.first_name %}
+                </div>
+                <div class="column is-half">
+                  {% include 'allauth/account/includes/form-field.html' with field=user_form.last_name %}
+                </div>
+                <div class="column is-full">
+                  {% include 'allauth/account/includes/form-field.html' with field=user_form.email %}
+                </div>
+                <div class="column is-full">
+                  <div class="field is-grouped is-grouped-right">
+                    <div class="control">
+                      <button class="button is-primary" id="form-submit" type="submit">Save</button>
+                    </div>
+                    <div class="control">
+                      <button class="button is-secondary" id="form-cancel" type="submit">Cancel</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}
