@@ -7,7 +7,7 @@ from uwcs_auth.models import WarwickGGUser
 class ProfileForm(forms.ModelForm):
     class Meta:
         model = WarwickGGUser
-        fields = ['uni_id', 'nickname']
+        fields = ['nickname']
 
 
 class UserForm(forms.ModelForm):

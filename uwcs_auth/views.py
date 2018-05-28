@@ -1,3 +1,5 @@
+from itertools import chain
+
 import requests
 from allauth.socialaccount.models import SocialAccount
 from allauth.socialaccount.providers.oauth2.views import (
@@ -6,8 +8,11 @@ from allauth.socialaccount.providers.oauth2.views import (
     OAuth2LoginView,
 )
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.http import JsonResponse
 from django.shortcuts import render
+from django.utils.decorators import method_decorator
 from django.views import View
+from django.views.decorators.csrf import csrf_protect
 
 from uwcs_auth.forms import UserForm, ProfileForm
 from uwcs_auth.models import WarwickGGUser
@@ -24,13 +29,43 @@ class UserProfileView(LoginRequiredMixin, View):
 
         social_user = SocialAccount.objects.get(user=request.user)
 
+        uni_id = profile_form.instance.uni_id
+
         context = {
             'user_form': user_form,
             'profile_form': profile_form,
             'social_account': social_user,
+            'uni_id': uni_id,
         }
 
         return render(request, self.template_name, context=context)
+
+    @method_decorator(csrf_protect, name='dispatch')
+    def post(self, request):
+        user_form = UserForm(request.POST, instance=request.user)
+        profile_form = ProfileForm(request.POST, instance=WarwickGGUser.objects.get(user=request.user))
+
+        if user_form.is_valid() and profile_form.is_valid():
+            user_form.save()
+            profile_form.save()
+
+            ctx = {
+                'success': True,
+                'values': {
+                    'nickname': profile_form.instance.nickname,
+                    'first_name': user_form.instance.first_name,
+                    'last_name': user_form.instance.last_name,
+                    'email': user_form.instance.email
+                }
+            }
+            return JsonResponse(ctx, status=200)
+        else:
+            errors = dict(chain(user_form.errors.items(), profile_form.errors.items()))
+            ctx = {'success': False}
+            if errors:
+                ctx['errors'] = errors
+
+            return JsonResponse(ctx, status=400)
 
 
 class UserDeleteView(LoginRequiredMixin, View):
