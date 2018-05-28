@@ -162,6 +162,9 @@ STATICFILES_DIRS = [
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 STATIC_URL = '/static/'
 
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+MEDIA_URL = '/media/'
+
 # Django Compressor
 PROJECT_PATH = os.path.abspath(os.path.dirname(__file__))
 BOWER_COMPONENTS_ROOT = os.path.join(PROJECT_PATH, "../components")
@@ -176,6 +179,8 @@ BOWER_INSTALLED_APPS = [
 ]
 
 # Django-avatar
-AVATAR_AUTO_GENERATE_SIZES = (64, 128, 256)
+AVATAR_AUTO_GENERATE_SIZES = (80, 64, 128, 256)
 AVATAR_CLEANUP_DELETED = True
 AVATAR_GRAVATAR_DEFAULT = 'identicon'
+AVATAR_EXPOSE_USERNAMES = False
+AVATAR_MAX_AVATARS_PER_USER = 1
