@@ -29,7 +29,10 @@ class UserProfileView(LoginRequiredMixin, View):
         user_form = UserForm(instance=request.user)
         profile_form = ProfileForm(instance=WarwickGGUser.objects.get(user=request.user))
 
-        social_user = SocialAccount.objects.get(user=request.user)
+        try:
+            social_user = SocialAccount.objects.get(user=request.user)
+        except SocialAccount.DoesNotExist:
+            social_user = None
 
         uni_id = profile_form.instance.uni_id
 

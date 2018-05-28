@@ -28,10 +28,10 @@
                   var $response;
                   if ($http.status == 200 && $http.readyState == 4) {
                       // If the update is successful
-                      $notification.parentNode.classList.remove('is-hidden');
+                      $notification.classList.remove('is-hidden');
                       $notification.classList.remove('is-danger');
                       $notification.classList.add('is-success');
-                      document.getElementById('notification-text').innerText = 'We\'ve successfully updated your profile!';
+                      document.getElementById('notification-text').innerText = 'Profile update successful!';
 
                       var $isDanger = document.getElementsByClassName('is-danger');
 
@@ -62,7 +62,7 @@
                       }
                   } else if ($http.status == 400 && $http.readyState == 4) {
                       // If the update failed
-                      $notification.parentNode.classList.remove('is-hidden');
+                      $notification.classList.remove('is-hidden');
                       $notification.classList.remove('is-success');
                       $notification.classList.add('is-danger');
                       document.getElementById('notification-text').innerText = 'There was an issue updating your profile';
@@ -92,7 +92,7 @@
 
               $notification.classList.remove('is-success');
               $notification.classList.remove('is-danger');
-              $notification.parentNode.classList.add('is-hidden');
+              $notification.classList.add('is-hidden');
 
               return false;
           });
@@ -104,7 +104,7 @@
               document.getElementById('account-edit').classList.remove('is-hidden');
               document.getElementById('account-info').classList.add('is-hidden');
               $editButton.classList.add('is-hidden');
-              $notification.parentNode.classList.add('is-hidden');
+              $notification.classList.add('is-hidden');
 
               return false;
           });
@@ -172,11 +172,9 @@
           </aside>
         </div>
         <div class="column is-8">
-          <div class="level is-hidden">
-            <div id="response-notification" class="notification is-full-width has-text-centered">
-              <span id="notification-text"></span>
-              <button id="notification-delete" class="delete"></button>
-            </div>
+          <div id="response-notification" class="notification is-hidden">
+            <span id="notification-text"></span>
+            <button id="notification-delete" class="delete"></button>
           </div>
           <div class="level" id="account-info">
             <div class="columns is-multiline">
