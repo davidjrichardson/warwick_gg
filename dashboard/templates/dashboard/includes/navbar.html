@@ -12,10 +12,13 @@
     </div>
     <div class="navbar-menu" id="navbar-menu">
       <div class="navbar-start">
-        <div class="navbar-item">
+        <div class="navbar-item {% if "/dashboard/" in request.path %}is-active{% endif %}">
+          <a href="{% url 'dashboard_index' %}">Dashboard</a>
+        </div>
+        <div class="navbar-item {% if "/events/" in request.path %}is-active{% endif %}">
           <a href="#">Events</a>
         </div>
-        <div class="navbar-item">
+        <div class="navbar-item {% if "/tournaments/" in request.path %}is-active{% endif %}">
           <a href="#">Tournaments</a>
         </div>
         <div class="navbar-item has-dropdown is-hoverable">
@@ -27,7 +30,7 @@
             </div>
           </div>
         </div>
-        <div class="navbar-item">
+        <div class="navbar-item {% if "/about/" in request.path %}is-active{% endif %}">
           <a href="#">About</a>
         </div>
         {# TODO: Create the views for these links #}
@@ -36,7 +39,7 @@
         <div class="navbar-item has-dropdown is-hoverable">
           <a href="#" class="navbar-link">{{ request.user.warwickgguser.long_name }}</a>
           <div class="navbar-dropdown is-right is-boxed">
-            <div class="navbar-item">
+            <div class="navbar-item {% if "/accounts/" in request.path %}is-active{% endif %}">
               <a href="{% url 'user_profile' %}">View profile</a>
             </div>
             <hr class="navbar-divider">

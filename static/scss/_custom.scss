@@ -479,6 +479,14 @@ div.navbar-dropdown {
   }
 }
 
+.navbar-item.is-active {
+  background-color: $navbar-item-hover-background-color;
+
+  & a {
+    color: $navbar-item-active-color;
+  }
+}
+
 .warwickgg-dash {
   & a {
     & .warwickgg-title {
@@ -603,4 +611,8 @@ button.is-primary.is-primary.is-primary.is-primary {
 
 .is-full-width {
   width: 100%;
+}
+
+.rounded-image {
+  border-radius: $radius-large;
 }

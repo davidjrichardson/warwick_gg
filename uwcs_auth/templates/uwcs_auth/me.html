@@ -1,12 +1,12 @@
 {% extends 'base.html' %}
 
-{% load static %}
+{% load static avatar_tags %}
 
 {% block title %}My Warwick.gg Profile{% endblock %}
 
 {% block extra_js %}
-  <script type="text/javascript" src="{% static 'js/nav.js' %}"></script>
   <script type="text/javascript" src="{% static 'js/js.cookie.js' %}"></script>
+  <script type="text/javascript" src="{% static 'js/nav.js' %}"></script>
   <script type="text/javascript">
       document.addEventListener('DOMContentLoaded', function () {
           var $editButton = document.getElementById('edit-button');
@@ -130,6 +130,14 @@
     <div class="container">
       <div class="level">
         <div class="level-left">
+          <div class="level-item">
+            <figure class="image is-64x64 is-hidden-mobile">
+              {% avatar user 128 class='rounded-image' %}
+            </figure>
+            <figure class="image is-128x128 is-hidden-tablet">
+              {% avatar user 256 class='rounded-image' %}
+            </figure>
+          </div>
           <div class="level-item">
             <h2 class="is-2 title">
               Your profile
