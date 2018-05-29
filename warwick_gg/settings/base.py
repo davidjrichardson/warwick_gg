@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     'djangobower',
     'compressor',
     'svg',
+    'markdownx',
 ]
 
 MIDDLEWARE = [
