@@ -1,7 +1,15 @@
-{% extends 'base.html' %}
+{% extends 'dashboard/navbar_base.html' %}
 
-{% block content %}
-  <h1 class="is-1">
-    {{ event }}
-  </h1>
+{% block title %}{{ event.title }} | Warwick.gg{% endblock %}
+
+{% block js %}
+
+{% endblock %}
+
+{% block body %}
+  <div class="section">
+    <div class="container">
+      <h1 class="is-2 title">{{ event.title }}</h1>
+    </div>
+  </div>
 {% endblock %}

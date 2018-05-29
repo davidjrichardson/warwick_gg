@@ -1,12 +1,10 @@
-{% extends 'base.html' %}
+{% extends 'dashboard/navbar_base.html' %}
 
 {% load static %}
 
 {% block title %}Delete my Warwick.gg Profile{% endblock %}
 
-{% block extra_js %}
-  <script type="text/javascript" src="{% static 'js/js.cookie.js' %}"></script>
-  <script type="text/javascript" src="{% static 'js/nav.js' %}"></script>
+{% block js %}
   <script type="text/javascript">
       document.addEventListener('DOMContentLoaded', function () {
           var $form = document.getElementById('account-delete');
@@ -20,9 +18,7 @@
   </script>
 {% endblock %}
 
-{% block content %}
-  {% include 'dashboard/includes/navbar.html' %}
-
+{% block body %}
   <div class="level title-container">
     <div class="container">
       <a href="{% url 'dashboard_index' %}">
@@ -45,7 +41,8 @@
     <div class="container">
       <div class="columns">
         <div class="column is-half-desktop is-4-fullhd is-offset-4-fullhd is-offset-one-quarter-desktop">
-          <form method="post" action="{% url 'account_delete' %}" id="account-delete" data-email="{{ user_form.email.value }}">
+          <form method="post" action="{% url 'account_delete' %}" id="account-delete"
+                data-email="{{ user_form.email.value }}">
             {% csrf_token %}
 
             <div class="field">
@@ -73,5 +70,4 @@
       </div>
     </div>
   </div>
-
 {% endblock %}

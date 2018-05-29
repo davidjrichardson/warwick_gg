@@ -1,12 +1,10 @@
-{% extends 'base.html' %}
+{% extends 'dashboard/navbar_base.html' %}
 
 {% load static avatar_tags %}
 
 {% block title %}My Warwick.gg Profile{% endblock %}
 
-{% block extra_js %}
-  <script type="text/javascript" src="{% static 'js/js.cookie.js' %}"></script>
-  <script type="text/javascript" src="{% static 'js/nav.js' %}"></script>
+{% block js %}
   <script type="text/javascript">
       document.addEventListener('DOMContentLoaded', function () {
           var $editButton = document.getElementById('edit-button');
@@ -123,9 +121,7 @@
   </script>
 {% endblock %}
 
-{% block content %}
-  {% include 'dashboard/includes/navbar.html' %}
-
+{% block body %}
   <div class="section">
     <div class="container">
       <div class="level">
