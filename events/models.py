@@ -55,17 +55,26 @@ class Event(models.Model):
     # Signup information
     signup_start = models.DateTimeField(default=timezone.now)
     signup_end = models.DateTimeField(default=timezone.now)
-    signup_start_fresher = models.DateTimeField(blank=True)
+    signup_start_fresher = models.DateTimeField(blank=True, null=True)
     signup_limit = models.IntegerField(default=70)
 
     # Society eligibility criteria
-    event_for = MultiSelectField(blank=True, choices=SOCIETY_CHOICES, max_choices=2)
+    hosted_by = MultiSelectField(blank=True, choices=SOCIETY_CHOICES, max_choices=2)
     cost_member = models.DecimalField(default=0, decimal_places=2, max_digits=3)
-    cost_nonmember = models.DecimalField(default=5, decimal_places=2, max_digits=3)
+    cost_non_member = models.DecimalField(default=5, decimal_places=2, max_digits=3)
+
+    # Routing
+    slug = models.SlugField(max_length=40, unique=True)
 
     # Seating plan
     has_seating = models.BooleanField(default=True)
     seating_location = models.ForeignKey(SeatingRoom, on_delete=models.PROTECT, blank=True, null=True)
+
+    def __str__(self):
+        return f'{self.title}'
+
+    def get_absolute_url(self):
+        return f'/events/{self.slug}'
 
     @property
     def signups(self):

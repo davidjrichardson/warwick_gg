@@ -18,7 +18,7 @@ from django.contrib import admin
 from django.urls import path, include, re_path
 from django.views.static import serve
 
-from warwick_gg.views import HomePageView
+from warwick_gg.views import HomePageView, EventSlugRedirectView
 
 urlpatterns = [
     path('', HomePageView.as_view(), name='home'),
@@ -26,6 +26,9 @@ urlpatterns = [
     path('accounts/', include('allauth.urls')),
     path('avatar/', include('avatar.urls')),
     path('admin/', admin.site.urls),
+    path('events/', include('events.urls')),
+    # Event slug short url redirect
+    path('<slug:slug>/', EventSlugRedirectView.as_view()),
 ]
 
 if settings.DEBUG:
