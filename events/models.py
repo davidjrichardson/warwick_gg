@@ -4,6 +4,7 @@ from functools import reduce
 from django.conf import settings
 from django.db import models
 from django.utils import timezone
+from markdown_deux.templatetags.markdown_deux_tags import markdown_allowed
 from multiselectfield import MultiSelectField
 
 
@@ -48,7 +49,7 @@ class Event(models.Model):
 
     # Event display information
     title = models.CharField(max_length=100)
-    description = models.TextField(blank=True)
+    description = models.TextField(blank=True, help_text=markdown_allowed())
     start = models.DateTimeField(default=timezone.now)
     end = models.DateTimeField(default=timezone.now)
 

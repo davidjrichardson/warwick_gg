@@ -1,5 +1,7 @@
 {% extends 'dashboard/navbar_base.html' %}
 
+{% load markdown_deux_tags %}
+
 {% block title %}{{ event.title }} | Warwick.gg{% endblock %}
 
 {% block js %}
@@ -7,9 +9,36 @@
 {% endblock %}
 
 {% block body %}
+  {% if HAS_LAUNCHED %}
+    <nav class="breadcrumb" aria-label="breadcrumbs">
+      <div class="container">
+        <ul>
+          <li><a href="{% url 'event_index' %}">Events</a></li>
+          <li class="is-active"><a href="#">{{ event.title }}</a></li>
+        </ul>
+      </div>
+    </nav>
+  {% endif %}
+
   <div class="section">
     <div class="container">
-      <h1 class="is-2 title">{{ event.title }}</h1>
+      <h2 class="is-2 title">{{ event.title }}</h2>
+      <h4 class="is-6 subtitle">{{ event.start|date:'P l jS F Y' }} - {{ event.end|date:'P l jS F Y' }}</h4>
+      <div class="content">
+        {{ event.description|markdown }}
+      </div>
+      <h4 class="is-4 title">Sign up information</h4>
+      <div class="content">
+        <ul class="has-bullets">
+          <li><strong>Signups open:</strong> {{ event.signup_start|date:'P l jS F Y' }}</li>
+          <li><strong>Signups close:</strong> {{ event.signup_end|date:'P l jS F Y' }}</li>
+          <li><strong>Max attendance:</strong> {{ event.signup_limit }}</li>
+          <li><strong>Attendance cost:</strong> CompSoc/Esports members: {% if event.cost_member == 0 %}Free{% else %}£{{ event.cost_member }}{% endif %}, Other*: £{{ event.cost_non_member }}</li>
+        </ul>
+        <p>
+          <small>*: Must be a current student at the University of Warwick.</small>
+        </p>
+      </div>
     </div>
   </div>
 {% endblock %}

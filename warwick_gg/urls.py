@@ -27,7 +27,6 @@ urlpatterns = [
     path('avatar/', include('avatar.urls')),
     path('admin/', admin.site.urls),
     path('events/', include('events.urls')),
-    path('markdownx/', include('markdownx.urls')),
     # Event slug short url redirect
     path('<slug:slug>/', EventSlugRedirectView.as_view()),
 ]

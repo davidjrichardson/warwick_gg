@@ -9,11 +9,7 @@ class HomePageView(View):
     template_name = 'home.html'
 
     def get(self, request):
-        ctx = {
-            'has_launched': settings.HAS_LAUNCHED
-        }
-
-        return render(request, self.template_name, context=ctx)
+        return render(request, self.template_name)
 
 
 class EventSlugRedirectView(View):

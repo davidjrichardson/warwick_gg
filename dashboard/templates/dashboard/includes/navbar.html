@@ -1,7 +1,7 @@
 <nav class="navbar" role="navigation" aria-label="main navigation">
   <div class="container">
     <div class="navbar-brand">
-      <a href="{% url 'dashboard_index' %}">
+      <a href="{% if request.user.is_authenticated %}{% url 'dashboard_index' %}{% else %}{% url 'home' %}{% endif %}">
         <h1 class="warwickgg-title has-text-centered">Warwick<span class="superscript">.gg</span></h1>
       </a>
       <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false" data-target="navbar-menu">
@@ -51,9 +51,11 @@
             </div>
           </div>
         {% else %}
-          <div class="navbar-item">
-            <a href="{% url 'account_login' %}">Log in</a>
-          </div>
+          {% if HAS_LAUNCHED %}
+            <div class="navbar-item">
+              <a href="{% url 'account_login' %}">Log in</a>
+            </div>
+          {% endif %}
         {% endif %}
       </div>
     </div>
