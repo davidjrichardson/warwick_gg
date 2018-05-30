@@ -72,10 +72,10 @@ class Event(models.Model):
     seating_location = models.ForeignKey(SeatingRoom, on_delete=models.PROTECT, blank=True, null=True)
 
     def __str__(self):
-        return f'{self.title}'
+        return self.title
 
     def get_absolute_url(self):
-        return f'/events/{self.slug}'
+        return '/events/{slug}'.format(slug=self.slug)
 
     @property
     def signups(self):

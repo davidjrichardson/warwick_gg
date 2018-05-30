@@ -10,7 +10,9 @@ class WarwickGGUser(models.Model):
     nickname = models.CharField(max_length=50, blank=True)
 
     def __str__(self):
-        return f'{self.uni_id} - {self.nickname if self.nickname else "no nickname"} for user {self.user.id}'
+        return '{uni_id} - {nick} for user {id}'.format(uni_id=self.uni_id,
+                                                        nick=self.nickname if self.nickname else "no nickname",
+                                                        id=self.user.id)
 
     def long_name(self):
         if self.nickname.strip():
