@@ -33,11 +33,25 @@
           <li><strong>Signups open:</strong> {{ event.signup_start|date:'P l jS F Y' }}</li>
           <li><strong>Signups close:</strong> {{ event.signup_end|date:'P l jS F Y' }}</li>
           <li><strong>Max attendance:</strong> {{ event.signup_limit }}</li>
-          <li><strong>Attendance cost:</strong> CompSoc/Esports members: {% if event.cost_member == 0 %}Free{% else %}£{{ event.cost_member }}{% endif %}, Other*: £{{ event.cost_non_member }}</li>
+          <li><strong>Attendance cost:</strong> CompSoc/Esports members: {% if event.cost_member == 0 %}Free{% else %}£
+            {{ event.cost_member }}{% endif %}, Other*: £{{ event.cost_non_member }}</li>
         </ul>
         <p>
           <small>*: Must be a current student at the University of Warwick.</small>
         </p>
+        {% if event.has_livestream %}
+          <p>
+            <strong>Note:</strong> This event will be streamed live on the platform(s) such as Twitch.tv or YouTube. If
+            you would like to not appear on the stream then do talk to one of the event organisers on the day.
+          </p>
+        {% endif %}
+        {% if request.user.is_authenticated %}
+          {% if has_signed_up %}
+            <p>You have already signed up - click <a href="#">here</a> to unsignup.</p>
+          {% else %}
+            <a href="#" class="button is-medium is-primary">Sign up</a>
+          {% endif %}
+        {% endif %}
       </div>
     </div>
   </div>

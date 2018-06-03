@@ -2,7 +2,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import render, get_object_or_404
 from django.views import View
 
-from events.models import Event
+from events.models import Event, EventSignup
 
 
 class EventIndexView(LoginRequiredMixin, View):
@@ -20,8 +20,18 @@ class EventView(View):
     def get(self, request, slug):
         event = get_object_or_404(Event, slug=slug)
 
+        has_signed_up = False
+
+        if request.user.is_authenticated:
+            signup = EventSignup.objects.for_event(event, request.user).first()
+
+            # If the user hasn't signed up
+            if signup:
+                has_signed_up = True
+
         ctx = {
-            'event': event
+            'event': event,
+            'has_signed_up': has_signed_up,
         }
 
         return render(request, self.template_name, context=ctx)

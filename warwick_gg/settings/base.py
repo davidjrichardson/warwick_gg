@@ -188,4 +188,4 @@ AVATAR_EXPOSE_USERNAMES = False
 AVATAR_MAX_AVATARS_PER_USER = 1
 
 # In-development sign in switch
-HAS_LAUNCHED = False
+HAS_LAUNCHED = True

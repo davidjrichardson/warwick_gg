@@ -2,6 +2,7 @@ import json
 from functools import reduce
 
 from django.conf import settings
+from django.contrib.auth.models import User
 from django.db import models
 from django.utils import timezone
 from markdown_deux.templatetags.markdown_deux_tags import markdown_allowed
@@ -99,6 +100,11 @@ class Event(models.Model):
             return False
 
 
+class SignupManager(models.Manager):
+    def for_event(self, event: Event, user):
+        return self.filter(event=event, user=user)
+
+
 class EventSignup(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     event = models.ForeignKey(Event, on_delete=models.CASCADE)
@@ -107,6 +113,8 @@ class EventSignup(models.Model):
 
     # Disclaimer signing
     photography_consent = models.BooleanField(default=False)
+
+    objects = SignupManager()
 
     class Meta:
         ordering = ['created_at']
