@@ -71,6 +71,10 @@ class Event(models.Model):
     has_seating = models.BooleanField(default=True)
     seating_location = models.ForeignKey(SeatingRoom, on_delete=models.PROTECT, blank=True, null=True)
 
+    # Signup options
+    has_photography = models.BooleanField(default=False)
+    has_livestream = models.BooleanField(default=False)
+
     def __str__(self):
         return self.title
 
