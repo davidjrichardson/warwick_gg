@@ -2,8 +2,10 @@ import json
 from functools import reduce
 
 from django.conf import settings
+from django.contrib.auth.models import User
 from django.db import models
 from django.utils import timezone
+from markdown_deux.templatetags.markdown_deux_tags import markdown_allowed
 from multiselectfield import MultiSelectField
 
 
@@ -48,24 +50,37 @@ class Event(models.Model):
 
     # Event display information
     title = models.CharField(max_length=100)
-    description = models.TextField(blank=True)
+    description = models.TextField(blank=True, help_text=markdown_allowed())
     start = models.DateTimeField(default=timezone.now)
     end = models.DateTimeField(default=timezone.now)
 
     # Signup information
     signup_start = models.DateTimeField(default=timezone.now)
     signup_end = models.DateTimeField(default=timezone.now)
-    signup_start_fresher = models.DateTimeField(blank=True)
+    signup_start_fresher = models.DateTimeField(blank=True, null=True)
     signup_limit = models.IntegerField(default=70)
 
     # Society eligibility criteria
-    event_for = MultiSelectField(blank=True, choices=SOCIETY_CHOICES, max_choices=2)
+    hosted_by = MultiSelectField(blank=True, choices=SOCIETY_CHOICES, max_choices=2)
     cost_member = models.DecimalField(default=0, decimal_places=2, max_digits=3)
-    cost_nonmember = models.DecimalField(default=5, decimal_places=2, max_digits=3)
+    cost_non_member = models.DecimalField(default=5, decimal_places=2, max_digits=3)
+
+    # Routing
+    slug = models.SlugField(max_length=40, unique=True)
 
     # Seating plan
     has_seating = models.BooleanField(default=True)
     seating_location = models.ForeignKey(SeatingRoom, on_delete=models.PROTECT, blank=True, null=True)
+
+    # Signup options
+    has_photography = models.BooleanField(default=False)
+    has_livestream = models.BooleanField(default=False)
+
+    def __str__(self):
+        return self.title
+
+    def get_absolute_url(self):
+        return '/events/{slug}'.format(slug=self.slug)
 
     @property
     def signups(self):
@@ -85,11 +100,21 @@ class Event(models.Model):
             return False
 
 
+class SignupManager(models.Manager):
+    def for_event(self, event: Event, user):
+        return self.filter(event=event, user=user)
+
+
 class EventSignup(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     event = models.ForeignKey(Event, on_delete=models.CASCADE)
     created_at = models.DateTimeField(default=timezone.now)
     comment = models.TextField(blank=True, max_length=1024)
+
+    # Disclaimer signing
+    photography_consent = models.BooleanField(default=False)
+
+    objects = SignupManager()
 
     class Meta:
         ordering = ['created_at']

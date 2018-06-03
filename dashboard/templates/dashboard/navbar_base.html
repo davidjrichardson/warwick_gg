@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block extra_js %}
+  <script type="text/javascript" src="{% static 'js/js.cookie.js' %}"></script>
+  <script type="text/javascript" src="{% static 'js/nav.js' %}"></script>
+
+  {% block js %}{% endblock %}
+{% endblock %}
+
+
+{% block content %}
+  {% include 'dashboard/includes/navbar.html' %}
+
+  {% block body %}{% endblock %}
+{% endblock %}

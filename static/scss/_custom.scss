@@ -453,6 +453,40 @@ div.navbar-dropdown {
 }
 
 // Dashboard styling
+.navbar-brand {
+  & .warwickgg-title {
+    font-size: 2.2rem;
+    text-shadow: 0px 3px 6px transparentize($warwickgg_blue_shadow, 0.4);
+    padding-top: 8px;
+
+    transition: all $speed ease-in-out;
+
+    & span {
+      transition: all $speed ease-in-out;
+      position: relative;
+      top: 0;
+    }
+  }
+
+  &:hover .warwickgg-title {
+    color: lighten($uwcs_blue, 3%);
+
+    & span {
+      color: $warwickgg_light_blue;
+      top: 1px;
+      text-shadow: 0px 3px 6px transparentize($warwickgg_light_blue_shadow, 0.4);
+    }
+  }
+}
+
+.navbar-item.is-active {
+  background-color: $navbar-item-hover-background-color;
+
+  & a {
+    color: $navbar-item-active-color;
+  }
+}
+
 .warwickgg-dash {
   & a {
     & .warwickgg-title {
@@ -486,7 +520,7 @@ div.navbar-dropdown {
   font-weight: 700;
 }
 
-h1.section-title {
+.section-title {
   display: inline-block;
   line-height: 1.5em;
   border-bottom: 2px solid $uwcs-blue;
@@ -537,5 +571,122 @@ h1.section-title {
 
   & span.signed-up {
     color: rgba($green, 0.87);
+  }
+}
+
+// Profile
+#edit-button {
+  margin-left: 0.5rem;
+}
+
+.is-hidden {
+  display: none;
+}
+
+.is-row-reverse-order {
+  flex-direction: row-reverse;
+}
+
+p.menu-label {
+  font-family: $family-title;
+  color: rgba(white, 0.7);
+  margin-bottom: 1rem;
+}
+
+.menu-list li a {
+  transition: all $speed ease-in-out;
+}
+
+button.is-primary.is-primary.is-primary.is-primary,
+button.is-danger.is-danger.is-danger.is-danger {
+  top: 0;
+  position: relative;
+
+  transition: all $speed ease-in-out;
+
+  &:enabled:hover,
+  &:enabled:focus {
+    top: 1px;
+  }
+}
+
+a.button.is-primary {
+  top: 0;
+  position: relative;
+
+  transition: all $speed ease-in-out;
+
+  &:hover,
+  &:focus {
+    top: 1px;
+  }
+}
+
+.is-full-width {
+  width: 100%;
+}
+
+.rounded-image {
+  border-radius: $radius-large;
+}
+
+// Change avatar/password
+.breadcrumb {
+  background-color: darken($warwickgg_dark_grey, 3.5%);
+
+  & ul a {
+    padding-top: 1rem;
+    padding-bottom: 1rem;
+  }
+}
+
+.file-label {
+  &:hover,
+  &:focus {
+    & span.file-cta {
+      background-color: lighten($warwickgg_dark_grey, 2.5%);
+      border-color: $input-hover-border-color;
+      color: white;
+    }
+
+    & span.file-name {
+      border-color: $input-border-color;
+    }
+  }
+
+  & span.file-name {
+    transition: all $speed ease-in-out;
+
+    border-color: $input-border-color;
+    color: rgba(white, 0.7);
+  }
+
+  & span.file-cta {
+    transition: all $speed ease-in-out;
+
+    background-color: $warwickgg_dark_grey;
+    border-color: $input-border-color;
+
+    color: rgba(white, 0.87);
+
+    &:hover,
+    &:focus {
+      background-color: lighten($warwickgg_dark_grey, 2.5%);
+      border-color: $input-hover-border-color;
+      color: white;
+    }
+
+    &:hover + span.file-name,
+    &:focus + span.file-name {
+      border-color: $input-border-color;
+    }
+  }
+}
+
+// Event homepage
+.content.content.content {
+  & h1, & h2, & h3, & h4, & h5, & h6 {
+    font-family: $family-title;
+    color: rgba(white, 0.87);
   }
 }

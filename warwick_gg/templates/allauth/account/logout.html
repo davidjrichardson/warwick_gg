@@ -1,13 +1,22 @@
 {% extends "base.html" %}
 
+{% load static %}
+
 {% block template_classname %}warwickgg-signout{% endblock %}
 
 {% block title %}Log out of warwick.gg{% endblock %}
 
+{% block extra_js %}
+  <script type="text/javascript" src="{% static 'js/js.cookie.js' %}"></script>
+  <script type="text/javascript" src="{% static 'js/nav.js' %}"></script>
+{% endblock %}
+
 {% block content %}
+  {% include 'dashboard/includes/navbar.html' %}
+
   <div class="level title-container">
     <div class="container">
-      <a href="/">
+      <a href="{% url 'dashboard_index' %}">
         <h1 class="warwickgg-title has-text-centered">Warwick<span class="superscript">.gg</span></h1>
       </a>
     </div>

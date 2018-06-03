@@ -1,0 +1,255 @@
+{% extends 'dashboard/navbar_base.html' %}
+
+{% load static avatar_tags %}
+
+{% block title %}My Warwick.gg Profile{% endblock %}
+
+{% block js %}
+  <script type="text/javascript">
+      document.addEventListener('DOMContentLoaded', function () {
+          var $editButton = document.getElementById('edit-button');
+          var $form = document.getElementById('profile-form');
+          var $cancelButton = document.getElementById('form-cancel');
+          var $notificationDelete = document.getElementById('notification-delete');
+          var $notification = document.getElementById('response-notification');
+          var $csrf = Cookies.get('csrftoken');
+
+          $form.addEventListener('submit', function (ev) {
+              ev.preventDefault();
+              ev.stopImmediatePropagation();
+
+              var $form = ev.target;
+              var $data = new FormData($form);
+              var $http = new XMLHttpRequest();
+
+              $http.onreadystatechange = function () {
+                  var $response;
+                  if ($http.status == 200 && $http.readyState == 4) {
+                      // If the update is successful
+                      $notification.classList.remove('is-hidden');
+                      $notification.classList.remove('is-danger');
+                      $notification.classList.add('is-success');
+                      document.getElementById('notification-text').innerText = 'Profile update successful!';
+
+                      var $isDanger = document.getElementsByClassName('is-danger');
+
+                      // Remove all help text fields
+                      Array.prototype.filter.call($isDanger, function (element) {
+                          return element.nodeName === 'P';
+                      }).forEach(function (value) {
+                          value.remove()
+                      });
+
+                      // Reset all inputs to non-danger
+                      Array.prototype.filter.call($isDanger, function (element) {
+                          return element.nodeName === 'INPUT';
+                      }).forEach(function (value) {
+                          value.classList.remove('is-danger');
+                      });
+
+                      document.getElementById('account-edit').classList.add('is-hidden');
+                      document.getElementById('account-info').classList.remove('is-hidden');
+                      $editButton.classList.remove('is-hidden');
+
+                      $response = JSON.parse($http.responseText);
+
+                      if ($response.hasOwnProperty('values')) {
+                          Object.keys($response['values']).forEach(function (value) {
+                              document.getElementById(value).innerText = $response['values'][value];
+                          });
+                      }
+                  } else if ($http.status == 400 && $http.readyState == 4) {
+                      // If the update failed
+                      $notification.classList.remove('is-hidden');
+                      $notification.classList.remove('is-success');
+                      $notification.classList.add('is-danger');
+                      document.getElementById('notification-text').innerText = 'There was an issue updating your profile';
+
+                      $response = JSON.parse($http.responseText);
+
+                      if ($response.hasOwnProperty('errors')) {
+                          Object.keys($response['errors']).forEach(function (value) {
+                              var $input = document.getElementById('id_' + value);
+                              var $error = $response['errors'][value][0];
+
+                              $input.classList.add('is-danger');
+                              $input.parentNode.parentNode.insertAdjacentHTML('beforeend', '<p class="help is-danger">' + $error + '</p>');
+                          });
+                      }
+                  }
+              };
+
+              $http.open($form.method, $form.action);
+              $http.setRequestHeader('X-CSRFToken', $csrf);
+              $http.send($data);
+          });
+
+          $notificationDelete.addEventListener('click', function (ev) {
+              ev.preventDefault();
+              ev.stopImmediatePropagation();
+
+              $notification.classList.remove('is-success');
+              $notification.classList.remove('is-danger');
+              $notification.classList.add('is-hidden');
+
+              return false;
+          });
+
+          $editButton.addEventListener('click', function (ev) {
+              ev.preventDefault();
+              ev.stopImmediatePropagation();
+
+              document.getElementById('account-edit').classList.remove('is-hidden');
+              document.getElementById('account-info').classList.add('is-hidden');
+              $editButton.classList.add('is-hidden');
+              $notification.classList.add('is-hidden');
+
+              return false;
+          });
+
+          $cancelButton.addEventListener('click', function (ev) {
+              ev.preventDefault();
+              ev.stopImmediatePropagation();
+
+              document.getElementById('account-edit').classList.add('is-hidden');
+              document.getElementById('account-info').classList.remove('is-hidden');
+              $editButton.classList.remove('is-hidden');
+
+              return false;
+          });
+      });
+  </script>
+{% endblock %}
+
+{% block body %}
+  <div class="section">
+    <div class="container">
+      <div class="level">
+        <div class="level-left">
+          <div class="level-item">
+            <figure class="image is-64x64 is-hidden-mobile">
+              {% avatar user 128 class='rounded-image' %}
+            </figure>
+            <figure class="image is-128x128 is-hidden-tablet">
+              {% avatar user 256 class='rounded-image' %}
+            </figure>
+          </div>
+          <div class="level-item">
+            <h2 class="is-2 title">
+              Your profile
+            </h2>
+            <a href="#" title="Edit your profile" id="edit-button"> <i class="fas fa-edit"></i></a>
+          </div>
+        </div>
+      </div>
+      <div class="columns is-row-reverse-order">
+        <div class="column is-4">
+          <aside class="menu">
+            <p class="menu-label">
+              Account controls
+            </p>
+            <ul class="menu-list">
+              {% if not social_account %}
+                <li>
+                  <a href="{% url 'account_change_password' %}">
+                    Change your password
+                  </a>
+                </li>
+              {% endif %}
+              <li>
+                <a href="{% url 'avatar_change' %}">Change your avatar</a>
+              </li>
+              <li>
+                <a class="has-text-danger" href="{% url 'account_delete' %}">
+                  Delete your account
+                </a>
+              </li>
+            </ul>
+          </aside>
+        </div>
+        <div class="column is-8">
+          <div id="response-notification" class="notification is-hidden">
+            <span id="notification-text"></span>
+            <button id="notification-delete" class="delete"></button>
+          </div>
+          <div class="level" id="account-info">
+            <div class="columns is-multiline">
+              <div class="column is-half">
+                <p>
+                  <strong>Nickname: </strong><br/>
+                  <span id="nickname">
+                    {% if profile_form.nickname.value %}
+                      {{ profile_form.nickname.value }}
+                    {% else %}
+                      No nickname set
+                    {% endif %}
+                  </span>
+                </p>
+              </div>
+              <div class="column is-half">
+                <p>
+                  <strong>University ID: </strong><br/>
+                  {{ uni_id }}
+                </p>
+              </div>
+              <div class="column is-half">
+                <p>
+                  <strong>First name: </strong><br/>
+                  <span id="first_name">{{ user_form.first_name.value }}</span>
+                </p>
+              </div>
+              <div class="column is-half">
+                <p>
+                  <strong>Last name: </strong><br/>
+                  <span id="last_name">{{ user_form.last_name.value }}</span>
+                </p>
+              </div>
+              <div class="column is-full">
+                <p>
+                  <strong>Email address: </strong><br/>
+                  <span id="email">{{ user_form.email.value }}</span>
+                </p>
+              </div>
+            </div>
+          </div>
+          <div class="level is-hidden" id="account-edit">
+            <form id="profile-form" method="post" action="{% url 'user_profile' %}">
+              <div class="columns is-multiline">
+                <div class="column is-half">
+                  {% include 'allauth/account/includes/form-field.html' with field=profile_form.nickname %}
+                </div>
+                <div class="column is-half">
+                  <div class="field">
+                    <label class="label" for="uni-id">University ID</label>
+                    <div class="control">
+                      <input id="uni-id" class="input is-static" type="text" value="{{ uni_id }}" readonly>
+                    </div>
+                  </div>
+                </div>
+                <div class="column is-half">
+                  {% include 'allauth/account/includes/form-field.html' with field=user_form.first_name %}
+                </div>
+                <div class="column is-half">
+                  {% include 'allauth/account/includes/form-field.html' with field=user_form.last_name %}
+                </div>
+                <div class="column is-full">
+                  {% include 'allauth/account/includes/form-field.html' with field=user_form.email %}
+                </div>
+                <div class="column is-full">
+                  <div class="field is-grouped is-grouped-right">
+                    <div class="control">
+                      <button class="button is-primary" type="submit">Save</button>
+                    </div>
+                    <div class="control">
+                      <button class="button is-secondary" id="form-cancel" type="submit">Cancel</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}

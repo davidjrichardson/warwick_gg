@@ -1,4 +1,4 @@
-{% extends 'base.html' %}
+{% extends 'dashboard/navbar_base.html' %}
 
 {% load static %}
 
@@ -6,9 +6,7 @@
 
 {% block template_classname %}warwickgg-dash{% endblock %}
 
-{% block extra_js %}
-  <script type="text/javascript" src="{% static 'js/js.cookie.js' %}"></script>
-  <script type="text/javascript" src="{% static 'js/nav.js' %}"></script>
+{% block js %}
   <script type="text/javascript" src="{% static 'js/countdown.en.min.js' %}"></script>
   <script type="text/javascript">
       document.addEventListener('DOMContentLoaded', function () {
@@ -30,8 +28,7 @@
   </script>
 {% endblock %}
 
-{% block content %}
-  {% include 'dashboard/includes/navbar.html' %}
+{% block body %}
   <section class="hero is-primary is-bold is-large">
     <div class="hero-body">
       <div class="container">
@@ -44,7 +41,8 @@
         {# TODO: Handle case where the event has finished (in the day after the event) - countdown doesn't like it #}
         {#          Event finishes in <span id="countdown-output" data-countdown-to="2018-06-29T18:00:00"></span> (29th June 2018, 18:00)#}
         <h2 class="subtitle is-6 has-text-centered">
-          Signups open in <span id="countdown-output" data-countdown-to="2018-06-11T10:00:00"></span> (11th June 2018, 10:00)
+          Signups open in <span id="countdown-output" data-countdown-to="2018-06-11T10:00:00"></span> (11th June 2018,
+          10:00)
         </h2>
       </div>
     </div>

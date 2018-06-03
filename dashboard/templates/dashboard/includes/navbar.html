@@ -1,7 +1,7 @@
 <nav class="navbar" role="navigation" aria-label="main navigation">
   <div class="container">
     <div class="navbar-brand">
-      <a href="{% url 'dashboard_index' %}">
+      <a href="{% if request.user.is_authenticated %}{% url 'dashboard_index' %}{% else %}{% url 'home' %}{% endif %}">
         <h1 class="warwickgg-title has-text-centered">Warwick<span class="superscript">.gg</span></h1>
       </a>
       <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false" data-target="navbar-menu">
@@ -12,39 +12,51 @@
     </div>
     <div class="navbar-menu" id="navbar-menu">
       <div class="navbar-start">
-        <div class="navbar-item">
-          <a href="#">Events</a>
-        </div>
-        <div class="navbar-item">
-          <a href="#">Tournaments</a>
-        </div>
-        <div class="navbar-item has-dropdown is-hoverable">
-          <a href="#" class="navbar-link">Links</a>
-          <div class="navbar-dropdown is-boxed">
-            <div class="navbar-item">
-              {# TODO: Make this configurable #}
-              <a href="https://discord.gg/uwcs">Discord</a>
+        {% if request.user.is_authenticated %}
+          <div class="navbar-item {% if "/dashboard/" in request.path %}is-active{% endif %}">
+            <a href="{% url 'dashboard_index' %}">Dashboard</a>
+          </div>
+          <div class="navbar-item {% if "/events/" in request.path %}is-active{% endif %}">
+            <a href="{% url 'event_index' %}">Events</a>
+          </div>
+          <div class="navbar-item {% if "/tournaments/" in request.path %}is-active{% endif %}">
+            <a href="#">Tournaments</a>
+          </div>
+          <div class="navbar-item has-dropdown is-hoverable">
+            <a href="#" class="navbar-link">Links</a>
+            <div class="navbar-dropdown is-boxed">
+              <div class="navbar-item">
+                {# TODO: Make this configurable #}
+                <a href="https://discord.gg/uwcs">Discord</a>
+              </div>
             </div>
           </div>
-        </div>
-        <div class="navbar-item">
-          <a href="#">About</a>
-        </div>
-        {# TODO: Create the views for these links #}
+          <div class="navbar-item {% if "/about/" in request.path %}is-active{% endif %}">
+            <a href="#">About</a>
+          </div>
+        {% endif %}
       </div>
       <div class="navbar-end">
-        <div class="navbar-item has-dropdown is-hoverable">
-          <a href="#" class="navbar-link">{{ request.user.warwickgguser.long_name }}</a>
-          <div class="navbar-dropdown is-right is-boxed">
-            <div class="navbar-item">
-              <a href="{% url 'user_profile' %}">View profile</a>
-            </div>
-            <hr class="navbar-divider">
-            <div class="navbar-item">
-              <a id="logout" href="{% url 'account_logout' %}{# TODO: Transform request into a POST #}">Logout</a>
+        {% if request.user.is_authenticated %}
+          <div class="navbar-item has-dropdown is-hoverable">
+            <a href="#" class="navbar-link">{{ request.user.warwickgguser.long_name }}</a>
+            <div class="navbar-dropdown is-right is-boxed">
+              <div class="navbar-item {% if "/accounts/" in request.path %}is-active{% endif %}">
+                <a href="{% url 'user_profile' %}">View profile</a>
+              </div>
+              <hr class="navbar-divider">
+              <div class="navbar-item">
+                <a id="logout" href="{% url 'account_logout' %}{# TODO: Transform request into a POST #}">Logout</a>
+              </div>
             </div>
           </div>
-        </div>
+        {% else %}
+          {% if HAS_LAUNCHED %}
+            <div class="navbar-item">
+              <a href="{% url 'account_login' %}">Log in</a>
+            </div>
+          {% endif %}
+        {% endif %}
       </div>
     </div>
   </div>

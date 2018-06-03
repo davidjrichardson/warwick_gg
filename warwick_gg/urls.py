@@ -13,16 +13,31 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
+from django.conf import settings
 from django.contrib import admin
-from django.urls import path, include
+from django.urls import path, include, re_path
+from django.views.static import serve
 
-from warwick_gg.views import HomePageView
+from warwick_gg.views import HomePageView, EventSlugRedirectView
 
 urlpatterns = [
     path('', HomePageView.as_view(), name='home'),
     path('dashboard/', include('dashboard.urls')),
     path('accounts/', include('allauth.urls')),
+    path('avatar/', include('avatar.urls')),
     path('admin/', admin.site.urls),
+    path('events/', include('events.urls')),
+  
     # TODO: Make this a child of events?
     path('seating/', include('seating.urls')),
+  
+    # Event slug short url redirect
+    path('<slug:slug>/', EventSlugRedirectView.as_view()),
 ]
+
+if settings.DEBUG:
+    urlpatterns += [
+        re_path(r'^media/(?P<path>.*)$', serve, {
+            'document_root': settings.MEDIA_ROOT,
+        }),
+    ]
