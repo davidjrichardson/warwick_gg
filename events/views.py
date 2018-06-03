@@ -32,6 +32,25 @@ class EventView(View):
         ctx = {
             'event': event,
             'has_signed_up': has_signed_up,
+            'event_slug': slug,
         }
 
+        return render(request, self.template_name, context=ctx)
+
+
+class SignupFormView(LoginRequiredMixin, View):
+    template_name = 'events/signup_view.html'
+    login_url = '/accounts/login/'
+
+    def get(self, request, slug):
+        ctx = {}
+        return render(request, self.template_name, context=ctx)
+
+
+class UnsignupFormView(LoginRequiredMixin, View):
+    template_name = 'events/unsignup_view.html'
+    login_url = '/accounts/login/'
+
+    def get(self, request, slug):
+        ctx = {}
         return render(request, self.template_name, context=ctx)
