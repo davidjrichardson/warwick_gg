@@ -1,0 +1,65 @@
+.warwickgg-seating {
+	#seating-chart-container {
+		position:relative; /* add position:relative on the out box */
+	}
+
+	.seating-unassigned-container {
+		width: 100%;
+		height: 100%;
+		background-color: $warwickgg_dark_grey;
+		border-radius: 3px;
+	}
+
+	.unassigned-user {
+		&.level:not(:last-child) {
+			margin-bottom: 5px;
+		}
+
+		border: 1px solid $input-border-color;
+		background-color: $warwickgg_black;
+		margin: 5px;
+		justify-content: start;
+		cursor: move;
+
+		span {
+			margin: 5px;
+			text-overflow: ellipsis;
+			white-space: nowrap;
+			overflow: hidden;
+		}
+
+		img {
+			height: 25px;
+			width: 25px;
+			margin: 5px;
+		}
+	}
+
+	#seating-chart-popup {
+		position: absolute;
+		display: none;
+		background-color: $warwickgg_black;
+		border: 1px solid $input-border-color;
+		padding: 5px;
+
+		span {
+			margin: 5px;
+		}
+
+		img {
+			height: 50px;
+			width: 50px;
+			margin: 5px;
+		}
+	}
+
+	h3 {
+		font-family: 'Montserrat', Arial, sans-serif;
+		font-weight: 700;
+		text-align: center;
+		line-height: 1.5;
+		font-size: 1rem;
+		margin-bottom: 10px;
+	}
+
+}

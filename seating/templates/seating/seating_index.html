@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block title %}Warwick.gg Seating{% endblock %}
+
+{% block template_classname %}warwickgg-seating{% endblock %}
+
+{% block extra_js %}
+  <script src="{% static 'js/md5.min.js' %}"></script>
+  <script src="{% static 'js/seating.js' %}"></script>
+{% endblock %}
+
+{% block content %}
+	<div id="seating-chart-container" class="columns">
+		<div id="seating-chart-popup" class="level">
+			<img class="seating-avatar" src="">
+			<span class="seating-username"></span>
+		</div>
+		<div class="column is-3">
+			<div class="seating-unassigned-container">
+				<h3>Unassigned</h3>
+				<div id="seating-unassigned">
+				</div>
+			</div>
+		</div>
+		<div
+			id="seating-chart"
+			class="column"
+		>
+			{% include 'compsoc-seating.svg' %}
+		</div>
+	</div>
+
+	<button
+		class="button is-primary"
+		id="seating-commit-button"
+		type="button"
+	>
+		Commit
+	</button>
+
+	<div id="seating-revision-log"></div>
+{% endblock %}

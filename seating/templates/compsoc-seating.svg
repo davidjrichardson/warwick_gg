@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg viewBox="0 0 920 654" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 48.2 (47327) - http://www.bohemiancoding.com/sketch -->
+    <desc>Created with Sketch.</desc>
+    <defs></defs>
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Artboard">
+            <g id="Table-1" transform="translate(69.000000, 104.000000)">
+                <g id="Table" transform="translate(85.000000, 200.000000) rotate(90.000000) translate(-85.000000, -200.000000) translate(-115.000000, 115.000000)">
+                    <rect fill="#2C3136" x="0" y="35" width="400" height="100" rx="4"></rect>
+                    <g id="Seat-Row-1" stroke-width="1" transform="translate(3.000000, 0.000000)" fill="#3B434B">
+                        <rect id="Rectangle-2" class="seat" data-seat-id="0" x="0" y="0" width="35" height="30" rx="2"></rect>
+                        <rect id="Rectangle-2" class="seat" data-seat-id="1" x="120" y="0" width="35" height="30" rx="2"></rect>
+                        <rect id="Rectangle-2" class="seat" data-seat-id="2" x="160" y="0" width="35" height="30" rx="2"></rect>
+                        <rect id="Rectangle-2" class="seat" data-seat-id="3" x="40" y="0" width="35" height="30" rx="2"></rect>
+                        <rect id="Rectangle-2" class="seat" data-seat-id="4" x="200" y="0" width="35" height="30" rx="2"></rect>
+                        <rect id="Rectangle-2" class="seat" data-seat-id="5" x="80" y="0" width="35" height="30" rx="2"></rect>
+                        <rect id="Rectangle-2" class="seat" data-seat-id="6" x="320" y="0" width="35" height="30" rx="2"></rect>
+                        <rect id="Rectangle-2" class="seat" data-seat-id="7" x="280" y="0" width="35" height="30" rx="2"></rect>
+                        <rect id="Rectangle-2" class="seat" data-seat-id="8" x="360" y="0" width="35" height="30" rx="2"></rect>
+                        <rect id="Rectangle-2" class="seat" data-seat-id="9" x="240" y="0" width="35" height="30" rx="2"></rect>
+                    </g>
+                    <g id="Seat-Row-2" stroke-width="1" transform="translate(3.000000, 140.000000)" fill="#3B434B">
+                        <rect id="Rectangle-2" class="seat" data-seat-id="10" x="0" y="0" width="35" height="30" rx="2"></rect>
+                        <rect id="Rectangle-2" class="seat" data-seat-id="11" x="120" y="0" width="35" height="30" rx="2"></rect>
+                        <rect id="Rectangle-2" class="seat" data-seat-id="12" x="160" y="0" width="35" height="30" rx="2"></rect>
+                        <rect id="Rectangle-2" class="seat" data-seat-id="13" x="40" y="0" width="35" height="30" rx="2"></rect>
+                        <rect id="Rectangle-2" class="seat" data-seat-id="14" x="200" y="0" width="35" height="30" rx="2"></rect>
+                        <rect id="Rectangle-2" class="seat" data-seat-id="15" x="80" y="0" width="35" height="30" rx="2"></rect>
+                        <rect id="Rectangle-2" class="seat" data-seat-id="16" x="320" y="0" width="35" height="30" rx="2"></rect>
+                        <rect id="Rectangle-2" class="seat" data-seat-id="17" x="280" y="0" width="35" height="30" rx="2"></rect>
+                        <rect id="Rectangle-2" class="seat" data-seat-id="18" x="360" y="0" width="35" height="30" rx="2"></rect>
+                        <rect id="Rectangle-2" class="seat" data-seat-id="19" x="240" y="0" width="35" height="30" rx="2"></rect>
+                    </g>
+                </g>
+                <rect id="Table-1-touch" x="0" y="0" width="171" height="400"></rect>
+                <text font-family="UbuntuMono-Regular, Ubuntu Mono" font-size="18" font-weight="normal" fill="#FFFFFF">
+                    <tspan x="53" y="206">Table 1</tspan>
+                </text>
+            </g>
+            <g id="Table-2" transform="translate(279.000000, 202.000000)">
+                <g id="Table" transform="translate(0.000000, 1.000000)">
+                    <rect fill="#2C3136" x="0" y="35" width="400" height="100" rx="4"></rect>
+                    <g id="Seat-Row-1" stroke-width="1" transform="translate(3.000000, 0.000000)" fill="#3B434B">
+                        <rect id="Rectangle-2" class="seat" data-seat-id="20" x="0" y="0" width="35" height="30" rx="2"></rect>
+                        <rect id="Rectangle-2" class="seat" data-seat-id="21" x="120" y="0" width="35" height="30" rx="2"></rect>
+                        <rect id="Rectangle-2" class="seat" data-seat-id="22" x="160" y="0" width="35" height="30" rx="2"></rect>
+                        <rect id="Rectangle-2" class="seat" data-seat-id="23" x="40" y="0" width="35" height="30" rx="2"></rect>
+                        <rect id="Rectangle-2" class="seat" data-seat-id="24" x="200" y="0" width="35" height="30" rx="2"></rect>
+                        <rect id="Rectangle-2" class="seat" data-seat-id="25" x="80" y="0" width="35" height="30" rx="2"></rect>
+                        <rect id="Rectangle-2" class="seat" data-seat-id="26" x="320" y="0" width="35" height="30" rx="2"></rect>
+                        <rect id="Rectangle-2" class="seat" data-seat-id="27" x="280" y="0" width="35" height="30" rx="2"></rect>
+                        <rect id="Rectangle-2" class="seat" data-seat-id="28" x="360" y="0" width="35" height="30" rx="2"></rect>
+                        <rect id="Rectangle-2" class="seat" data-seat-id="29" x="240" y="0" width="35" height="30" rx="2"></rect>
+                    </g>
+                    <g id="Seat-Row-2" stroke-width="1" transform="translate(3.000000, 140.000000)" fill="#3B434B">
+                        <rect id="Rectangle-2" class="seat" data-seat-id="30" x="0" y="0" width="35" height="30" rx="2"></rect>
+                        <rect id="Rectangle-2" class="seat" data-seat-id="31" x="120" y="0" width="35" height="30" rx="2"></rect>
+                        <rect id="Rectangle-2" class="seat" data-seat-id="32" x="160" y="0" width="35" height="30" rx="2"></rect>
+                        <rect id="Rectangle-2" class="seat" data-seat-id="33" x="40" y="0" width="35" height="30" rx="2"></rect>
+                        <rect id="Rectangle-2" class="seat" data-seat-id="34" x="200" y="0" width="35" height="30" rx="2"></rect>
+                        <rect id="Rectangle-2" class="seat" data-seat-id="35" x="80" y="0" width="35" height="30" rx="2"></rect>
+                        <rect id="Rectangle-2" class="seat" data-seat-id="36" x="320" y="0" width="35" height="30" rx="2"></rect>
+                        <rect id="Rectangle-2" class="seat" data-seat-id="37" x="280" y="0" width="35" height="30" rx="2"></rect>
+                        <rect id="Rectangle-2" class="seat" data-seat-id="38" x="360" y="0" width="35" height="30" rx="2"></rect>
+                        <rect id="Rectangle-2" class="seat" data-seat-id="39" x="240" y="0" width="35" height="30" rx="2"></rect>
+                    </g>
+                </g>
+                <text font-family="UbuntuMono-Regular, Ubuntu Mono" font-size="18" font-weight="normal" fill="#FFFFFF">
+                    <tspan x="169" y="92">Table 2</tspan>
+                </text>
+                <rect id="Table-2-touch" transform="translate(200.000000, 85.500000) rotate(90.000000) translate(-200.000000, -85.500000) " x="114.5" y="-114.5" width="171" height="400"></rect>
+            </g>
+            <g id="Table-3" transform="translate(718.000000, 173.000000)">
+                <g id="Table" transform="translate(85.000000, 200.000000) rotate(90.000000) translate(-85.000000, -200.000000) translate(-115.000000, 115.000000)">
+                    <rect fill="#2C3136" x="0" y="35" width="400" height="100" rx="4"></rect>
+                    <g id="Seat-Row-1" stroke-width="1" transform="translate(3.000000, 0.000000)" fill="#3B434B">
+                        <rect id="Rectangle-2" class="seat" data-seat-id="40" x="0" y="0" width="35" height="30" rx="2"></rect>
+                        <rect id="Rectangle-2" class="seat" data-seat-id="41" x="120" y="0" width="35" height="30" rx="2"></rect>
+                        <rect id="Rectangle-2" class="seat" data-seat-id="42" x="160" y="0" width="35" height="30" rx="2"></rect>
+                        <rect id="Rectangle-2" class="seat" data-seat-id="43" x="40" y="0" width="35" height="30" rx="2"></rect>
+                        <rect id="Rectangle-2" class="seat" data-seat-id="44" x="200" y="0" width="35" height="30" rx="2"></rect>
+                        <rect id="Rectangle-2" class="seat" data-seat-id="45" x="80" y="0" width="35" height="30" rx="2"></rect>
+                        <rect id="Rectangle-2" class="seat" data-seat-id="46" x="320" y="0" width="35" height="30" rx="2"></rect>
+                        <rect id="Rectangle-2" class="seat" data-seat-id="47" x="280" y="0" width="35" height="30" rx="2"></rect>
+                        <rect id="Rectangle-2" class="seat" data-seat-id="48" x="360" y="0" width="35" height="30" rx="2"></rect>
+                        <rect id="Rectangle-2" class="seat" data-seat-id="49" x="240" y="0" width="35" height="30" rx="2"></rect>
+                    </g>
+                    <g id="Seat-Row-2" stroke-width="1" transform="translate(3.000000, 140.000000)" fill="#3B434B">
+                        <rect id="Rectangle-2" class="seat" data-seat-id="50" x="0" y="0" width="35" height="30" rx="2"></rect>
+                        <rect id="Rectangle-2" class="seat" data-seat-id="51" x="120" y="0" width="35" height="30" rx="2"></rect>
+                        <rect id="Rectangle-2" class="seat" data-seat-id="52" x="160" y="0" width="35" height="30" rx="2"></rect>
+                        <rect id="Rectangle-2" class="seat" data-seat-id="53" x="40" y="0" width="35" height="30" rx="2"></rect>
+                        <rect id="Rectangle-2" class="seat" data-seat-id="54" x="200" y="0" width="35" height="30" rx="2"></rect>
+                        <rect id="Rectangle-2" class="seat" data-seat-id="55" x="80" y="0" width="35" height="30" rx="2"></rect>
+                        <rect id="Rectangle-2" class="seat" data-seat-id="56" x="320" y="0" width="35" height="30" rx="2"></rect>
+                        <rect id="Rectangle-2" class="seat" data-seat-id="57" x="280" y="0" width="35" height="30" rx="2"></rect>
+                        <rect id="Rectangle-2" class="seat" data-seat-id="58" x="360" y="0" width="35" height="30" rx="2"></rect>
+                        <rect id="Rectangle-2" class="seat" data-seat-id="59" x="240" y="0" width="35" height="30" rx="2"></rect>
+                    </g>
+                </g>
+                <text font-family="UbuntuMono-Regular, Ubuntu Mono" font-size="18" font-weight="normal" fill="#FFFFFF">
+                    <tspan x="54" y="206">Table 3</tspan>
+                </text>
+                <rect id="Table-3-touch" x="0" y="0" width="171" height="400"></rect>
+            </g>
+            <g id="Table-4" transform="translate(327.000000, 433.000000)">
+                <g id="Small-Table">
+                    <rect id="Table" fill="#2C3136" x="0" y="35" width="160" height="81" rx="4"></rect>
+                    <g id="Seat-Row-1" stroke-width="1" transform="translate(3.000000, 121.000000)" fill="#3B434B">
+                        <rect id="Rectangle-2" class="seat" data-seat-id="60" x="0" y="0" width="35" height="30" rx="2"></rect>
+                        <rect id="Rectangle-2" class="seat" data-seat-id="61" x="120" y="0" width="35" height="30" rx="2"></rect>
+                        <rect id="Rectangle-2" class="seat" data-seat-id="62" x="40" y="0" width="35" height="30" rx="2"></rect>
+                        <rect id="Rectangle-2" class="seat" data-seat-id="63" x="80" y="0" width="35" height="30" rx="2"></rect>
+                    </g>
+                    <g id="Seat-Row-2" stroke-width="1" transform="translate(3.000000, 0.000000)" fill="#3B434B">
+                        <rect id="Rectangle-2" class="seat" data-seat-id="64" x="0" y="0" width="35" height="30" rx="2"></rect>
+                        <rect id="Rectangle-2" class="seat" data-seat-id="65" x="120" y="0" width="35" height="30" rx="2"></rect>
+                        <rect id="Rectangle-2" class="seat" data-seat-id="66" x="40" y="0" width="35" height="30" rx="2"></rect>
+                        <rect id="Rectangle-2" class="seat" data-seat-id="67" x="80" y="0" width="35" height="30" rx="2"></rect>
+                    </g>
+                </g>
+                <text font-family="UbuntuMono-Regular, Ubuntu Mono" font-size="18" font-weight="normal" fill="#FFFFFF">
+                    <tspan x="49" y="82">Table 4</tspan>
+                </text>
+            </g>
+            <g id="Fire-Exit" transform="translate(327.000000, 622.000000)">
+                <rect id="Rectangle" fill="#00E676" x="0" y="0" width="286" height="37" rx="4"></rect>
+                <text font-family="UbuntuMono-Regular, Ubuntu Mono" font-size="18" font-weight="normal" fill="#000000" fill-opacity="0.87">
+                    <tspan x="103" y="22">Fire Exit</tspan>
+                </text>
+            </g>
+            <g id="Entrance" transform="translate(907.500000, 92.500000) rotate(-90.000000) translate(-907.500000, -92.500000) translate(850.000000, 74.000000)">
+                <rect id="Rectangle" fill="#00E676" x="0" y="0" width="115" height="37" rx="4"></rect>
+                <text font-family="UbuntuMono-Regular, Ubuntu Mono" font-size="18" font-weight="normal" fill="#000000" fill-opacity="0.87">
+                    <tspan x="21.5" y="22">Entrance</tspan>
+                </text>
+            </g>
+            <g id="Projector-Screen" transform="translate(82.000000, 9.000000)">
+                <rect id="Rectangle" fill="#607D8B" x="0" y="0" width="286" height="26" rx="4"></rect>
+                <text font-family="UbuntuMono-Regular, Ubuntu Mono" font-size="18" font-weight="normal" fill="#FFFFFF">
+                    <tspan x="71" y="19">Projector Screen</tspan>
+                </text>
+            </g>
+            <g id="Projector-Screen" transform="translate(536.000000, 9.000000)">
+                <rect id="Rectangle" fill="#607D8B" x="0" y="0" width="286" height="26" rx="4"></rect>
+                <text font-family="UbuntuMono-Regular, Ubuntu Mono" font-size="18" font-weight="normal" fill="#FFFFFF">
+                    <tspan x="71" y="19">Projector Screen</tspan>
+                </text>
+            </g>
+            <g id="Windows" transform="translate(-3.000000, 43.000000)">
+                <rect id="Rectangle" fill="#455A64" x="0" y="0" width="33" height="568" rx="4"></rect>
+                <text transform="translate(17.000000, 283.500000) rotate(-90.000000) translate(-17.000000, -283.500000) " font-family="UbuntuMono-Regular, Ubuntu Mono" font-size="18" font-weight="normal" fill="#FFFFFF">
+                    <tspan x="-14.5" y="289.5">Windows</tspan>
+                </text>
+            </g>
+            <rect id="Rectangle-2" fill="#2C3136" x="491" y="485" width="48" height="48"></rect>
+        </g>
+    </g>
+</svg>
