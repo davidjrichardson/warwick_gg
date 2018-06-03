@@ -105,6 +105,9 @@ class EventSignup(models.Model):
     created_at = models.DateTimeField(default=timezone.now)
     comment = models.TextField(blank=True, max_length=1024)
 
+    # Disclaimer signing
+    photography_consent = models.BooleanField(default=False)
+
     class Meta:
         ordering = ['created_at']
         unique_together = ('user', 'event')
