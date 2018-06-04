@@ -43,20 +43,25 @@
         </div>
       </div>
       <div class="columns">
-        <div class="column is-3 seating-unassigned-container">
-          <h4 class="title is-4">Unassigned seats</h4>
-          <p>Drag yourself to a seat and click 'Save' to reserve your seat.</p>
-          <div id="seating-unassigned"></div>
+        <div class="column is-3">
+          <div class="seating-unassigned-container">
+            <h4 class="title is-4">Unassigned seats</h4>
+            <p>Drag yourself to a seat and click 'Save' to reserve your seat.</p>
+            <div id="seating-unassigned"></div>
+          </div>
+          {% if is_exec %}
+            <div class="revision-list-container">
+              <h4 class="title is-4">Revision list</h4>
+              <p>Click on a revision and save to revert the plan to that revision.</p>
+              <ul id="seating-revision-log"></ul>
+            </div>
+          {% endif %}
         </div>
         <div class="column">
           <div id="seating-chart">
             {% include 'compsoc-seating.svg' %}
           </div>
         </div>
-      </div>
-
-      <div id="seating-revision-log">
-        {# TODO: Allow the reivision log for admins only #}
       </div>
     </div>
   </section>

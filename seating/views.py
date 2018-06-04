@@ -1,4 +1,5 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.db.models.functions import Lower
 from django.shortcuts import render, get_object_or_404
 from django.views import View
 
@@ -15,25 +16,22 @@ class SeatingFAQView(LoginRequiredMixin, View):
 
 
 class SeatingView(LoginRequiredMixin, View):
-    template_name = 'seating/seating_index.html'
+    template_name = 'seating/seating_page.html'
     login_url = '/accounts/login/'
 
     def get(self, request, slug):
         event = get_object_or_404(Event, slug=slug)
 
-        has_signed_up = False
-        if request.user.is_authenticated:
-            signup = EventSignup.objects.for_event(event, request.user).first()
+        # Check if the user has signed up
+        has_signed_up = EventSignup.objects.for_event(event, request.user).exists()
+        # Check if the user is an exec member
+        is_exec = 'exec' in request.user.groups.values_list(Lower('name'), flat=True)
 
-            # If the user hasn't signed up
-            if signup:
-                has_signed_up = True
+        print(is_exec, 'signup', has_signed_up)
 
-            # if has_signed_up:
-            ctx = {
-                'event': event,
-            }
-            return render(request, self.template_name, context=ctx)
-        # else:
-        #     TODO: Redirect with message that the user needs to sign up
-        # return redirect('event_home', slug=slug)
+        ctx = {
+            'event': event,
+            'has_signed_up': has_signed_up,
+            'is_exec': is_exec
+        }
+        return render(request, self.template_name, context=ctx)

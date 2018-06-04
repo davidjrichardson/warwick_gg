@@ -324,14 +324,15 @@
     }
 
     function addRevisionButton(revision) {
-        const node = document.createElement('a');
-        node.dataset.revisionId = revision.id;
-        node.appendChild(document.createTextNode('Revision ' + revision.id));
-        node.classList.add('revision');
-        node.addEventListener('click', onClickRevision);
+        const list_element = document.createElement('li');
+        const anchor = document.createElement('a');
+        anchor.dataset.revisionId = revision.id;
+        anchor.appendChild(document.createTextNode('Revision ' + revision.id));
+        anchor.classList.add('revision');
+        anchor.addEventListener('click', onClickRevision);
 
-        revisionLogDom.appendChild(node);
-        revisionLogDom.appendChild(document.createElement('br'));
+        list_element.appendChild(anchor);
+        revisionLogDom.appendChild(list_element);
     }
 
     document.addEventListener('DOMContentLoaded', function () {

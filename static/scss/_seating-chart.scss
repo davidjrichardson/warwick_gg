@@ -13,6 +13,8 @@
 
   & .seating-unassigned-container {
     background-color: $warwickgg_dark_grey;
+    border-radius: $radius-large;
+    padding: 1rem;
 
     & #seating-unassigned {
       margin-top: 0.5rem;
@@ -20,6 +22,10 @@
       display: flex;
       flex-wrap: wrap;
     }
+  }
+
+  .revision {
+
   }
 
   & .unassigned-user {
@@ -74,12 +80,41 @@
     }
   }
 
-  & h3 {
-    font-family: 'Montserrat', Arial, sans-serif;
-    font-weight: 700;
-    text-align: center;
-    line-height: 1.5;
-    font-size: 1rem;
-    margin-bottom: 10px;
+  .revision-list-container {
+    border-radius: $radius-large;
+    margin-top: 1rem;
+    background-color: $warwickgg_dark_grey;
+
+    & h4 {
+      padding: 1rem;
+      margin-bottom: 0.5rem;
+    }
+
+    & p {
+      padding: 0 1rem 0.5rem;
+    }
+
+    & #seating-revision-log {
+      padding-bottom: 1rem;
+    }
+
+    & li {
+      padding: 0.5rem 1rem;
+
+      transition: all $speed ease-in-out;
+
+      & a {
+        color: rgba(255, 255, 255, 0.87);
+      }
+
+      &:hover,
+      &:focus {
+        background-color: $navbar-dropdown-item-hover-background-color;
+
+        & a {
+          color: white;
+        }
+      }
+    }
   }
 }
