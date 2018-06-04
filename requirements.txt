@@ -25,4 +25,5 @@ requests==2.18.4
 requests-oauthlib==0.8.0
 rjsmin==1.0.12
 six==1.11.0
+stripe==1.82.1
 urllib3==1.22

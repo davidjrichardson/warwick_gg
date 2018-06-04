@@ -189,3 +189,7 @@ AVATAR_MAX_AVATARS_PER_USER = 1
 
 # In-development sign in switch
 HAS_LAUNCHED = True
+
+# Warwick SU API keys
+UWCS_API_KEY = os.environ.get('UWCS_API_KEY')
+ESPORTS_API_KEY = os.environ.get('ESPORTS_API_KEY')
