@@ -1,44 +1,69 @@
-{% extends 'base.html' %}
+{% extends 'dashboard/navbar_base.html' %}
 
 {% load static %}
 
-{% block title %}Warwick.gg Seating{% endblock %}
+{% block title %}Seating for {{ event.title }} | Warwick.gg{% endblock %}
 
 {% block template_classname %}warwickgg-seating{% endblock %}
 
-{% block extra_js %}
+{% block js %}
   <script src="{% static 'js/md5.min.js' %}"></script>
   <script src="{% static 'js/seating.js' %}"></script>
 {% endblock %}
 
-{% block content %}
-	<div id="seating-chart-container" class="columns">
-		<div id="seating-chart-popup" class="level">
-			<img class="seating-avatar" src="">
-			<span class="seating-username"></span>
-		</div>
-		<div class="column is-3">
-			<div class="seating-unassigned-container">
-				<h3>Unassigned</h3>
-				<div id="seating-unassigned">
-				</div>
-			</div>
-		</div>
-		<div
-			id="seating-chart"
-			class="column"
-		>
-			{% include 'compsoc-seating.svg' %}
-		</div>
-	</div>
+{% block body %}
+  {% if HAS_LAUNCHED %}
+    <nav class="breadcrumb" aria-label="breadcrumbs">
+      <div class="container">
+        <ul>
+          <li><a href="{% url 'event_home' slug=event.slug %}">{{ event.title }}</a></li>
+          <li class="is-active"><a href="#">Seating Plan</a></li>
+        </ul>
+      </div>
+    </nav>
+  {% endif %}
 
-	<button
-		class="button is-primary"
-		id="seating-commit-button"
-		type="button"
-	>
-		Commit
-	</button>
+  <div class="notification is-warning is-hidden-desktop">
+    <div class="container">
+      This part of the website has been optimised for desktop and laptop computers. There may be bugs if you use a phone
+      or tablet.
+    </div>
+  </div>
 
-	<div id="seating-revision-log"></div>
+  <section class="section">
+    <div class="container" id="seating-chart-container">
+      <div class="columns">
+        <div class="column">
+          <h2 class="title is-2">Seating Plan for {{ event.title }}</h2>
+          <h6 class="subtitle is-6">Click <a href="{% url 'seating_faqs' %}">here</a> to see the seating plan FAQs</h6>
+        </div>
+        <div class="column is-narrow">
+          <button class="button is-primary" id="seating-commit-button" type="button"><i class="fas fa-save"></i>Save
+          </button>
+        </div>
+      </div>
+      <div class="columns">
+        <div class="column is-3 seating-unassigned-container">
+          <h4 class="title is-4">Unassigned seats</h4>
+          <p>Drag yourself to a seat and click 'Save' to reserve your seat.</p>
+          <div id="seating-unassigned"></div>
+        </div>
+        <div class="column">
+          <div id="seating-chart">
+            {% include 'compsoc-seating.svg' %}
+          </div>
+        </div>
+      </div>
+
+      <div id="seating-revision-log">
+        {# TODO: Allow the reivision log for admins only #}
+      </div>
+    </div>
+  </section>
+
+  <div id="seating-chart-popup" class="level">
+    <img class="seating-avatar" src="">
+    <span class="seating-username"></span>
+  </div>
+
 {% endblock %}

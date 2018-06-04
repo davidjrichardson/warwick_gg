@@ -21,7 +21,6 @@ class EventView(View):
         event = get_object_or_404(Event, slug=slug)
 
         has_signed_up = False
-
         if request.user.is_authenticated:
             signup = EventSignup.objects.for_event(event, request.user).first()
 
