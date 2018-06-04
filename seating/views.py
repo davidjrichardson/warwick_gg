@@ -32,6 +32,7 @@ class SeatingView(LoginRequiredMixin, View):
         ctx = {
             'event': event,
             'has_signed_up': has_signed_up,
-            'is_exec': is_exec
+            'is_exec': is_exec,
+            'slug': slug,
         }
         return render(request, self.template_name, context=ctx)

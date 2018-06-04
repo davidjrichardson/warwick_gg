@@ -24,8 +24,20 @@
     }
   }
 
-  .revision {
+  & .button-wrapper {
+    display: flex;
+  }
 
+  & .modal {
+    & .modal-card-title {
+      font-family: $family-title;
+      font-weight: 700;
+    }
+
+    & .modal-card-foot {
+      display: flex;
+      justify-content: flex-end;
+    }
   }
 
   & .unassigned-user {
@@ -80,7 +92,14 @@
     }
   }
 
-  .revision-list-container {
+  & .signup-alert-container {
+    border-radius: $radius-large;
+    margin-top: 1rem;
+    background-color: $warwickgg_dark_grey;
+    padding: 1rem;
+  }
+
+  & .revision-list-container {
     border-radius: $radius-large;
     margin-top: 1rem;
     background-color: $warwickgg_dark_grey;

@@ -7,8 +7,30 @@
 {% block template_classname %}warwickgg-seating{% endblock %}
 
 {% block js %}
-  <script src="{% static 'js/md5.min.js' %}"></script>
-  <script src="{% static 'js/seating.js' %}"></script>
+  {% if has_signed_up or is_exec %}
+    <script src="{% static 'js/md5.min.js' %}"></script>
+    <script src="{% static 'js/seating.js' %}"></script>
+  {% else %}
+    <script type="text/javascript">
+        document.addEventListener('DOMContentLoaded', function () {
+            let $modalClose1 = document.getElementById('close-modal-top');
+            let $modalClose2 = document.getElementById('close-modal-bottom');
+            let $modalBackground = document.getElementById('modal-background');
+            let $modalContainer = document.getElementById('modal-container');
+
+            // Close the modal
+            $modalClose1.addEventListener('click', function () {
+                $modalContainer.classList.remove('is-active');
+            });
+            $modalClose2.addEventListener('click', function () {
+                $modalContainer.classList.remove('is-active');
+            });
+            $modalBackground.addEventListener('click', function () {
+                $modalContainer.classList.remove('is-active');
+            });
+        });
+    </script>
+  {% endif %}
 {% endblock %}
 
 {% block body %}
@@ -37,9 +59,11 @@
           <h2 class="title is-2">Seating Plan for {{ event.title }}</h2>
           <h6 class="subtitle is-6">Click <a href="{% url 'seating_faqs' %}">here</a> to see the seating plan FAQs</h6>
         </div>
-        <div class="column is-narrow">
-          <button class="button is-primary" id="seating-commit-button" type="button"><i class="fas fa-save"></i>Save
-          </button>
+        <div class="column is-narrow button-wrapper">
+          {% if has_signed_up or is_exec %}
+            <button class="button is-primary" id="seating-commit-button" type="button"><i class="fas fa-save"></i>Save
+            </button>
+          {% endif %}
         </div>
       </div>
       <div class="columns">
@@ -49,6 +73,13 @@
             <p>Drag yourself to a seat and click 'Save' to reserve your seat.</p>
             <div id="seating-unassigned"></div>
           </div>
+          {% if not has_signed_up %}
+            <div class="signup-alert-container">
+              <h4 class="title is-4">Not signed up</h4>
+              <p>You haven't signed up to this event. Click <a href="{% url 'event_signup' slug=slug %}">here</a> to
+                sign up.</p>
+            </div>
+          {% endif %}
           {% if is_exec %}
             <div class="revision-list-container">
               <h4 class="title is-4">Revision list</h4>
@@ -70,5 +101,27 @@
     <img class="seating-avatar" src="">
     <span class="seating-username"></span>
   </div>
+
+  {% if not has_signed_up and not is_exec %}
+    <div class="modal is-active" id="modal-container">
+      <div class="modal-background" id="modal-background"></div>
+      <div class="modal-card">
+        <header class="modal-card-head">
+          <p class="modal-card-title">Please sign up</p>
+          <button id="close-modal-top" class="delete" aria-label="close"></button>
+        </header>
+        <section class="modal-card-body">
+          <div class="content">
+            <p>To reserve a seat for this event you need to have signed up first. Please sign up and come back
+              later.</p>
+          </div>
+        </section>
+        <footer class="modal-card-foot">
+          <a href="{% url 'event_signup' slug=slug %}" class="has-text-right button is-primary">Sign up</a>
+          <button id="close-modal-bottom" class="has-text-right button is-secondary">Close</button>
+        </footer>
+      </div>
+    </div>
+  {% endif %}
 
 {% endblock %}
