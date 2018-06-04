@@ -7,31 +7,31 @@
 {% block js %}
   <script type="text/javascript">
       document.addEventListener('DOMContentLoaded', function () {
-          var $editButton = document.getElementById('edit-button');
-          var $form = document.getElementById('profile-form');
-          var $cancelButton = document.getElementById('form-cancel');
-          var $notificationDelete = document.getElementById('notification-delete');
-          var $notification = document.getElementById('response-notification');
-          var $csrf = Cookies.get('csrftoken');
+          const $editButton = document.getElementById('edit-button');
+          const $form = document.getElementById('profile-form');
+          const $cancelButton = document.getElementById('form-cancel');
+          const $notificationDelete = document.getElementById('notification-delete');
+          const $notification = document.getElementById('response-notification');
+          const $csrf = Cookies.get('csrftoken');
 
           $form.addEventListener('submit', function (ev) {
               ev.preventDefault();
               ev.stopImmediatePropagation();
 
-              var $form = ev.target;
-              var $data = new FormData($form);
-              var $http = new XMLHttpRequest();
+              let $form = ev.target;
+              let $data = new FormData($form);
+              let $http = new XMLHttpRequest();
 
               $http.onreadystatechange = function () {
-                  var $response;
-                  if ($http.status == 200 && $http.readyState == 4) {
+                  let $response;
+                  if ($http.status === 200 && $http.readyState === 4) {
                       // If the update is successful
                       $notification.classList.remove('is-hidden');
                       $notification.classList.remove('is-danger');
                       $notification.classList.add('is-success');
                       document.getElementById('notification-text').innerText = 'Profile update successful!';
 
-                      var $isDanger = document.getElementsByClassName('is-danger');
+                      let $isDanger = document.getElementsByClassName('is-danger');
 
                       // Remove all help text fields
                       Array.prototype.filter.call($isDanger, function (element) {
@@ -58,7 +58,7 @@
                               document.getElementById(value).innerText = $response['values'][value];
                           });
                       }
-                  } else if ($http.status == 400 && $http.readyState == 4) {
+                  } else if ($http.status === 400 && $http.readyState === 4) {
                       // If the update failed
                       $notification.classList.remove('is-hidden');
                       $notification.classList.remove('is-success');
@@ -69,8 +69,8 @@
 
                       if ($response.hasOwnProperty('errors')) {
                           Object.keys($response['errors']).forEach(function (value) {
-                              var $input = document.getElementById('id_' + value);
-                              var $error = $response['errors'][value][0];
+                              let $input = document.getElementById('id_' + value);
+                              let $error = $response['errors'][value][0];
 
                               $input.classList.add('is-danger');
                               $input.parentNode.parentNode.insertAdjacentHTML('beforeend', '<p class="help is-danger">' + $error + '</p>');
