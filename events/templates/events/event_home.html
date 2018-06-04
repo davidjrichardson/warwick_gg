@@ -5,7 +5,15 @@
 {% block title %}{{ event.title }} | Warwick.gg{% endblock %}
 
 {% block js %}
+  <script type="text/javascript">
+      document.addEventListener('DOMContentLoaded', function () {
+          let $notificationClose = document.getElementById('notification-close');
 
+          $notificationClose.addEventListener('click', function (ev) {
+              ev.target.parentNode.remove();
+          })
+      });
+  </script>
 {% endblock %}
 
 {% block body %}
@@ -22,6 +30,14 @@
 
   <div class="section">
     <div class="container">
+      {% if messages %}
+        {% for message in messages %}
+          <div class="notification {% if message.tags %}{{ message.tags }}{% endif %}">
+            <button class="delete" id="notification-close"></button>
+            {{ message }}
+          </div>
+        {% endfor %}
+      {% endif %}
       <h2 class="is-2 title">{{ event.title }}</h2>
       <h4 class="is-6 subtitle">{{ event.start|date:'P l jS F Y' }} - {{ event.end|date:'P l jS F Y' }}</h4>
       <div class="content">
@@ -47,7 +63,8 @@
         {% endif %}
         {% if request.user.is_authenticated %}
           {% if has_signed_up %}
-            <p>You have already signed up - click <a href="{% url 'event_unsignup' slug=event_slug %}">here</a> to unsignup.</p>
+            <p>You have already signed up - click <a href="{% url 'event_unsignup' slug=event_slug %}">here</a> to
+              unsignup.</p>
             {# TODO: Seating plan goes here too #}
           {% else %}
             <a href="{% url 'event_signup' slug=event_slug %}" class="button is-medium is-primary">Sign up</a>

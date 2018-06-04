@@ -1,5 +1,6 @@
+from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, get_object_or_404, redirect
 from django.views import View
 
 from events.models import Event, EventSignup
@@ -22,11 +23,7 @@ class EventView(View):
 
         has_signed_up = False
         if request.user.is_authenticated:
-            signup = EventSignup.objects.for_event(event, request.user).first()
-
-            # If the user hasn't signed up
-            if signup:
-                has_signed_up = True
+            has_signed_up = EventSignup.objects.for_event(event, request.user).exists()
 
         ctx = {
             'event': event,
@@ -42,7 +39,16 @@ class SignupFormView(LoginRequiredMixin, View):
     login_url = '/accounts/login/'
 
     def get(self, request, slug):
-        ctx = {}
+        event = get_object_or_404(Event, slug=slug)
+
+        has_signed_up = EventSignup.objects.for_event(event, request.user).exists()
+        if has_signed_up:
+            messages.error(request, 'You\'re already signed up to that event.', extra_tags='is-danger')
+            return redirect('event_home', slug=slug)
+
+        ctx = {
+            'event': event
+        }
         return render(request, self.template_name, context=ctx)
 
 
@@ -51,5 +57,16 @@ class UnsignupFormView(LoginRequiredMixin, View):
     login_url = '/accounts/login/'
 
     def get(self, request, slug):
-        ctx = {}
+        event = get_object_or_404(Event, slug=slug)
+
+        has_signed_up = EventSignup.objects.for_event(event, request.user).exists()
+
+        if not has_signed_up:
+            messages.error(request, 'You cannot un-signup from an event you\'re not signed up to.',
+                           extra_tags='is-danger')
+            return redirect('event_home', slug=slug)
+
+        ctx = {
+            'event': event
+        }
         return render(request, self.template_name, context=ctx)
