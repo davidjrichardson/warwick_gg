@@ -7,13 +7,15 @@
 {% block js %}
   <script type="text/javascript">
       document.addEventListener('DOMContentLoaded', function () {
-          let $notificationClose = document.getElementById('notification-close');
+          {% if messages %}
+              let $notificationClose = document.getElementById('notification-close');
 
-          if ($notificationClose != null) {
-              $notificationClose.addEventListener('click', function (ev) {
-                  ev.target.parentNode.remove();
-              })
-          }
+              if ($notificationClose != null) {
+                  $notificationClose.addEventListener('click', function (ev) {
+                      ev.target.parentNode.remove();
+                  })
+              }
+          {% endif %}
       });
   </script>
 {% endblock %}

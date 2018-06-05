@@ -120,6 +120,9 @@ class EventSignup(models.Model):
 
     objects = SignupManager()
 
+    def __str__(self):
+        return '{user}\'s signup to {event}'.format(user=self.user, event=self.event)
+
     class Meta:
         ordering = ['created_at']
         unique_together = ('user', 'event')

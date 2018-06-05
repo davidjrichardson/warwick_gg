@@ -6,69 +6,75 @@
 
 {% block js %}
   {% if event_cost > 0 %}
-    {% if event_cost > 0 %}
-      <script src="https://checkout.stripe.com/checkout.js"></script>
-    {% endif %}
-    <script type="text/javascript">
-        document.addEventListener('DOMContentLoaded', function () {
-            {% if event_cost > 0 %}
-                const signupForm = document.getElementById('signup-form');
-                const handler = StripeCheckout.configure({
-                    key: '{{ stripe_pubkey }}',
-                    image: '{% static 'img/uwcs.png' %}',
-                    locale: 'auto',
-                    zipCode: true,
-                    billingAddress: true,
-                    email: '{{ request.user.email }}',
-                    token: function (token) {
-                        console.log(token);
-
-                        let tokenInput = document.createElement('input');
-                        tokenInput.setAttribute('type', 'hidden');
-                        tokenInput.setAttribute('name', 'stripe_token');
-                        tokenInput.setAttribute('value', token.id);
-
-                        signupForm.appendChild(tokenInput);
-                        signupForm.submit();
-                    }
-                });
-
-                document.getElementById('stripe-button').addEventListener('click', function (ev) {
-                    handler.open({
-                        name: 'UWCS',
-                        description: 'Signup fee for {{ event.title }}',
-                        currency: 'gbp',
-                        amount: {{ stripe_cost }}
-                    });
-                    ev.stopImmediatePropagation();
-                    ev.preventDefault();
-                });
-
-                window.addEventListener('popstate', function () {
-                    handler.close();
-                });
-            {% endif %}
-
-            {% if event.has_photography %}
-                const helpChecked = document.getElementById('checked-help');
-                const helpUnhecked = document.getElementById('unchecked-help');
-                const checkbox = document.getElementById('{{ signup_form.photography_consent.id_for_label }}');
-
-                checkbox.addEventListener('change', function () {
-                    console.log(this);
-
-                    if (checkbox.checked) {
-                        helpChecked.classList.remove('is-hidden');
-                        helpUnhecked.classList.add('is-hidden');
-                    } else {
-                        helpChecked.classList.add('is-hidden');
-                        helpUnhecked.classList.remove('is-hidden');
-                    }
-                });
-            {% endif %}
-        });
-    </script>
+    <script src="https://checkout.stripe.com/checkout.js"></script>
   {% endif %}
+  <script type="text/javascript">
+      document.addEventListener('DOMContentLoaded', function () {
+          {% if event_cost > 0 %}
+              const signupForm = document.getElementById('signup-form');
+              const handler = StripeCheckout.configure({
+                  key: '{{ stripe_pubkey }}',
+                  image: '{% static 'img/uwcs.png' %}',
+                  locale: 'auto',
+                  zipCode: true,
+                  billingAddress: true,
+                  email: '{{ request.user.email }}',
+                  token: function (token) {
+                      console.log(token);
+
+                      let tokenInput = document.createElement('input');
+                      tokenInput.setAttribute('type', 'hidden');
+                      tokenInput.setAttribute('name', 'stripe_token');
+                      tokenInput.setAttribute('value', token.id);
+
+                      signupForm.appendChild(tokenInput);
+                      signupForm.submit();
+                  }
+              });
+
+              document.getElementById('stripe-button').addEventListener('click', function (ev) {
+                  handler.open({
+                      name: 'UWCS',
+                      description: 'Signup fee for {{ event.title }}',
+                      currency: 'gbp',
+                      amount: {{ stripe_cost }}
+                  });
+                  ev.stopImmediatePropagation();
+                  ev.preventDefault();
+              });
+
+              window.addEventListener('popstate', function () {
+                  handler.close();
+              });
+          {% endif %}
+
+          {% if event.has_photography %}
+              const helpChecked = document.getElementById('checked-help');
+              const helpUnhecked = document.getElementById('unchecked-help');
+              const checkbox = document.getElementById('{{ signup_form.photography_consent.id_for_label }}');
+
+              checkbox.addEventListener('change', function () {
+                  if (checkbox.checked) {
+                      helpChecked.classList.remove('is-hidden');
+                      helpUnhecked.classList.add('is-hidden');
+                  } else {
+                      helpChecked.classList.add('is-hidden');
+                      helpUnhecked.classList.remove('is-hidden');
+                  }
+              });
+          {% endif %}
+
+          {% if messages %}
+              const deleteNotification = document.getElementById('notification-close');
+
+              if (deleteNotification != null) {
+                  deleteNotification.addEventListener('click', function (ev) {
+                      ev.target.parentNode.remove();
+                  })
+              }
+          {% endif %}
+      });
+  </script>
 {% endblock %}
 
 {% block body %}
@@ -86,6 +92,16 @@
   <section class="section">
     <div class="container">
       <div class="columns is-centered is-multiline">
+        {% if messages %}
+          <div class="column is-7">
+            {% for message in messages %}
+              <div class="notification {% if message.tags %}{{ message.tags }}{% endif %}">
+                <button class="delete" id="notification-close"></button>
+                {{ message }}
+              </div>
+            {% endfor %}
+          </div>
+        {% endif %}
         <div class="column is-7">
           <h2 class="title is-2 has-text-centered">Sign up for {{ event.title }}</h2>
         </div>
@@ -118,6 +134,7 @@
         <div class="column is-6">
           <form id="signup-form" action="{% url 'event_charge' %}" method="post">
             {% csrf_token %}
+            <input type="hidden" name="event_id" value="{{ event.id }}">
 
             <div class="field">
               <label class="label" for="{{ signup_form.comment.id_for_label }}">Sign up message</label>
@@ -150,6 +167,9 @@
               </div>
             </div>
           </form>
+          <hr/>
+          <p>Note: Society membership is checked when you load this page. If you've just joined a society, try
+            refreshing the page.</p>
         </div>
       </div>
     </div>

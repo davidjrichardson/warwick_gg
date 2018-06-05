@@ -94,7 +94,7 @@
                 <a class="help" href="{% url 'account_reset_password' %}">Forgot your password?</a>
               </div>
               <div class="field">
-                <input class="is-checkradio has-background-color is-primary" type="checkbox" name="{{ form.remember.name }}" id="{{ form.remember.id_for_label }}">
+                <input class="is-checkradio is-primary" type="checkbox" name="{{ form.remember.name }}" id="{{ form.remember.id_for_label }}">
                 <label for="{{ form.remember.id_for_label }}">Remember me?</label>
               </div>
               {% if redirect_field_value %}
