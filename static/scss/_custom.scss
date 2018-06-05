@@ -372,6 +372,10 @@ a {
   }
 }
 
+textarea.textarea {
+  transition: all $speed ease-in-out;
+}
+
 a.navbar-burger {
   transition: all 0.2s ease-in-out;
 
@@ -680,6 +684,14 @@ a.button.is-primary {
     &:focus + span.file-name {
       border-color: $input-border-color;
     }
+  }
+}
+
+.breadcrumb .container ul li:not(.is-active) a {
+  color: $uwcs-blue;
+
+  &:hover {
+    color: $link;
   }
 }
 
