@@ -195,7 +195,7 @@
     }
 
     function gravatarUrl(email) {
-        const base = 'http://www.gravatar.com/avatar/';
+        const base = 'https://www.gravatar.com/avatar/';
         const hash = md5(email.trim().toLowerCase());
         const tail = '?d=identicon&s=200';
         return base + hash + tail;

@@ -5,8 +5,11 @@ from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import render, get_object_or_404, redirect
+from django.utils.decorators import method_decorator
 from django.views import View
+from django.views.decorators.csrf import csrf_protect
 
+from events.forms import SignupForm
 from events.models import Event, EventSignup
 from uwcs_auth.models import WarwickGGUser
 
@@ -56,6 +59,15 @@ def check_membership(api_token, uni_id, request, society):
         return False
 
 
+class SignupChargeView(LoginRequiredMixin, View):
+    login_url = '/accounts/login/'
+
+    @method_decorator(csrf_protect, name='dispatch')
+    def post(self, request):
+        # TODO: Charge stripe
+        pass
+
+
 class SignupFormView(LoginRequiredMixin, View):
     template_name = 'events/signup_view.html'
     login_url = '/accounts/login/'
@@ -70,21 +82,30 @@ class SignupFormView(LoginRequiredMixin, View):
 
         profile = WarwickGGUser.objects.get(user=request.user)
 
-        uwcs_member = False
-        esports_member = False
-
         # If the event is hosted by UWCS
         if 'UWCS' in event.hosted_by:
             uwcs_member = check_membership(settings.UWCS_API_KEY, profile.uni_id, request, 'UWCS')
+        else:
+            uwcs_member = False
 
         # If the event is hosted by Esports
-        if 'ES' in event.hosted_by:
+        if 'WE' in event.hosted_by:
             esports_member = check_membership(settings.ESPORTS_API_KEY, profile.uni_id, request, 'Esports')
+        else:
+            esports_member = False
 
-        print(esports_member, uwcs_member)
+        is_host_member = esports_member or uwcs_member
+        signup_cost = event.cost_member if (esports_member or uwcs_member) else event.cost_non_member
+
+        signup_form = SignupForm()
 
         ctx = {
-            'event': event
+            'event': event,
+            'event_cost': signup_cost,
+            'stripe_cost': 100 * signup_cost,
+            'is_host_member': is_host_member,
+            'stripe_pubkey': settings.STRIPE_PUBLIC_KEY,
+            'signup_form': signup_form
         }
         return render(request, self.template_name, context=ctx)
 

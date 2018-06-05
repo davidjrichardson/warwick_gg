@@ -1,15 +1,157 @@
 {% extends 'dashboard/navbar_base.html' %}
 
+{% load static %}
+
 {% block title %}Sign up to {{ event.title }} | Warwick.gg{% endblock %}
 
 {% block js %}
-  <script type="text/javascript">
-      document.addEventListener('DOMContentLoaded', function () {
+  {% if event_cost > 0 %}
+    {% if event_cost > 0 %}
+      <script src="https://checkout.stripe.com/checkout.js"></script>
+    {% endif %}
+    <script type="text/javascript">
+        document.addEventListener('DOMContentLoaded', function () {
+            {% if event_cost > 0 %}
+                const signupForm = document.getElementById('signup-form');
+                const handler = StripeCheckout.configure({
+                    key: '{{ stripe_pubkey }}',
+                    image: '{% static 'img/uwcs.png' %}',
+                    locale: 'auto',
+                    zipCode: true,
+                    billingAddress: true,
+                    email: '{{ request.user.email }}',
+                    token: function (token) {
+                        console.log(token);
 
-      });
-  </script>
+                        let tokenInput = document.createElement('input');
+                        tokenInput.setAttribute('type', 'hidden');
+                        tokenInput.setAttribute('name', 'stripe_token');
+                        tokenInput.setAttribute('value', token.id);
+
+                        signupForm.appendChild(tokenInput);
+                        signupForm.submit();
+                    }
+                });
+
+                document.getElementById('stripe-button').addEventListener('click', function (ev) {
+                    handler.open({
+                        name: 'UWCS',
+                        description: 'Signup fee for {{ event.title }}',
+                        currency: 'gbp',
+                        amount: {{ stripe_cost }}
+                    });
+                    ev.stopImmediatePropagation();
+                    ev.preventDefault();
+                });
+
+                window.addEventListener('popstate', function () {
+                    handler.close();
+                });
+            {% endif %}
+
+            {% if event.has_photography %}
+                const helpChecked = document.getElementById('checked-help');
+                const helpUnhecked = document.getElementById('unchecked-help');
+                const checkbox = document.getElementById('{{ signup_form.photography_consent.id_for_label }}');
+
+                checkbox.addEventListener('change', function () {
+                    console.log(this);
+
+                    if (checkbox.checked) {
+                        helpChecked.classList.remove('is-hidden');
+                        helpUnhecked.classList.add('is-hidden');
+                    } else {
+                        helpChecked.classList.add('is-hidden');
+                        helpUnhecked.classList.remove('is-hidden');
+                    }
+                });
+            {% endif %}
+        });
+    </script>
+  {% endif %}
 {% endblock %}
 
 {% block body %}
+  {% if HAS_LAUNCHED %}
+    <nav class="breadcrumb" aria-label="breadcrumbs">
+      <div class="container">
+        <ul>
+          <li><a href="{% url 'event_home' slug=event.slug %}">{{ event.title }}</a></li>
+          <li class="is-active"><a href="#">Sign up</a></li>
+        </ul>
+      </div>
+    </nav>
+  {% endif %}
 
+  <section class="section">
+    <div class="container">
+      <div class="columns is-centered is-multiline">
+        <div class="column is-7">
+          <h2 class="title is-2 has-text-centered">Sign up for {{ event.title }}</h2>
+        </div>
+        <div class="column is-7">
+          {% if event_cost > 0 %}
+            {% if is_host_member %}
+              <p class="has-text-centered">Since you're a member of {{ event.hosted_by|pluralize:"one or more of" }} the
+                hosting
+                societ{{ event.hosted_by|pluralize:'y,ies' }}, entry to this event will cost
+                <strong>£{{ event_cost }}</strong>. Please
+                fill out the form below to sign up!</p>
+            {% else %}
+              <p class="has-text-centered">Sign ups to this event cost <strong>£{{ event_cost }}</strong>. To sign up,
+                please fill in the
+                form below to pay for
+                entry and sign up!</p>
+            {% endif %}
+          {% else %}
+            {% if is_host_member %}
+              <p class="has-text-centered">Since you're a member of {{ event.hosted_by|pluralize:"one or more of" }} the
+                hosting
+                societ{{ event.hosted_by|pluralize:'y,ies' }}, you get free entry to this event! Just fill out the form
+                below to complete the sign up process.</p>
+            {% else %}
+              <p class="has-text-centered">Sign ups to this event are free! Just fill out the form below to complete the
+                sign up process.</p>
+            {% endif %}
+          {% endif %}
+        </div>
+        <div class="column is-6">
+          <form id="signup-form" action="{% url 'event_charge' %}" method="post">
+            {% csrf_token %}
+
+            <div class="field">
+              <label class="label" for="{{ signup_form.comment.id_for_label }}">Sign up message</label>
+              <div class="control">
+                <textarea class="textarea" name="{{ signup_form.comment.name }}"
+                          id="{{ signup_form.comment.id_for_label }}" maxlength="{{ signup_form.comment.max_length }}"
+                          placeholder="A sign up message (optional)"></textarea>
+              </div>
+            </div>
+
+            {% if event.has_photography %}
+              <div class="field">
+                <input class="is-checkradio" id="{{ signup_form.photography_consent.id_for_label }}"
+                       name="{{ signup_form.photography_consent.name }}" type="checkbox">
+                <label for="{{ signup_form.photography_consent.id_for_label }}">I consent to having my photograph
+                  taken</label>
+                <p class="help is-hidden" id="checked-help">By giving consent you agree to the possible use of any
+                  photographs of you in published materials by the event hosts or sponsors.</p>
+                <p class="help" id="unchecked-help">Without consent you still may end up in the background of some
+                  photographs. If you would like to not be included, please let the photographer know.</p>
+              </div>
+            {% endif %}
+            <div class="field is-grouped is-grouped-right">
+              <div class="control">
+                {% if event_cost > 0 %}
+                  <button class="button is-primary" id="stripe-button">Pay using Stripe</button>
+                {% else %}
+                  <button class="button is-primary" type="submit">Sign up</button>
+                {% endif %}
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </section>
 {% endblock %}

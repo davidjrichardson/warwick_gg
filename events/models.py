@@ -112,6 +112,9 @@ class EventSignup(models.Model):
     created_at = models.DateTimeField(default=timezone.now)
     comment = models.TextField(blank=True, max_length=1024)
 
+    # Stripe transaction token in case of refund
+    transaction_token = models.TextField(blank=True)
+
     # Disclaimer signing
     photography_consent = models.BooleanField(default=False)
 

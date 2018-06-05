@@ -24,8 +24,8 @@ $family-title: 'Titillium Web', 'Montserrat', sans-serif;
 $family-primary: $family-monospace;
 $text: rgba(white, 0.87);
 $text-strong: white;
-$link: $uwcs_blue;
-$link-hover: darken($link, 5%);
+$link: saturate(lighten($uwcs_blue, 5%), 10%);
+$link-hover: lighten($link, 7.5%);
 $link-focus: $link-hover;
 $title-color: rgba(255, 255, 255, 0.87);
 $title-weight: 700;
@@ -33,9 +33,10 @@ $subtitle-color: rgba(255, 255, 255, 0.54);
 
 $primary: $uwcs_blue;
 
-//$desktop: 770px + (2 * $gap);
+//$desktop: 850px + (2 * $gap);
 //$fullhd: $desktop;
 //$widescreen: $desktop;
+
 
 // TODO: Handle hover states ($link_hover, $link-border, $link-actives)
 $body-background-color: $warwickgg_black;

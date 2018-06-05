@@ -5,6 +5,8 @@
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  {# TODO: Change this to make use of django-csp-nonce for improved security #}
+  <meta http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-inline' https://checkout.stripe.com; connect-src 'self' 'unsafe-inline' https://checkout.stripe.com; frame-src https://checkout.stripe.com; img-src 'self' https://*.gravatar.com https://*.stripe.com">
 
   <title>{% block title %}{% endblock %}</title>
 

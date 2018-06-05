@@ -702,3 +702,8 @@ a.button.is-primary {
     color: rgba(white, 0.87);
   }
 }
+
+// Event signup page
+.is-checkradio ~ p.help {
+  margin-top: 0.5rem;
+}

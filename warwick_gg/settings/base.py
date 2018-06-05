@@ -193,3 +193,7 @@ HAS_LAUNCHED = True
 # Warwick SU API keys
 UWCS_API_KEY = os.environ.get('UWCS_API_KEY')
 ESPORTS_API_KEY = os.environ.get('ESPORTS_API_KEY')
+
+# Stripe API keys
+STRIPE_PUBLIC_KEY = os.environ.get('STRIPE_PUBLIC_KEY')
+STRIPE_PRIVATE_KEY = os.environ.get('STRIPE_PRIVATE_KEY')
