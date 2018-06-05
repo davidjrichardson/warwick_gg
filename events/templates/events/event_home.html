@@ -39,7 +39,7 @@
         {% endfor %}
       {% endif %}
       <h2 class="is-2 title">{{ event.title }}</h2>
-      <h4 class="is-6 subtitle">{{ event.start|date:'P l jS F Y' }} - {{ event.end|date:'P l jS F Y' }}</h4>
+      <h4 class="is-6 subtitle">{{ event.location }}, {{ event.start|date:'P l jS F Y' }} - {{ event.end|date:'P l jS F Y' }}</h4>
       <div class="content">
         {{ event.description|markdown }}
       </div>

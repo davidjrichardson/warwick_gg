@@ -53,6 +53,7 @@ class Event(models.Model):
     description = models.TextField(blank=True, help_text=markdown_allowed())
     start = models.DateTimeField(default=timezone.now)
     end = models.DateTimeField(default=timezone.now)
+    location = models.CharField(max_length=100)
 
     # Signup information
     signup_start = models.DateTimeField(default=timezone.now)
