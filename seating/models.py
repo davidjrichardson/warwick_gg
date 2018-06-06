@@ -58,6 +58,9 @@ class SeatingManager(models.Manager):
         """
         return self.filter(revision__event=e)
 
+    def for_event_revision(self, event, number):
+        return self.filter(revision__event=event, revision__number__lte=number)
+
 
 class Seating(models.Model):
     reserved = models.BooleanField(default=False)

@@ -121,6 +121,9 @@ class SignupManager(models.Manager):
     def for_event(self, event: Event, user):
         return self.filter(event=event, user=user, is_unsigned_up=False)
 
+    def all_for_event(self, event: Event):
+        return self.filter(event=event, is_unsigned_up=False)
+
 
 class EventSignup(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
