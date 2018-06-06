@@ -141,7 +141,7 @@ class SignupChargeView(LoginRequiredMixin, View):
             messages.success(request, 'Signup successful!{seating}'.format(
                 seating=' You can now reserve a seat on the seating plan.' if event.has_seating else ''),
                              extra_tags='is-success')
-            return redirect('event_home', slug=event.slug)
+            return redirect(event.get_absolute_url() + '#signup')
 
 
 class SignupFormView(LoginRequiredMixin, View):

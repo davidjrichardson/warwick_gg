@@ -18,6 +18,13 @@
           {% endif %}
 
           const tabs = document.querySelectorAll('#tab-container li a');
+
+          if (window.location.hash === '#signup') {
+              document.querySelector('li a[data-target="signup-container"]').parentNode.classList.add('is-active');
+          } else {
+              document.querySelector('li a[data-target="info-container"]').parentNode.classList.add('is-active');
+          }
+
           tabs.forEach(function (tab) {
               let target = document.getElementById(tab.getAttribute('data-target'));
 
@@ -70,7 +77,7 @@
         - {{ event.end|date:'P l jS F Y' }}</h4>
       <div class="tabs is-boxed">
         <ul id="tab-container">
-          <li class="is-active"><a href="#" data-target="info-container">Info</a></li>
+          <li><a href="#" data-target="info-container">Info</a></li>
           <li><a href="#" data-target="signup-container">Sign ups</a></li>
         </ul>
       </div>
@@ -110,7 +117,7 @@
               {# TODO: Seating plan goes here too #}
             {% else %}
               {% if signups_open %}
-                <a href="{% url 'event_signup' slug=event_slug %}" class="button is-medium is-primary">Sign up</a>
+                <a href="{% url 'event_signup' slug=event_slug %}" class="button is-primary">Sign up here</a>
               {% else %}
                 <p>Sign ups aren't open yet.</p>
               {% endif %}
