@@ -69,7 +69,7 @@
         {% if request.user.is_authenticated %}
           {% if has_signed_up %}
             <p>You have already signed up - click <a href="{% url 'event_unsignup' slug=event_slug %}">here</a> to
-              unsignup.</p>
+              un-signup.</p>
             {# TODO: Seating plan goes here too #}
           {% else %}
             <a href="{% url 'event_signup' slug=event_slug %}" class="button is-medium is-primary">Sign up</a>

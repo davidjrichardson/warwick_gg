@@ -6,10 +6,11 @@ from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import HttpResponseBadRequest
 from django.shortcuts import render, get_object_or_404, redirect
+from django.utils import timezone
 from django.utils.decorators import method_decorator
 from django.views import View
 from django.views.decorators.csrf import csrf_protect
-from stripe import Charge, StripeError
+from stripe import Charge, StripeError, Refund
 
 from events.forms import SignupForm
 from events.models import Event, EventSignup
@@ -200,3 +201,36 @@ class UnsignupFormView(LoginRequiredMixin, View):
             'event': event
         }
         return render(request, self.template_name, context=ctx)
+
+
+class UnsignupConfirmView(LoginRequiredMixin, View):
+    login_url = '/accounts/login/'
+
+    def post(self, request):
+        if not request.POST.get('event_id'):
+            return HttpResponseBadRequest()
+
+        event = get_object_or_404(Event, id=request.POST.get('event_id'))
+        signup = EventSignup.objects.for_event(event, request.user).first()
+
+        if not signup:
+            messages.error(request, 'You cannot un-signup from an event you\'re not signed up to.',
+                           extra_tags='is-danger')
+            return redirect('event_home', slug=event.slug)
+
+        # If the
+        if signup.transaction_token:
+            try:
+                refund = Refund.create(charge=signup.transaction_token)
+                signup.refund_token = refund.stripe_id
+            except StripeError:
+                messages.error(request,
+                               'There was an error processing your refund. Please contact a member of the exec.',
+                               extra_tags='is-danger')
+
+        signup.is_unsigned_up = True
+        signup.unsigned_up_at = timezone.now()
+        signup.save()
+
+        messages.info(request, 'Successfully un-signed up from {event}.'.format(event=event.title), extra_tags='is-info')
+        return redirect('event_home', slug=event.slug)

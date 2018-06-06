@@ -103,7 +103,7 @@ class Event(models.Model):
 
 class SignupManager(models.Manager):
     def for_event(self, event: Event, user):
-        return self.filter(event=event, user=user)
+        return self.filter(event=event, user=user, is_unsigned_up=False)
 
 
 class EventSignup(models.Model):
@@ -112,8 +112,14 @@ class EventSignup(models.Model):
     created_at = models.DateTimeField(default=timezone.now)
     comment = models.TextField(blank=True, max_length=1024)
 
-    # Stripe transaction token in case of refund
+    # If a user has un-signed up, their signup will persist to preserve transaction information
+    # This flag will determine if a signup has been removed.
+    is_unsigned_up = models.BooleanField(default=False)
+    unsigned_up_at = models.DateTimeField(blank=True, null=True)
+
+    # Stripe transaction tokens in case of refund
     transaction_token = models.TextField(blank=True)
+    refund_token = models.TextField(blank=True)
 
     # Disclaimer signing
     photography_consent = models.BooleanField(default=False)
@@ -125,4 +131,3 @@ class EventSignup(models.Model):
 
     class Meta:
         ordering = ['created_at']
-        unique_together = ('user', 'event')
