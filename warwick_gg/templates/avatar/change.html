@@ -7,20 +7,30 @@
 {% block js %}
   <script type="text/javascript">
       document.addEventListener('DOMContentLoaded', function () {
-          var $fileInput = document.getElementById('id_avatar');
-          var $fileContainer = document.getElementById('file-container');
-          var $fileName = document.getElementById('file-name');
+          const fileInput = document.getElementById('id_avatar');
+          const fileContainer = document.getElementById('file-container');
+          const fileName = document.getElementById('file-name');
 
-          $fileInput.addEventListener('change', function () {
-              if ($fileInput.files.length > 0) {
-                  $fileContainer.classList.add('has-name');
-                  $fileName.classList.remove('is-hidden');
-                  $fileName.innerText = $fileInput.files[0].name;
+          fileInput.addEventListener('change', function () {
+              if (fileInput.files.length > 0) {
+                  fileContainer.classList.add('has-name');
+                  fileName.classList.remove('is-hidden');
+                  fileName.innerText = fileInput.files[0].name;
               } else {
-                  $fileContainer.classList.remove('has-name');
-                  $fileName.classList.add('is-hidden');
+                  fileContainer.classList.remove('has-name');
+                  fileName.classList.add('is-hidden');
               }
           });
+
+          {% if messages %}
+              const deleteNotification = document.getElementById('notification-close');
+
+              if (deleteNotification != null) {
+                  deleteNotification.addEventListener('click', function (ev) {
+                      ev.target.parentNode.remove();
+                  })
+              }
+          {% endif %}
       });
   </script>
 {% endblock %}
@@ -37,6 +47,14 @@
 
   <div class="section">
     <div class="container">
+      {% if messages %}
+        {% for message in messages %}
+          <div class="notification is-success {% if message.tags %}{{ message.tags }}{% endif %}">
+            <button class="delete" id="notification-close"></button>
+            {{ message }}
+          </div>
+        {% endfor %}
+      {% endif %}
       <div class="level">
         <div class="level-left">
           <div class="level-item">
