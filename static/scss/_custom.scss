@@ -243,6 +243,10 @@ a {
   }
 }
 
+body hr {
+  background-color: lighten($warwickgg_dark_grey, 10%);
+}
+
 .warwickgg-signin {
   padding: 0 1rem;
 
@@ -277,10 +281,6 @@ a {
   & .button:focus {
     top: 1px;
     color: white;
-  }
-
-  & hr {
-    background-color: lighten($warwickgg_dark_grey, 10%);
   }
 
   & form {
@@ -701,6 +701,17 @@ a.button.is-primary {
     font-family: $family-title;
     color: rgba(white, 0.87);
   }
+}
+
+.subtitle.subtitle.subtitle {
+  & strong {
+    font-weight: 700;
+    color: rgba(white, 0.87);
+  }
+}
+
+.tabs li a {
+  transition: all $speed ease-in-out;
 }
 
 // Event signup page

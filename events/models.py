@@ -2,11 +2,12 @@ import json
 from functools import reduce
 
 from django.conf import settings
-from django.contrib.auth.models import User
 from django.db import models
 from django.utils import timezone
 from markdown_deux.templatetags.markdown_deux_tags import markdown_allowed
 from multiselectfield import MultiSelectField
+
+from uwcs_auth.models import WarwickGGUser
 
 
 class SeatingRoom(models.Model):
@@ -85,13 +86,28 @@ class Event(models.Model):
 
     @property
     def signups(self):
-        signups = EventSignup.objects.filter(event=self).all().order_by('-signup_created')
+        signups = EventSignup.objects.filter(event=self, is_unsigned_up=False).all().order_by('-signup_created')
 
         return signups
 
     @property
     def signup_count(self):
         return len(self.signups)
+
+    @property
+    def signups_left(self):
+        return self.signup_limit - self.signup_count
+
+    def signups_open(self, user):
+        if self.signup_start_fresher:
+            profile = WarwickGGUser.objects.get(user=user)
+
+            if profile.is_fresher:
+                return self.signup_start_fresher < timezone.now() <= self.signup_end
+            else:
+                return self.signup_start < timezone.now() <= self.signup_end
+        else:
+            return self.signup_start < timezone.now() <= self.signup_end
 
     @property
     def is_ongoing(self):

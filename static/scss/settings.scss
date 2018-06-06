@@ -86,3 +86,12 @@ $modal-card-head-background-color: $warwickgg_black;
 $modal-card-body-background-color: $warwickgg_black;
 $modal-card-foot-border-top: 0px solid transparent;
 $modal-card-head-border-bottom: 0px solid transparent;
+
+//Tabs
+$tabs-link-active-color: white;
+$tabs-border-bottom-color: lighten($warwickgg_black, 10%);
+$tabs-boxed-link-hover-background-color: $warwickgg_dark_grey;
+$tabs-boxed-link-hover-border-bottom-color: lighten($warwickgg_dark_grey, 10%);
+$tabs-boxed-link-active-background-color: $uwcs_blue;
+$tabs-boxed-link-active-border-color: $tabs-boxed-link-active-background-color;
+$tabs-boxed-link-active-border-bottom-color: $tabs-boxed-link-active-background-color;

@@ -8,14 +8,37 @@
   <script type="text/javascript">
       document.addEventListener('DOMContentLoaded', function () {
           {% if messages %}
-              let $notificationClose = document.getElementById('notification-close');
+              const notificationClose = document.getElementById('notification-close');
 
-              if ($notificationClose != null) {
-                  $notificationClose.addEventListener('click', function (ev) {
+              if (notificationClose != null) {
+                  notificationClose.addEventListener('click', function (ev) {
                       ev.target.parentNode.remove();
                   })
               }
           {% endif %}
+
+          const tabs = document.querySelectorAll('#tab-container li a');
+          tabs.forEach(function (tab) {
+              let target = document.getElementById(tab.getAttribute('data-target'));
+
+              // Hide all of the containers by default
+              if (tab.parentNode.classList.contains('is-active')) {
+                  target.classList.remove('is-hidden');
+              } else {
+                  target.classList.add('is-hidden');
+              }
+
+
+              tab.addEventListener('click', function (ev) {
+                  tabs.forEach(function (tab) {
+                      tab.parentNode.classList.remove('is-active');
+                      document.getElementById(tab.getAttribute('data-target')).classList.add('is-hidden');
+                  });
+
+                  ev.target.parentNode.classList.add('is-active');
+                  document.getElementById(ev.target.getAttribute('data-target')).classList.remove('is-hidden');
+              });
+          })
       });
   </script>
 {% endblock %}
@@ -43,38 +66,57 @@
         {% endfor %}
       {% endif %}
       <h2 class="is-2 title">{{ event.title }}</h2>
-      <h4 class="is-6 subtitle">{{ event.location }}, {{ event.start|date:'P l jS F Y' }}
+      <h4 class="is-6 subtitle"><strong>{{ event.location }}</strong>, {{ event.start|date:'P l jS F Y' }}
         - {{ event.end|date:'P l jS F Y' }}</h4>
-      <div class="content">
-        {{ event.description|markdown }}
-      </div>
-      <h4 class="is-4 title">Sign up information</h4>
-      <div class="content">
-        <ul class="has-bullets">
-          <li><strong>Signups open:</strong> {{ event.signup_start|date:'P l jS F Y' }}</li>
-          <li><strong>Signups close:</strong> {{ event.signup_end|date:'P l jS F Y' }}</li>
-          <li><strong>Max attendance:</strong> {{ event.signup_limit }}</li>
-          <li><strong>Attendance cost:</strong> CompSoc/Esports members: {% if event.cost_member == 0 %}Free{% else %}£
-            {{ event.cost_member }}{% endif %}, Other*: £{{ event.cost_non_member }}</li>
+      <div class="tabs is-boxed">
+        <ul id="tab-container">
+          <li class="is-active"><a href="#" data-target="info-container">Info</a></li>
+          <li><a href="#" data-target="signup-container">Sign ups</a></li>
         </ul>
-        <p>
-          <small>*: Must be a current student at the University of Warwick.</small>
-        </p>
-        {% if event.has_livestream %}
+      </div>
+      <div class="container" id="info-container">
+        <h4 class="is-4 title">Event information</h4>
+        <div class="content">
+          {{ event.description|markdown }}
+        </div>
+      </div>
+
+      <div class="container is-hidden" id="signup-container">
+        <h4 class="is-4 title">Sign up information</h4>
+        <div class="content">
+          <ul class="has-bullets">
+            <li><strong>Signups open:</strong> {{ event.signup_start|date:'P l jS F Y' }}</li>
+            <li><strong>Signups close:</strong> {{ event.signup_end|date:'P l jS F Y' }}</li>
+            <li><strong>Spaces left:</strong> {{ event.signup_limit }}</li>
+            <li><strong>Attendance cost:</strong> CompSoc/Esports members: {% if event.cost_member == 0 %}Free{% else %}
+              £{{ event.cost_member }}{% endif %}, Other*: £{{ event.cost_non_member }}</li>
+          </ul>
           <p>
-            <strong>Note:</strong> This event will be streamed live on the platform(s) such as Twitch.tv or YouTube. If
-            you would like to not appear on the stream then do talk to one of the event organisers on the day.
+            <small>*: Must be a current student at the University of Warwick.</small>
           </p>
-        {% endif %}
-        {% if request.user.is_authenticated %}
-          {% if has_signed_up %}
-            <p>You have already signed up - click <a href="{% url 'event_unsignup' slug=event_slug %}">here</a> to
-              un-signup.</p>
-            {# TODO: Seating plan goes here too #}
-          {% else %}
-            <a href="{% url 'event_signup' slug=event_slug %}" class="button is-medium is-primary">Sign up</a>
+          {% if event.has_livestream %}
+            <p>
+              <strong>Note:</strong> This event will be streamed live on platform(s) such as Twitch.tv or YouTube. If
+              you would like to not appear on the stream then do talk to one of the event organisers on the day.
+            </p>
           {% endif %}
-        {% endif %}
+          {% if request.user.is_authenticated %}
+            {% if has_signed_up %}
+              <p>You have already signed up - click <a href="{% url 'event_unsignup' slug=event_slug %}">here</a> to
+                un-signup.</p>
+              {% if event.has_seating %}
+                <p>Seating plan available</p>
+              {% endif %}
+              {# TODO: Seating plan goes here too #}
+            {% else %}
+              {% if signups_open %}
+                <a href="{% url 'event_signup' slug=event_slug %}" class="button is-medium is-primary">Sign up</a>
+              {% else %}
+                <p>Sign ups aren't open yet.</p>
+              {% endif %}
+            {% endif %}
+          {% endif %}
+        </div>
       </div>
     </div>
   </div>

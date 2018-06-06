@@ -36,10 +36,13 @@ class EventView(View):
         if request.user.is_authenticated:
             has_signed_up = EventSignup.objects.for_event(event, request.user).exists()
 
+        print(event.signups_open(request.user))
+
         ctx = {
             'event': event,
             'has_signed_up': has_signed_up,
             'event_slug': slug,
+            'signups_open': event.signups_open(request.user)
         }
 
         return render(request, self.template_name, context=ctx)
