@@ -145,16 +145,9 @@ class SeatingRoomAPIView(LoginRequiredMixin, View):
         if revision:
             seatings = Seating.objects.for_event_revision(event=event, revision=revision.number).all()
             seated_users = set(map(lambda s: s.user, seatings))
-            buckets = {}
-
-            for seat in seatings:
-                # Since we're going back in time with seats, seat already not populated will be at its latest state.
-                # So we only want to modify the seat bucket if it hasn't been allocated already
-                if seat.seat not in buckets:
-                    buckets[seat.seat] = seat
 
             unseated = unseated - seated_users
-            seated = list(map(seat_to_dict, buckets.values()))
+            seated = list(map(seat_to_dict, seatings.values()))
         else:
             seated = []
 
