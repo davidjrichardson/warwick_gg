@@ -7,43 +7,71 @@
 {% block template_classname %}warwickgg-dash{% endblock %}
 
 {% block js %}
-  <script type="text/javascript" src="{% static 'js/countdown.en.min.js' %}"></script>
-  <script type="text/javascript">
-      document.addEventListener('DOMContentLoaded', function () {
-          var output_target = document.getElementById('countdown-output'),
-              event_status = document.getElementById('event-status'),
-              countdown_date = Date.parse(output_target.getAttribute('data-countdown-to')),
-              label_builder = Countdown.Helper.Pluralize.label_builder_factory('en'),
-              countdown = new Countdown({
-                  progress: function (seconds) {
-                      output_target.innerHTML = label_builder(seconds);
-                  }, complete: function () {
-                      output_target.innerHTML = 'This event has now finished. Come back soon for information about the next one!';
-                      event_status.innerHTML = 'Just Finished';
-                  }
-              });
+  {% if event and not just_finished %}
+    <script type="text/javascript" src="{% static 'js/countdown.en.min.js' %}"></script>
+    <script type="text/javascript">
+        document.addEventListener('DOMContentLoaded', function () {
+            var output_target = document.getElementById('countdown-output'),
+                event_status = document.getElementById('event-status'),
+                countdown_date = Date.parse(output_target.getAttribute('data-countdown-to')),
+                label_builder = Countdown.Helper.Pluralize.label_builder_factory('en'),
+                countdown = new Countdown({
+                    progress: function (seconds) {
+                        output_target.innerHTML = label_builder(seconds);
+                    }, complete: function () {
+                        output_target.innerHTML = 'This event has now finished. Come back soon for information about the next one!';
+                        event_status.innerHTML = 'Just Finished';
+                    }
+                });
 
-          countdown.start_to(Math.floor(countdown_date / 1000));
-      });
-  </script>
+            countdown.start_to(Math.floor(countdown_date / 1000));
+        });
+    </script>
+  {% endif %}
 {% endblock %}
 
 {% block body %}
   <section class="hero is-primary is-bold is-large">
     <div class="hero-body">
       <div class="container">
-        {#        <h1 class="title has-text-centered">#}
-        {#          <span id="event-status">Ongoing Event</span>: <a href="#">ALAN Turing (UWCS LAN 2 2018)</a>#}
-        {#        </h1>#}
-        <h1 class="title has-text-centered is-2">
-          Next Event: <a href="#">BFL 2018</a>
-        </h1>
-        {# TODO: Handle case where the event has finished (in the day after the event) - countdown doesn't like it #}
-        {#          Event finishes in <span id="countdown-output" data-countdown-to="2018-06-29T18:00:00"></span> (29th June 2018, 18:00)#}
-        <h2 class="subtitle is-6 has-text-centered">
-          Signups open in <span id="countdown-output" data-countdown-to="2018-06-11T10:00:00"></span> (11th June 2018,
-          10:00)
-        </h2>
+        {% if event and not just_finished %}
+          <h1 class="title has-text-centered is-2">
+            {% if event.is_ongoing %}In progress:{% else %}Next event:{% endif %}
+            <a href="{% url 'event_home' slug=event.slug %}">{{ event.title }}</a>
+          </h1>
+          <h2 class="subtitle is-6 has-text-centered">
+            {% if event.is_ongoing %}
+              Finishes in <span id="countdown-output" data-countdown-to="{{ event.end|date:'c' }}"></span> ({{ event.end|date:'P l jS F Y' }})
+            {% else %}
+              {% if not event_signups_open %}
+                {% if event.signup_start_fresher %}
+                  Signups open for freshers in
+                  <span id="countdown-output" data-countdown-to="{{ event.signup_start_fresher|date:'c' }}"></span> ({{ event.signup_start_fresher|date:'P l jS F Y' }})
+                {% else %}
+                  Signups open in <span id="countdown-output" data-countdown-to="{{ event.signup_start|date:'c' }}"></span> ({{ event.signup_start|date:'P l jS F Y' }})
+                {% endif %}
+              {% else %}
+                Signups are now open! Click <strong><a href="{% url 'event_home' slug=event.slug %}#signup">here</a></strong> to start signing up for {{ event.title }}.
+              {% endif %}
+            {% endif %}
+          </h2>
+        {% else %}
+          {% if just_finished %}
+            <h1 class="title has-text-centered is-2">
+              Just finished: <a href="{% url 'event_home' slug=just_finished.slug %}">{{ just_finished.title }}</a>
+            </h1>
+            <h2 class="subtitle is-6 has-text-centered">
+              Thanks to all of those who came along!
+            </h2>
+          {% else %}
+            <h1 class="title has-text-centered is-2">
+              No upcoming events
+            </h1>
+            <h2 class="subtitle is-6 has-text-centered">
+              There are no upcoming events. Check back soon for updates!
+            </h2>
+          {% endif %}
+        {% endif %}
       </div>
     </div>
   </section>
