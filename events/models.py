@@ -117,7 +117,36 @@ class Event(models.Model):
             return False
 
 
-class SignupManager(models.Manager):
+class Tournament(models.Model):
+    id = models.IntegerField(primary_key=True)
+
+    # Tournament display information
+    title = models.CharField(max_length=100)
+    description = models.TextField(blank=True, help_text=markdown_allowed())
+    start = models.DateTimeField(default=timezone.now)
+    end = models.DateTimeField(default=timezone.now)
+
+    # TODO: handle signups through warwick.gg itself rather than an external signup form.
+    signup_form = models.URLField()
+    signup_start = models.DateTimeField(default=timezone.now)
+    signup_end = models.DateTimeField(default=timezone.now)
+
+    # Associated event
+    for_event = models.ForeignKey(Event, on_delete=models.CASCADE, blank=True, null=True)
+    requires_attendance = models.BooleanField(default=False)
+
+    # Routing
+    slug = models.SlugField(max_length=40, unique=True)
+
+    @property
+    def signups_open(self):
+            return self.signup_start < timezone.now() <= self.signup_end
+
+    def get_absolute_url(self):
+        return '/events/tournament/{slug}'.format(slug=self.slug)
+
+
+class EventSignupManager(models.Manager):
     def for_event(self, event: Event, user):
         return self.filter(event=event, user=user, is_unsigned_up=False)
 
@@ -143,7 +172,7 @@ class EventSignup(models.Model):
     # Disclaimer signing
     photography_consent = models.BooleanField(default=False)
 
-    objects = SignupManager()
+    objects = EventSignupManager()
 
     def __str__(self):
         return '{user}\'s signup to {event}'.format(user=self.user, event=self.event)
