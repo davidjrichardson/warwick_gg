@@ -36,13 +36,18 @@ class EventView(View):
         if request.user.is_authenticated:
             has_signed_up = EventSignup.objects.for_event(event, request.user).exists()
 
-        print(event.signups_open(request.user))
+        if has_signed_up:
+            signups = EventSignup.objects.all_for_event(event).exclude(comment__isnull=True).order_by(
+                '-created_at').all()
+        else:
+            signups = []
 
         ctx = {
             'event': event,
             'has_signed_up': has_signed_up,
             'event_slug': slug,
-            'signups_open': event.signups_open(request.user)
+            'signups_open': event.signups_open(request.user),
+            'signups': signups
         }
 
         return render(request, self.template_name, context=ctx)
@@ -235,5 +240,6 @@ class UnsignupConfirmView(LoginRequiredMixin, View):
         signup.unsigned_up_at = timezone.now()
         signup.save()
 
-        messages.info(request, 'Successfully un-signed up from {event}.'.format(event=event.title), extra_tags='is-info')
+        messages.info(request, 'Successfully un-signed up from {event}.'.format(event=event.title),
+                      extra_tags='is-info')
         return redirect('event_home', slug=event.slug)

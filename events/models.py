@@ -174,6 +174,10 @@ class EventSignup(models.Model):
 
     objects = EventSignupManager()
 
+    @property
+    def long_name(self):
+        return WarwickGGUser.objects.get(user=self.user).long_name
+
     def __str__(self):
         return '{user}\'s signup to {event}'.format(user=self.user, event=self.event)
 
