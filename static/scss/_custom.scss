@@ -714,6 +714,36 @@ a.button.is-primary {
   transition: all $speed ease-in-out;
 }
 
+div.columns.comment-divider {
+  margin-bottom: 1.5rem;
+  margin-top: 1.5rem;
+
+  & .column.is-6 {
+    padding-top: 0;
+    padding-bottom: 0;
+
+    & hr {
+      margin: 0;
+    }
+  }
+}
+
+article.media {
+  & .media-left {
+    margin-right: 1.5rem;
+  }
+
+  & .media-content {
+    overflow: inherit;
+
+    & + article.media {
+      border-top: 0;
+      margin-top: 0;
+      padding-top: 0;
+    }
+  }
+}
+
 // Event signup page
 .is-checkradio ~ p.help {
   margin-top: 0.5rem;

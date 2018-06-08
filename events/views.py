@@ -3,8 +3,9 @@ import xml.etree.ElementTree as ET
 import requests
 from django.conf import settings
 from django.contrib import messages
-from django.contrib.auth.mixins import LoginRequiredMixin
-from django.http import HttpResponseBadRequest
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
+from django.db.models.functions import Lower
+from django.http import HttpResponseBadRequest, HttpResponse
 from django.shortcuts import render, get_object_or_404, redirect
 from django.utils import timezone
 from django.utils.decorators import method_decorator
@@ -37,7 +38,7 @@ class EventView(View):
             has_signed_up = EventSignup.objects.for_event(event, request.user).exists()
 
         if has_signed_up:
-            signups = EventSignup.objects.all_for_event(event).exclude(comment__isnull=True).order_by(
+            signups = EventSignup.objects.all_for_event(event).exclude(comment__isnull=True, comment=None).order_by(
                 '-created_at').all()
         else:
             signups = []
@@ -47,10 +48,29 @@ class EventView(View):
             'has_signed_up': has_signed_up,
             'event_slug': slug,
             'signups_open': event.signups_open(request.user),
-            'signups': signups
+            'signups': signups,
+            'is_exec': WarwickGGUser.objects.get(user=request.user).is_exec
         }
 
         return render(request, self.template_name, context=ctx)
+
+
+class DeleteCommentView(LoginRequiredMixin, UserPassesTestMixin, View):
+    login_url = '/accounts/login/'
+
+    def test_func(self):
+        return 'exec' in self.request.user.groups.values_list(Lower('name'), flat=True)
+
+    @method_decorator(csrf_protect, name='dispatch')
+    def post(self, request):
+        if not request.POST.get('comment-id'):
+            return HttpResponseBadRequest()
+
+        signup = get_object_or_404(EventSignup, id=request.POST.get('comment-id'))
+        signup.comment = None
+        signup.save()
+
+        return HttpResponse()
 
 
 def check_membership(api_token, uni_id, request, society):

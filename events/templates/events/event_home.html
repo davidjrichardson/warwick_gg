@@ -17,6 +17,43 @@
               }
           {% endif %}
 
+          {% if is_exec %}
+              let deleteLinks = document.querySelectorAll('.comment-delete-link');
+              deleteLinks.forEach(function (element) {
+                  element.addEventListener('click', function (ev) {
+                      ev.preventDefault();
+                      ev.stopImmediatePropagation();
+
+                      const url = '/events/api/comment/delete';
+                      const csrf = Cookies.get('csrftoken');
+                      const http = new XMLHttpRequest();
+
+                      http.open('POST', url, true);
+                      http.setRequestHeader('X-CSRFToken', csrf);
+                      http.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+                      http.onreadystatechange = function () {
+                          // If the element is not the last one
+                          if (element.parentNode.parentNode.nextElementSibling !== null) {
+                              if (element.parentNode.parentNode.nextElementSibling.classList.contains('comment-divider')) {
+                                  element.parentNode.parentNode.nextElementSibling.remove();
+                              }
+                          } else if (element.parentNode.parentNode.previousElementSibling !== null) {
+                              // Its the top comment
+                              if (element.parentNode.parentNode.previousElementSibling.classList.contains('comment-divider')) {
+                                  element.parentNode.parentNode.previousElementSibling.remove();
+                              } else if (element.parentNode.parentNode.previousElementSibling.id === 'comments-title') {
+                                  document.getElementById('comments-container').remove();
+                              }
+                          }
+                          element.parentNode.parentNode.remove();
+                      };
+                      http.send('comment-id=' + element.getAttribute('data-comment-id'));
+
+                      return false;
+                  });
+              });
+          {% endif %}
+
           const tabs = document.querySelectorAll('#tab-container li a');
 
           if (window.location.hash === '#signup') {
@@ -107,23 +144,34 @@
               you would like to not appear on the stream then do talk to one of the event organisers on the day.
             </p>
           {% endif %}
-          {% if request.user.is_authenticated %}
-            {% if has_signed_up %}
-              <p>You have already signed up - click <a href="{% url 'event_unsignup' slug=event_slug %}">here</a> to
-                un-signup.</p>
-              {% if event.has_seating %}
-                <p>Seating plan available</p>
-              {% endif %}
+        </div>
+        {% if request.user.is_authenticated %}
+          {% if has_signed_up %}
+            <p>You have already signed up - click <a href="{% url 'event_unsignup' slug=event_slug %}">here</a> to
+              un-signup.</p>
+
+            {% if event.has_seating %}
               {# TODO: Seating plan goes here too #}
+              <p>Seating plan available</p>
+            {% endif %}
+
+            {% if signups %}
+              <div id="comments-container" class="comment-container">
+                <hr/>
+                <h4 class="title is-4" id="comments-title">Signup Comments</h4>
+                {% for signup in signups %}
+                  {% include 'events/includes/signup-comment.html' with signup=signup count=forloop.counter0 %}
+                {% endfor %}
+              </div>
+            {% endif %}
+          {% else %}
+            {% if signups_open %}
+              <a href="{% url 'event_signup' slug=event_slug %}" class="button is-primary">Sign up here</a>
             {% else %}
-              {% if signups_open %}
-                <a href="{% url 'event_signup' slug=event_slug %}" class="button is-primary">Sign up here</a>
-              {% else %}
-                <p>Sign ups aren't open yet.</p>
-              {% endif %}
+              <p>Sign ups aren't open yet.</p>
             {% endif %}
           {% endif %}
-        </div>
+        {% endif %}
       </div>
     </div>
   </div>

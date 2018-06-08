@@ -1,7 +1,7 @@
 from django.urls import path
 
 from events.views import EventView, EventIndexView, SignupFormView, UnsignupFormView, SignupChargeView, \
-    UnsignupConfirmView
+    UnsignupConfirmView, DeleteCommentView
 
 urlpatterns = [
     path('', EventIndexView.as_view(), name='event_index'),
@@ -10,4 +10,5 @@ urlpatterns = [
     path('signup/<slug:slug>', SignupFormView.as_view(), name='event_signup'),
     path('unsignup/confirm', UnsignupConfirmView.as_view(), name='event_unsignup_confirm'),
     path('unsignup/<slug:slug>', UnsignupFormView.as_view(), name='event_unsignup'),
+    path('api/comment/delete', DeleteCommentView.as_view(), name='delete_comment'),
 ]
