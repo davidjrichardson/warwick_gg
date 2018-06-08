@@ -729,6 +729,8 @@ div.columns.comment-divider {
 }
 
 article.media {
+  display: flex;
+
   & .media-left {
     margin-right: 1.5rem;
   }
@@ -740,6 +742,87 @@ article.media {
       border-top: 0;
       margin-top: 0;
       padding-top: 0;
+    }
+  }
+}
+
+.signup-tile {
+  background-color: $uwcs_blue;
+  padding: 1rem;
+  border-radius: $radius;
+
+  display: flex;
+  flex-wrap: nowrap;
+
+  & .tile-left {
+    display: block;
+    flex: 1;
+  }
+
+  & .tile-right {
+    border-left: 1px solid white;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+
+    & a {
+      text-align: center;
+      padding: 2rem 0 2rem 1rem;
+
+      & i.fas {
+        position: relative;
+        left: 0;
+
+        margin-left: 8px;
+
+        transition: all $speed ease-in-out;
+      }
+
+      &:hover i.fas,
+      &:focus i.fas {
+        left: 3px;
+      }
+    }
+  }
+
+  & h4.title.is-4 {
+    margin-bottom: 1rem;
+  }
+
+  & p:not(:last-child) {
+    margin-bottom: 0.33rem;
+  }
+
+  & a {
+    color: white;
+    font-weight: bold;
+
+    &:focus,
+    &:hover {
+      text-decoration: underline;
+
+      color: white;
+    }
+  }
+
+  @include mobile {
+    flex-wrap: wrap;
+
+    & .tile-left {
+      flex-basis: 100%;
+    }
+
+    & .tile-right {
+      flex-basis: 100%;
+
+      margin-top: 0.7rem;
+
+      border-top: 1px solid white;
+      border-left: 0px solid transparent;
+
+      & a {
+        padding: 2rem 2rem 1rem;
+      }
     }
   }
 }

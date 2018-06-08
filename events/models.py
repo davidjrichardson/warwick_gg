@@ -98,16 +98,16 @@ class Event(models.Model):
     def signups_left(self):
         return self.signup_limit - self.signup_count
 
-    def signups_open(self, user):
+    def signup_start_for_user(self, user):
         if self.signup_start_fresher:
             profile = WarwickGGUser.objects.get(user=user)
 
-            if profile.is_fresher:
-                return self.signup_start_fresher < timezone.now() <= self.signup_end
-            else:
-                return self.signup_start < timezone.now() <= self.signup_end
+            return self.signup_start_fresher if profile.is_fresher else self.signup_start
         else:
-            return self.signup_start < timezone.now() <= self.signup_end
+            return self.signup_start
+
+    def signups_open(self, user):
+        return self.signup_start_for_user(user) < timezone.now() <= self.signup_end
 
     @property
     def is_ongoing(self):
@@ -140,7 +140,7 @@ class Tournament(models.Model):
 
     @property
     def signups_open(self):
-            return self.signup_start < timezone.now() <= self.signup_end
+        return self.signup_start < timezone.now() <= self.signup_end
 
     def get_absolute_url(self):
         return '/events/tournament/{slug}'.format(slug=self.slug)

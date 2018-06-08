@@ -147,13 +147,24 @@
         </div>
         {% if request.user.is_authenticated %}
           {% if has_signed_up %}
-            <p>You have already signed up - click <a href="{% url 'event_unsignup' slug=event_slug %}">here</a> to
-              un-signup.</p>
+            <div class="signup-tile">
+              <div class="tile-left">
+                <h4 class="is-4 title">Signed up</h4>
+                <p>You have already signed up - click <a href="{% url 'event_unsignup' slug=event.slug %}">here</a> to
+                  un-signup.</p>
+                {% if event.has_seating %}
+                  <p class="is-hidden-tablet">Click the button below to go to the seating plan.</p>
+                  <p class="is-hidden-mobile">Click the button on the right to go to the seating plan.</p>
+                {% endif %}
+              </div>
 
-            {% if event.has_seating %}
-              {# TODO: Seating plan goes here too #}
-              <p>Seating plan available</p>
-            {% endif %}
+              {% if event.has_seating %}
+                <div class="tile-right">
+                  <a href="{% url 'event_seating' slug=event.slug %}">Seating plan<i
+                      class="fas fa-chevron-right"></i></a>
+                </div>
+              {% endif %}
+            </div>
 
             {% if signups %}
               <div id="comments-container" class="comment-container">
@@ -165,11 +176,17 @@
               </div>
             {% endif %}
           {% else %}
-            {% if signups_open %}
-              <a href="{% url 'event_signup' slug=event_slug %}" class="button is-primary">Sign up here</a>
-            {% else %}
-              <p>Sign ups aren't open yet.</p>
-            {% endif %}
+            <div class="signup-tile">
+              <div class="tile-left">
+                {% if signups_open %}
+                  <h4 class="is-4 title">Signup to {{ event.title }}</h4>
+                  <p>Signups are open for {{ event.title }}! Click <a href="{% url 'event_signup' slug=event.slug %}">here</a> to sign up.</p>
+                {% else %}
+                  <h4 class="is-4 title">Signups opening soon</h4>
+                  <p>Signups for {{ event.title }} arent open just yet. They open at {{ signup_start|date:'P l jS F Y' }}, so check back then!</p>
+                {% endif %}
+              </div>
+            </div>
           {% endif %}
         {% endif %}
       </div>

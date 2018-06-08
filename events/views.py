@@ -46,8 +46,8 @@ class EventView(View):
         ctx = {
             'event': event,
             'has_signed_up': has_signed_up,
-            'event_slug': slug,
             'signups_open': event.signups_open(request.user),
+            'signup_start': event.signup_start_for_user(request.user),
             'signups': signups,
             'is_exec': WarwickGGUser.objects.get(user=request.user).is_exec
         }
