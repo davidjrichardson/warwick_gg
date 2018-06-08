@@ -158,7 +158,7 @@ class EventSignup(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     event = models.ForeignKey(Event, on_delete=models.CASCADE)
     created_at = models.DateTimeField(default=timezone.now)
-    comment = models.TextField(blank=True, null=True, max_length=1024)
+    comment = models.TextField(blank=True, null=True, max_length=255)
 
     # If a user has un-signed up, their signup will persist to preserve transaction information
     # This flag will determine if a signup has been removed.

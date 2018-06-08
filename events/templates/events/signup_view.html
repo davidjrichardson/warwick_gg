@@ -140,8 +140,9 @@
               <label class="label" for="{{ signup_form.comment.id_for_label }}">Sign up message</label>
               <div class="control">
                 <textarea class="textarea" name="{{ signup_form.comment.name }}"
-                          id="{{ signup_form.comment.id_for_label }}" maxlength="{{ signup_form.comment.max_length }}"
+                          id="{{ signup_form.comment.id_for_label }}" maxlength="255"
                           placeholder="A sign up message (optional)"></textarea>
+                <p class="help">Maximum length: 255 characters</p>
               </div>
             </div>
 
