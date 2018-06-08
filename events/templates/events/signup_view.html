@@ -82,6 +82,7 @@
     <nav class="breadcrumb" aria-label="breadcrumbs">
       <div class="container">
         <ul>
+          <li><a href="{% url 'event_index' %}">Events</a></li>
           <li><a href="{% url 'event_home' slug=event.slug %}">{{ event.title }}</a></li>
           <li class="is-active"><a href="#">Sign up</a></li>
         </ul>
