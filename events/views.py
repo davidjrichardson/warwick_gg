@@ -49,7 +49,7 @@ class EventView(View):
             'signups_open': event.signups_open(request.user),
             'signup_start': event.signup_start_for_user(request.user),
             'signups': signups,
-            'is_exec': WarwickGGUser.objects.get(user=request.user).is_exec
+            'is_exec': WarwickGGUser.objects.get(user=request.user).is_exec if request.user.is_authenticated else False
         }
 
         return render(request, self.template_name, context=ctx)

@@ -88,7 +88,7 @@
 {% endblock %}
 
 {% block body %}
-  {% if HAS_LAUNCHED %}
+  {% if request.user.is_authenticated %}
     <nav class="breadcrumb" aria-label="breadcrumbs">
       <div class="container">
         <ul>
