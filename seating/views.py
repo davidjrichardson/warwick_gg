@@ -5,7 +5,7 @@ from django.contrib.auth import get_user_model
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.db import transaction, DatabaseError
 from django.http import HttpResponseForbidden, JsonResponse, HttpResponseBadRequest
-from django.http.response import HttpResponseBase
+from django.http.response import HttpResponse
 from django.shortcuts import render, get_object_or_404
 from django.utils.decorators import method_decorator
 from django.views import View
@@ -47,7 +47,7 @@ def save_revision(seats, event, user):
 
 
 class SeatingRoomAPISubmitRevisionView(LoginRequiredMixin, View):
-    login_url = '/accounts/login/'
+    raise_exception = True
 
     @method_decorator(csrf_protect, name='dispatch')
     def post(self, request, event_id):
@@ -77,7 +77,7 @@ class SeatingRoomAPISubmitRevisionView(LoginRequiredMixin, View):
 
         seats_obj = json.loads(request.POST.get('json'))
         try:
-            latest_revision = save_revision(seats_obj['seats'], event)
+            latest_revision = save_revision(seats_obj['seats'], event, request.user)
         except DatabaseError:
             return HttpResponseBadRequest()
 
@@ -92,20 +92,20 @@ class SeatingRoomAPISubmitRevisionView(LoginRequiredMixin, View):
                 'revision': revision_dict
             })
         else:
-            return HttpResponseBase()
+            return HttpResponse(status=200)
 
 
 def seat_to_dict(seat: Seating):
     """
     Convert a seat in the DB to a dict for use in the seating front-end
     """
-    profile = WarwickGGUser.objects.get(user=seat.user)
+    profile = WarwickGGUser.objects.get(user=seat['user_id'])
 
     return {
         'nickname': profile.long_name,
-        'seat_id': seat.seat,
-        'user_id': seat.user.id,
-        'avatar': avatar_url(seat.user)
+        'seat_id': seat['seat'],
+        'user_id': seat['user_id'],
+        'avatar': avatar_url(profile.user)
     }
 
 
@@ -123,7 +123,7 @@ def user_to_dict(user):
 
 
 class SeatingRoomAPIView(LoginRequiredMixin, View):
-    login_url = '/accounts/login/'
+    raise_exception = True
 
     def get(self, request, event_id):
         event = get_object_or_404(Event, id=event_id)
@@ -162,10 +162,10 @@ class SeatingRoomAPIView(LoginRequiredMixin, View):
 
 
 class SeatingRoomRevisionListAPIView(UserPassesTestMixin, LoginRequiredMixin, View):
-    login_url = '/accounts/login/'
+    raise_exception = True
 
     def test_func(self):
-        return WarwickGGUser.objects.get(user=self.request.user).is_exec
+        return WarwickGGUser.objects.get(user=self.request.user).is_exec if self.request.user.is_authenticated else False
 
     def get(self, request, event_id):
         event = get_object_or_404(Event, id=event_id)
