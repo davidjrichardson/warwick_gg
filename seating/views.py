@@ -196,11 +196,13 @@ class SeatingView(LoginRequiredMixin, View):
 
         # Check if the user has signed up
         has_signed_up = EventSignup.objects.for_event(event, request.user).exists()
+        seating_plan = event.seating_location if event.has_seating else None
 
         ctx = {
             'event': event,
             'has_signed_up': has_signed_up,
             'is_exec': WarwickGGUser.objects.get(user=self.request.user).is_exec,
             'slug': slug,
+            'seating_plan': seating_plan,
         }
         return render(request, self.template_name, context=ctx)

@@ -72,12 +72,7 @@
         </div>
         <div class="column is-narrow button-wrapper">
           {% if has_signed_up or is_exec %}
-            <button
-                class="button is-primary"
-                id="seating-commit-button"
-                type="button"
-                disabled
-            >
+            <button class="button is-primary" id="seating-commit-button" type="button" disabled>
                 <i class="fas fa-save"></i>Save
             </button>
           {% endif %}
@@ -107,7 +102,7 @@
         </div>
         <div class="column">
           <div id="seating-chart">
-            {% include 'compsoc-seating.svg' %}
+            {% include 'bfl-seating-optimised.svg' %}
           </div>
         </div>
       </div>
