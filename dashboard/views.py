@@ -1,5 +1,6 @@
 from datetime import timedelta
 
+from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import render
 from django.utils import timezone
@@ -17,6 +18,9 @@ class DashboardIndexView(LoginRequiredMixin, View):
         next_event = Event.objects.filter(end__gte=timezone.now()).order_by('start').first()
         just_finished = Event.objects.filter(start__lt=timezone.now(),
                                              end__gte=(timezone.now() - timedelta(days=2))).order_by('start').first()
+
+        # Clean out the django messages buffer
+        _ = list(messages.get_messages(request))
 
         # TODO: Get tournaments
 
