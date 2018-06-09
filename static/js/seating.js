@@ -1,26 +1,9 @@
 (function () {
     'use strict';
 
-// TODO: get all this from the backend
-    const loggedInUserId = 0;
+    const users = [];
 
-// NOTE: The emails are used for gravatars, however given we probably don't
-// want to send the email address of everyone to anyone who looks at the
-// seating plan this could trivially be refactored to send the gravatar hash
-// instead (email.trim().toLower().md5()), this would also allow us to not
-// include md5.js
-    const users = [
-        {id: 0, nickname: 'zed0', email: 'ben@falconers.me.uk'},
-        {id: 1, nickname: 'rhiba', email: 'rhiannon.michelmore@gmail.com'},
-        {id: 2, nickname: 'Tankski', email: 'dr.tankski@gmail.com'},
-        // {
-        //     id: 3,
-        //     nickname: 'Lorem ipsum dolor sit amet',
-        //     email: 'a@b.com'
-        // },
-        // {id: 4, nickname: 'Some name with <marquee>html content</marquee>', email: 'b@b.com'},
-    ];
-
+    // TODO: get all this from the backend
     const seatingRevisions = [
         {id: 0, seatHasUser: {1: 0, 2: 1, 8: 2}},
         {id: 1, seatHasUser: {2: 0, 3: 1, 4: 2}},
@@ -28,11 +11,11 @@
         {id: 3, seatHasUser: {10: 0, 11: 1}},
         {id: 4, seatHasUser: {20: 0, 21: 1}},
     ];
+    let unassignedUsers = [];
 
     let currentSeatHasUser;
     let dragging = false;
     let draggingUser;
-    let unassignedUsers;
 
     let svgDom;
     let unassignedDom;
@@ -49,8 +32,8 @@
             updateSeatStyle(oldSeat);
         }
 
-        if (unassignedUsers.find(user => user.id === userId)) {
-            unassignedUsers = unassignedUsers.filter(user => user.id !== userId);
+        if (unassignedUsers.find(user => user.user_id === userId)) {
+            unassignedUsers = unassignedUsers.filter(user => user.user_id !== userId);
             const element = unassignedDom.querySelectorAll('[data-user-id="' + userId + '"]')[0];
             element.parentElement.removeChild(element);
         }
@@ -60,7 +43,7 @@
         removeUserFromOldLocation(userId);
 
         unassignedUsers = unassignedUsers
-            .concat(users.find(user => user.id === userId))
+            .concat(users.find(user => user.user_id === userId))
             .sort(sortByNickname);
 
         refreshUnassigned();
@@ -86,8 +69,8 @@
         popupUsernameDom.innerHTML = '';
         popupUsernameDom.appendChild(document.createTextNode(user.nickname));
 
-        popupDom.getElementsByClassName('seating-avatar')[0].src = gravatarUrl(user.email);
-        popupDom.dataset.userId = user.id;
+        popupDom.getElementsByClassName('seating-avatar')[0].src = user.avatar;
+        popupDom.dataset.userId = user.user_id;
         popupDom.style.display = 'flex';
 
         dragSetPosition(event);
@@ -114,7 +97,7 @@
 
         const seat = this;
         if (currentSeatHasUser[seat.dataset.seatId] === undefined)
-            giveSeatToUser(seat, draggingUser.id);
+            giveSeatToUser(seat, draggingUser.user_id);
 
         dragStop(event);
     }
@@ -123,7 +106,7 @@
         if (!dragging)
             return;
 
-        giveUnassignedToUser(draggingUser.id);
+        giveUnassignedToUser(draggingUser.user_id);
 
         dragStop(event);
     }
@@ -175,7 +158,7 @@
         const seatUserId = currentSeatHasUser[seat.dataset.seatId];
 
         if (seatUserId !== undefined) {
-            const seatUser = users.find(user => user.id === seatUserId);
+            const seatUser = users.find(user => user.user_id === seatUserId);
             dragStart(seatUser, event);
         }
     };
@@ -184,7 +167,7 @@
         const unassignedUserDom = this;
         const userId = parseInt(unassignedUserDom.dataset.userId, 10);
 
-        const user = users.find(user => user.id === userId);
+        const user = users.find(user => user.user_id === userId);
         dragStart(user, event);
     };
 
@@ -194,15 +177,8 @@
         updateToRevision(revisionId);
     }
 
-    function gravatarUrl(email) {
-        const base = 'https://www.gravatar.com/avatar/';
-        const hash = md5(email.trim().toLowerCase());
-        const tail = '?d=identicon&s=200';
-        return base + hash + tail;
-    }
-
-    function gravatarIdForUser(user) {
-        return 'gravatar-' + user.id;
+    function avatarIdForUser(user) {
+        return 'avatar-' + user.user_id;
     }
 
     function createSvgPattern(id, url) {
@@ -232,8 +208,8 @@
             seat.style.cursor = '';
         }
         else {
-            const seatUser = users.find(user => user.id === seatUserId);
-            seat.style.fill = 'url(#' + gravatarIdForUser(seatUser) + ')';
+            const seatUser = users.find(user => user.user_id === seatUserId);
+            seat.style.fill = 'url(#' + avatarIdForUser(seatUser) + ')';
             seat.style.cursor = 'move';
         }
 
@@ -274,7 +250,7 @@
         currentSeatHasUser = Object.assign({}, newRevision.seatHasUser);
 
         unassignedUsers = users
-            .filter(user => Object.values(currentSeatHasUser).indexOf(user.id) === -1)
+            .filter(user => Object.values(currentSeatHasUser).indexOf(user.user_id) === -1)
             .sort(sortByNickname);
 
         refreshUnassigned();
@@ -285,7 +261,7 @@
         unassignedDom.innerHTML = '';
         unassignedUsers.forEach(user => {
             const avatar = document.createElement('img');
-            avatar.src = gravatarUrl(user.email);
+            avatar.src = user.avatar;
             const nickname = document.createElement('span');
             nickname.appendChild(document.createTextNode(user.nickname));
             const unassignedUserDiv = document.createElement('div');
@@ -293,7 +269,7 @@
             unassignedUserDiv.appendChild(nickname);
             unassignedUserDiv.classList.add('unassigned-user');
             unassignedUserDiv.classList.add('level');
-            unassignedUserDiv.dataset.userId = user.id;
+            unassignedUserDiv.dataset.userId = user.user_id;
             unassignedUserDiv.addEventListener('mousedown', dragStartOnUnassignedUser);
             unassignedUserDiv.addEventListener('touchstart', dragStartOnUnassignedUser);
 
@@ -311,7 +287,8 @@
     }
 
     function commitRevision(event) {
-        // TODO: Send this to the backend and get the new seatingRevisions array from there
+        // TODO: Work out what of this needs to be kept for exec
+        /*
         const maxId = Math.max.apply(Math, seatingRevisions.map(rev => rev.id));
 
         const newRevision = {
@@ -321,6 +298,22 @@
         };
         seatingRevisions.push(newRevision);
         addRevisionButton(newRevision);
+        */
+
+        const seatsToBackendFormat = input => Object.keys(input)
+            .filter(key => input[key] !== undefined)
+            .map(key => ({seat_id: parseInt(key, 10), user_id: input[key]}));
+        const layout = {
+            seats: seatsToBackendFormat(currentSeatHasUser),
+        };
+        const eventSubmitUrl = '/seating/api/submit/' + eventId;
+        ajax(eventSubmitUrl, 'POST', 'json=' + JSON.stringify(layout), (status, response) => {
+            if(status !== 200) {
+                const notification = document.getElementById('seating-error-notification');
+                notification.querySelectorAll('span')[0].innerHTML = 'There was an error saving your changes.';
+                notification.classList.remove('is-hidden');
+            }
+        });
     }
 
     function addRevisionButton(revision) {
@@ -335,6 +328,29 @@
         revisionLogDom.appendChild(list_element);
     }
 
+    function ajax(url, method, body, callback) {
+        const csrf = Cookies.get('csrftoken');
+        const http = new XMLHttpRequest();
+
+        http.open(method, url, true);
+        http.setRequestHeader('X-CSRFToken', csrf);
+        if(method !== 'GET')
+            http.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+
+        http.onload = function () {
+            callback(http.status, http.response);
+        };
+        http.onerror = function () {
+            callback(http.status, http.response);
+        };
+        try {
+            http.send(body);
+        }
+        catch(e) {
+            callback(http.status, http.response);
+        }
+    }
+
     document.addEventListener('DOMContentLoaded', function () {
         svgDom = document.getElementById('seating-chart').getElementsByTagName('svg')[0];
         unassignedDom = document.getElementById('seating-unassigned');
@@ -346,18 +362,12 @@
         commitButtonDom.addEventListener('click', commitRevision);
         containerDom.addEventListener('mousemove', dragMove);
         containerDom.addEventListener('touchmove', dragMove);
+        // Triggering this on the popup too makes dragging a lot smoother
+        popupDom.addEventListener('mousemove', dragMove);
         containerDom.addEventListener('mouseup', dragStop);
         containerDom.addEventListener('touchend', handleTouchEnd);
         unassignedDom.parentElement.addEventListener('mouseup', dragStopOnUnassigned);
         unassignedDom.parentElement.addEventListener('touchend', handleTouchEnd);
-
-        seatingRevisions.forEach(revision => {
-            addRevisionButton(revision);
-        });
-
-        users.forEach(user => {
-            createSvgPattern(gravatarIdForUser(user), gravatarUrl(user.email));
-        });
 
         const seats = svgDom.getElementsByClassName('seat');
         // For some reason HTMLCollection doesn't have .forEach or .map :(
@@ -371,7 +381,41 @@
             seat.addEventListener('mouseout', unhighlightSeat);
         }
 
-        updateToRevision(seatingRevisions[seatingRevisions.length - 1].id);
+        const notification = document.getElementById('seating-error-notification');
+        const notificationClose = notification.getElementsByClassName('delete')[0];
+        notificationClose.addEventListener('click', function () {
+            notification.classList.add('is-hidden');
+        });
+
+        const eventSeatingUrl = '/seating/api/seats/' + eventId;
+        ajax(eventSeatingUrl, 'GET', null, (status, response) => {
+            if(status !== 200) {
+                const notification = document.getElementById('seating-error-notification');
+                notification.querySelectorAll('span')[0].innerHTML = 'The current seating configuration could not be retrieved.';
+                notification.classList.remove('is-hidden');
+            }
+            else {
+                const currentRevision = JSON.parse(response);
+
+                currentSeatHasUser = {};
+                currentRevision.seated.forEach(userSeat => {
+                    currentSeatHasUser[userSeat.seat_id] = userSeat.user_id;
+                    users.push(userSeat);
+                });
+
+                currentRevision.unseated.forEach(userSeat => {
+                    users.push(userSeat);
+                    unassignedUsers.push(userSeat);
+                });
+
+                users.forEach(user => {
+                    createSvgPattern(avatarIdForUser(user), user.avatar);
+                });
+
+                refreshUnassigned();
+                refreshSeats();
+            }
+        });
     });
 
 })();
