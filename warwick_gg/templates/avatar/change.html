@@ -91,7 +91,7 @@
                   new one just use the form below:<br/><br/></p>
               {% else %}
                 <p>Your current avatar is displayed above. If you would like to change it, upload a file using the form
-                  below:<br/><br/></p>
+                  below. <strong>Note:</strong> please only use JPEG images.<br/><br/></p>
               {% endif %}
               <form enctype="multipart/form-data" method="POST" action="{% url 'avatar_add' %}">
                 <div class="columns is-centered is-multiline">
