@@ -15,21 +15,25 @@
     cursor: move;
   }
 
+  & .seat {
+    fill: #3B434B;
+
+    transition: fill $speed ease-in-out;
+  }
+
   & .seating-chart-dragging {
     & .seating-unassigned-container {
-      background-color: $uwcs_blue_dark;
-    }
-
-    & .seating-unassigned-container:hover {
-      background-color: $uwcs_blue;
+      &:hover {
+        background-color: lighten($warwickgg_dark_grey, 3%);
+      }
     }
 
     & .seat {
-      fill: $uwcs_blue_dark;
+      fill: #253354;
     }
 
     & .seat:not(.user-seat):hover {
-      fill: $uwcs_blue;
+      fill: darken($uwcs_blue_dark, 10%);
     }
     & .seat.user-seat:hover {
       cursor: no-drop;
@@ -37,13 +41,15 @@
   }
 
   & .logged-in-user-seat {
-      stroke: $uwcs_yellow;
+      stroke: rgba(white, 0.7);
   }
 
   & .seating-unassigned-container {
     background-color: $warwickgg_dark_grey;
     border-radius: $radius-large;
     padding: 1rem;
+
+    transition: background-color $speed ease-in-out;
 
     & #seating-unassigned {
       margin-top: 0.5rem;

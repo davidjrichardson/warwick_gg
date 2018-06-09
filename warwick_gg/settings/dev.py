@@ -5,8 +5,6 @@ from .base import *
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['zed0.co.uk']
-
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'l33th4x0rs'
 
@@ -26,7 +24,7 @@ DATABASES = {
 stripe.api_key = STRIPE_PRIVATE_KEY
 
 # In-development sign in switch
-HAS_LAUNCHED = False
+HAS_LAUNCHED = True
 
 try:
     from .local import *
