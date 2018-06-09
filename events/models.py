@@ -86,7 +86,8 @@ class Event(models.Model):
 
     @property
     def signups(self):
-        signups = EventSignup.objects.filter(event=self, is_unsigned_up=False).all().order_by('-signup_created')
+        signups = EventSignup.objects.filter(event=self, is_unsigned_up=False).exclude(comment__exact='').order_by(
+            '-created_at').all()
 
         return signups
 
