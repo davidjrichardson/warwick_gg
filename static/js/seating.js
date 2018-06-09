@@ -3,15 +3,8 @@
 
     const users = [];
 
-    // TODO: get all this from the backend
-    const seatingRevisions = [
-        {id: 0, seatHasUser: {1: 0, 2: 1, 8: 2}},
-        {id: 1, seatHasUser: {2: 0, 3: 1, 4: 2}},
-        {id: 2, seatHasUser: {7: 0, 8: 1, 9: 2, 11: 3}},
-        {id: 3, seatHasUser: {10: 0, 11: 1}},
-        {id: 4, seatHasUser: {20: 0, 21: 1}},
-    ];
-    let unassignedUsers = [];
+    let seatingRevisions = [];
+    let unassignedUsers;
 
     let currentSeatHasUser;
     let dragging = false;
@@ -23,6 +16,9 @@
     let popupDom;
     let revisionLogDom;
     let commitButtonDom;
+    let notificationDom;
+    let notificationTextDom;
+    let notificationCloseDom;
 
     function removeUserFromOldLocation(userId) {
         const oldSeatId = Object.keys(currentSeatHasUser).find(key => currentSeatHasUser[key] === userId);
@@ -40,6 +36,7 @@
     }
 
     function giveUnassignedToUser(userId) {
+        enableSave();
         removeUserFromOldLocation(userId);
 
         unassignedUsers = unassignedUsers
@@ -58,6 +55,7 @@
     }
 
     function giveSeatToUser(seat, userId) {
+        enableSave();
         removeUserFromOldLocation(userId);
 
         currentSeatHasUser[seat.dataset.seatId] = userId;
@@ -65,13 +63,14 @@
     }
 
     function dragStart(user, event) {
+        containerDom.classList.add('seating-chart-dragging');
         const popupUsernameDom = popupDom.getElementsByClassName('seating-username')[0];
         popupUsernameDom.innerHTML = '';
         popupUsernameDom.appendChild(document.createTextNode(user.nickname));
 
         popupDom.getElementsByClassName('seating-avatar')[0].src = user.avatar;
         popupDom.dataset.userId = user.user_id;
-        popupDom.style.display = 'flex';
+        popupDom.classList.remove('is-hidden');
 
         dragSetPosition(event);
 
@@ -86,7 +85,8 @@
         if (!dragging)
             return;
 
-        popupDom.style.display = 'none';
+        containerDom.classList.remove('seating-chart-dragging');
+        popupDom.classList.add('is-hidden');
         dragging = false;
         draggingUser = undefined;
     }
@@ -204,57 +204,19 @@
         const seatUserId = currentSeatHasUser[seat.dataset.seatId];
 
         if (seatUserId === undefined) {
+            seat.classList.remove('user-seat');
             seat.style.fill = '';
-            seat.style.cursor = '';
         }
         else {
             const seatUser = users.find(user => user.user_id === seatUserId);
+            seat.classList.add('user-seat');
             seat.style.fill = 'url(#' + avatarIdForUser(seatUser) + ')';
-            seat.style.cursor = 'move';
         }
 
-        if (seatUserId === loggedInUserId) {
-            // Unfortuantely due to this being in a different document we can't share
-            // this with the sass variable
-            seat.style.stroke = 'rgba(228, 232, 255, 0.7)';
-        }
-        else {
-            seat.style.stroke = '';
-        }
-    }
-
-    function highlightSeatIfDragging(event) {
-        if (!dragging)
-            return;
-
-        const seat = this;
-        const seatUserId = currentSeatHasUser[seat.dataset.seatId];
-        if (seatUserId === undefined)
-            seat.style.fill = '#5a6771';
+        if (seatUserId === loggedInUserId)
+            seat.classList.add('logged-in-user-seat');
         else
-            seat.style.cursor = 'no-drop';
-    }
-
-    function unhighlightSeat(event) {
-        const seat = this;
-        const seatUserId = currentSeatHasUser[seat.dataset.seatId];
-        if (seatUserId === undefined)
-            seat.style.fill = '';
-        else
-            seat.style.cursor = 'move';
-    }
-
-    function updateToRevision(revisionId) {
-        const newRevision = seatingRevisions.find(revision => revision.id === revisionId);
-        // It is important to break the reference here so we don't corrupt the original revision
-        currentSeatHasUser = Object.assign({}, newRevision.seatHasUser);
-
-        unassignedUsers = users
-            .filter(user => Object.values(currentSeatHasUser).indexOf(user.user_id) === -1)
-            .sort(sortByNickname);
-
-        refreshUnassigned();
-        refreshSeats();
+            seat.classList.remove('logged-in-user-seat');
     }
 
     function refreshUnassigned() {
@@ -287,18 +249,7 @@
     }
 
     function commitRevision(event) {
-        // TODO: Work out what of this needs to be kept for exec
-        /*
-        const maxId = Math.max.apply(Math, seatingRevisions.map(rev => rev.id));
-
-        const newRevision = {
-            id: maxId + 1,
-            // Make sure to break the reference so the committed revision doesn't continue to be updated
-            seatHasUser: Object.assign({}, currentSeatHasUser),
-        };
-        seatingRevisions.push(newRevision);
-        addRevisionButton(newRevision);
-        */
+        disableSave();
 
         const seatsToBackendFormat = input => Object.keys(input)
             .filter(key => input[key] !== undefined)
@@ -309,24 +260,45 @@
         const eventSubmitUrl = '/seating/api/submit/' + eventId;
         ajax(eventSubmitUrl, 'POST', 'json=' + JSON.stringify(layout), (status, response) => {
             if(status !== 200) {
-                const notification = document.getElementById('seating-error-notification');
-                notification.querySelectorAll('span')[0].innerHTML = 'There was an error saving your changes.';
-                notification.classList.remove('is-hidden');
+                enableSave();
+                addError('There was an error saving your changes.');
+            }
+            else {
+                finishSave('Saved');
+                if(response.length && isExec)
+                    addRevision(JSON.parse(response).revision);
             }
         });
     }
 
-    function addRevisionButton(revision) {
-        const list_element = document.createElement('li');
+    function addRevision(revision) {
+        seatingRevisions.unshift(revision);
+
+        const listElement = document.createElement('li');
         const anchor = document.createElement('a');
-        anchor.dataset.revisionId = revision.id;
-        anchor.appendChild(document.createTextNode('Revision ' + revision.id));
+        anchor.dataset.revisionId = revision.number;
+        anchor.appendChild(document.createTextNode(revision.name));
         anchor.classList.add('revision');
         anchor.addEventListener('click', onClickRevision);
 
-        list_element.appendChild(anchor);
-        revisionLogDom.appendChild(list_element);
+        listElement.appendChild(anchor);
+        revisionLogDom.insertBefore(listElement, revisionLogDom.childNodes[0]);
     }
+
+    function disableSave() {
+        commitButtonDom.disabled = true;
+    }
+
+    function finishSave() {
+        commitButtonDom.disabled = true;
+        commitButtonDom.innerHTML = '<i class="fas fa-check"></i>Saved';
+    }
+
+    function enableSave() {
+        commitButtonDom.innerHTML = '<i class="fas fa-save"></i>Save';
+        commitButtonDom.disabled = false;
+    }
+
 
     function ajax(url, method, body, callback) {
         const csrf = Cookies.get('csrftoken');
@@ -351,6 +323,72 @@
         }
     }
 
+    function addError(errorText) {
+        notificationTextDom.append(document.createTextNode(errorText));
+        notificationDom.classList.remove('is-hidden');
+    }
+
+    function clearError() {
+        notificationDom.classList.add('is-hidden');
+        notificationTextDom.innerHTML = '';
+    }
+
+    function updateToRevision(revision = null) {
+        let eventSeatingUrl = '/seating/api/seats/' + eventId;
+        if(revision !== null)
+            eventSeatingUrl = eventSeatingUrl + '?revision=' + revision;
+
+        ajax(eventSeatingUrl, 'GET', null, (status, response) => {
+            if(status !== 200) {
+                addError('The seating configuration could not be retrieved.');
+            }
+            else {
+                const currentRevision = JSON.parse(response);
+
+                currentSeatHasUser = {};
+                unassignedUsers = [];
+
+                currentRevision.seated.forEach(userSeat => {
+                    currentSeatHasUser[userSeat.seat_id] = userSeat.user_id;
+                    users.push(userSeat);
+                });
+
+                currentRevision.unseated.forEach(userSeat => {
+                    users.push(userSeat);
+                    unassignedUsers.push(userSeat);
+                });
+
+                users.forEach(user => {
+                    createSvgPattern(avatarIdForUser(user), user.avatar);
+                });
+
+                refreshUnassigned();
+                refreshSeats();
+
+                if(revision !== null)
+                    enableSave();
+            }
+        });
+    }
+
+    function updateRevisionList() {
+        if(!isExec)
+            return;
+
+        const eventRevisionsUrl = '/seating/api/revisions/' + eventId;
+        ajax(eventRevisionsUrl, 'GET', null, (status, response) => {
+            if(status !== 200) {
+                addError('The current revision log could not be retrieved.');
+            }
+            else {
+                JSON.parse(response).revisions
+                    .sort((a, b) => a.number - b.number)
+                    .map(addRevision);
+            }
+        });
+    }
+
+
     document.addEventListener('DOMContentLoaded', function () {
         svgDom = document.getElementById('seating-chart').getElementsByTagName('svg')[0];
         unassignedDom = document.getElementById('seating-unassigned');
@@ -358,6 +396,9 @@
         popupDom = document.getElementById('seating-chart-popup');
         revisionLogDom = document.getElementById('seating-revision-log');
         commitButtonDom = document.getElementById('seating-commit-button');
+        notificationDom = document.getElementById('seating-error-notification');
+        notificationTextDom = notificationDom.querySelectorAll('span')[0];
+        notificationCloseDom = notificationDom.getElementsByClassName('delete')[0];
 
         commitButtonDom.addEventListener('click', commitRevision);
         containerDom.addEventListener('mousemove', dragMove);
@@ -377,45 +418,12 @@
             seat.addEventListener('touchstart', dragStartOnSeat);
             seat.addEventListener('mouseup', dragStopOnSeat);
             seat.addEventListener('touchend', handleTouchEnd);
-            seat.addEventListener('mouseenter', highlightSeatIfDragging);
-            seat.addEventListener('mouseout', unhighlightSeat);
         }
 
-        const notification = document.getElementById('seating-error-notification');
-        const notificationClose = notification.getElementsByClassName('delete')[0];
-        notificationClose.addEventListener('click', function () {
-            notification.classList.add('is-hidden');
-        });
+        notificationCloseDom.addEventListener('click', clearError);
 
-        const eventSeatingUrl = '/seating/api/seats/' + eventId;
-        ajax(eventSeatingUrl, 'GET', null, (status, response) => {
-            if(status !== 200) {
-                const notification = document.getElementById('seating-error-notification');
-                notification.querySelectorAll('span')[0].innerHTML = 'The current seating configuration could not be retrieved.';
-                notification.classList.remove('is-hidden');
-            }
-            else {
-                const currentRevision = JSON.parse(response);
-
-                currentSeatHasUser = {};
-                currentRevision.seated.forEach(userSeat => {
-                    currentSeatHasUser[userSeat.seat_id] = userSeat.user_id;
-                    users.push(userSeat);
-                });
-
-                currentRevision.unseated.forEach(userSeat => {
-                    users.push(userSeat);
-                    unassignedUsers.push(userSeat);
-                });
-
-                users.forEach(user => {
-                    createSvgPattern(avatarIdForUser(user), user.avatar);
-                });
-
-                refreshUnassigned();
-                refreshSeats();
-            }
-        });
+        updateToRevision(null);
+        updateRevisionList();
     });
 
 })();

@@ -71,7 +71,13 @@
         </div>
         <div class="column is-narrow button-wrapper">
           {% if has_signed_up or is_exec %}
-            <button class="button is-primary" id="seating-commit-button" type="button"><i class="fas fa-save"></i>Save
+            <button
+                class="button is-primary"
+                id="seating-commit-button"
+                type="button"
+                disabled
+            >
+                <i class="fas fa-save"></i>Save
             </button>
           {% endif %}
         </div>
@@ -107,7 +113,7 @@
     </div>
   </section>
 
-  <div id="seating-chart-popup" class="level">
+  <div id="seating-chart-popup" class="level is-hidden">
     <img class="seating-avatar" src="">
     <span class="seating-username"></span>
   </div>

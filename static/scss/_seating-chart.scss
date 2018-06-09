@@ -11,6 +11,35 @@
     margin-right: 4px;
   }
 
+  & .user-seat {
+    cursor: move;
+  }
+
+  & .seating-chart-dragging {
+    & .seating-unassigned-container {
+      background-color: $uwcs_blue_dark;
+    }
+
+    & .seating-unassigned-container:hover {
+      background-color: $uwcs_blue;
+    }
+
+    & .seat {
+      fill: $uwcs_blue_dark;
+    }
+
+    & .seat:not(.user-seat):hover {
+      fill: $uwcs_blue;
+    }
+    & .seat.user-seat:hover {
+      cursor: no-drop;
+    }
+  }
+
+  & .logged-in-user-seat {
+      stroke: $uwcs_yellow;
+  }
+
   & .seating-unassigned-container {
     background-color: $warwickgg_dark_grey;
     border-radius: $radius-large;
@@ -73,7 +102,7 @@
 
   & #seating-chart-popup {
     position: absolute;
-    display: none;
+    display: flex;
 
     background-color: $navbar-dropdown-item-hover-background-color;
     padding: 0.5rem;
