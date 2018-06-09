@@ -24,7 +24,7 @@ class EventIndexView(LoginRequiredMixin, View):
 
     def get(self, request):
         ctx = {
-            'events': Event.objects.filter(end__gte=timezone.now()).all()
+            'events': Event.objects.filter(end__gte=timezone.now()).order_by('start').all()
         }
         return render(request, self.template_name, context=ctx)
 

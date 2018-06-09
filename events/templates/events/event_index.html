@@ -8,13 +8,19 @@
     <div class="container">
       <h2 class="is-2 title">Events index</h2>
       <div class="events-container">
-        {% for event in events %}
-          {% include 'events/includes/event_list_item.html' with event=event %}
-        {% empty %}
+        {% if events %}
+          <div class="tile is-ancestor">
+            <div class="tile is-parent is-vertical">
+              {% for event in events %}
+                {% include 'events/includes/event_list_item.html' with event=event %}
+              {% endfor %}
+            </div>
+          </div>
+        {% else %}
           <div class="content">
             <p>There are no events at the moment. Check back soon!</p>
           </div>
-        {% endfor %}
+        {% endif %}
       </div>
     </div>
   </section>

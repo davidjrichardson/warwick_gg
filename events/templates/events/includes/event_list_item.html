@@ -1,0 +1,8 @@
+<div class="tile is-child {% if event.is_ongoing %}is-ongoing{% endif %}">
+  <h3 class="is-3 title"><a href="{% url 'event_home' slug=event.slug %}">{{ event.title }}</a></h3>
+  <h6 class="is-6 subtitle"><strong>{{ event.location }}</strong>, {{ event.start|date:'P l jS F Y' }}
+        - {{ event.end|date:'P l jS F Y' }}</h6>
+  {% if event.is_ongoing %}
+    <p>In progress</p>
+  {% endif %}
+</div>
