@@ -21,6 +21,8 @@ DATABASES = {
 
 # EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
+stripe.api_key = STRIPE_PRIVATE_KEY
+
 # In-development sign in switch
 HAS_LAUNCHED = True
 
