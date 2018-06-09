@@ -6,7 +6,28 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   {# TODO: Change this to make use of django-csp-nonce for improved security #}
-  <meta http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-inline' https://checkout.stripe.com; connect-src 'self' 'unsafe-inline' https://checkout.stripe.com; frame-src https://checkout.stripe.com; img-src 'self' https://*.gravatar.com https://*.stripe.com">
+  <meta http-equiv="Content-Security-Policy"
+        content="script-src 'self' 'unsafe-inline' https://checkout.stripe.com; connect-src 'self' 'unsafe-inline' https://checkout.stripe.com; frame-src https://checkout.stripe.com; img-src 'self' https://*.gravatar.com https://*.stripe.com">
+  <meta name="theme-color" content="#2D3338"/>
+
+  {# IE10 Tile #}
+  <meta name="msapplication-TileColor" content="#2D3338">
+  <meta name="msapplication-TileImage" content="{% static 'favicon-144.png' %}"/>
+
+  {# Apple touch icons #}
+  <link rel="apple-touch-icon-precomposed" sizes="180x180" href="{% static 'favicon-180.png' %}">
+  <link rel="apple-touch-icon-precomposed" sizes="152x152" href="{% static 'favicon-152.png' %}">
+  <link rel="apple-touch-icon-precomposed" sizes="120x120" href="{% static 'favicon-120.png' %}">
+  <link rel="apple-touch-icon-precomposed" sizes="76x76" href="{% static 'favicon-76.png' %}">
+  <link rel="apple-touch-icon-precomposed" sizes="57x57" href="{% static 'favicon-57.png' %}">
+
+  {# Favicons #}
+  <link rel="icon" sizes="16x16 24x24 32x32 64x64" href="{% static 'favicon.ico' %}">
+  <link rel="icon" sizes="228x228" href="{% static 'favicon-228.png' %}">
+  <link rel="icon" sizes="128x128" href="{% static 'favicon-128.png' %}">
+  <link rel="icon" sizes="96x96" href="{% static 'favicon-96.png' %}">
+  <link rel="icon" sizes="32x32" href="{% static 'favicon-32.png' %}">
+  <link rel="shortcut icon" sizes="196x196" href="{% static 'favicon-196.png' %}">
 
   <title>{% block title %}{% endblock %}</title>
 
@@ -21,7 +42,7 @@
 </head>
 <body class="site-wrapper {% block template_classname %}{% endblock %}">
 <div class="site-content">
-{% block content %}{% endblock %}
+  {% block content %}{% endblock %}
 </div>
 
 {% include 'includes/footer.html' %}

@@ -23,7 +23,9 @@ class EventIndexView(LoginRequiredMixin, View):
     login_url = '/accounts/login/'
 
     def get(self, request):
-        ctx = {}
+        ctx = {
+            'events': Event.objects.filter(end__gte=timezone.now()).all()
+        }
         return render(request, self.template_name, context=ctx)
 
 
