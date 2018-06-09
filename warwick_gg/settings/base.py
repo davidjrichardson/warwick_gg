@@ -49,6 +49,7 @@ INSTALLED_APPS = [
     'compressor',
     'svg',
     'markdown_deux',
+    'anymail',
 ]
 
 MIDDLEWARE = [
@@ -191,6 +192,14 @@ AVATAR_MAX_AVATARS_PER_USER = 1
 
 # In-development sign in switch
 HAS_LAUNCHED = True
+
+# Anymail config
+EMAIL_BACKEND = 'anymail.backends.sendgrid.EmailBackend'
+EMAIL_ABS_URL = 'https://warwick.gg'
+DEFAULT_FROM_EMAIL = 'accounts@warwick.gg'
+ANYMAIL = {
+    'SENDGRID_API_KEY': os.environ.get('SENDGRID_API_KEY')
+}
 
 # Warwick SU API keys
 UWCS_API_KEY = os.environ.get('UWCS_API_KEY')

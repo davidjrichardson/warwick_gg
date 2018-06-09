@@ -1,0 +1,14 @@
+{% load account %}
+{% autoescape off %}
+Welcome to Warwick.gg!
+
+To verify your e-mail address please click on the following link (or copy it into your browser):
+
+{{ activate_url }}.
+
+Once verified you'll be able to sign up to all of the exciting events and tournaments we put on throughout the year. If you didn't expect to receive this email, please contact the UWCS exec at: exec@uwcs.co.uk.
+
+Thank you from the Warwick.gg team.
+
+P.S.: This is an automated E-mail, please do not reply to it.
+{% endautoescape %}
