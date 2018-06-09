@@ -5,25 +5,17 @@
 {% block title %}Sign up for a warwick.gg account{% endblock %}
 
 {% block content %}
-  <div class="level title-container">
+  <section class="section">
     <div class="container">
-      <a href="/">
-        <h1 class="warwickgg-title has-text-centered">Warwick<span class="superscript">.gg</span></h1>
-      </a>
-    </div>
-  </div>
-  <div class="level">
-    <div class="container">
+      <div class="title-container">
+        <h1 class="warwickgg-title has-text-centered"><a href="/">Warwick<span class="superscript">.gg</span></a></h1>
+      </div>
       <div class="columns">
         <div class="column is-half-desktop is-4-fullhd is-offset-4-fullhd is-offset-one-quarter-desktop">
           <p class="instructions has-text-centered">You are about to use your UWCS account to login to warwick.gg. As a
             final step, please complete the following form:</p>
         </div>
       </div>
-    </div>
-  </div>
-  <div class="container">
-    <div class="columns">
       <div class="column is-half-desktop is-4-fullhd is-offset-4-fullhd is-offset-one-quarter-desktop">
         <form class="signup" id="signup_form" method="post" action="{% url 'socialaccount_signup' %}">
           {% csrf_token %}
@@ -49,7 +41,12 @@
             <div class="column">
               <p class="required-help">Asterisk (<span class="is-required">*</span>) denotes a required field</p>
             </div>
-            {# TODO: Work out if we need a privacy policy here #}
+            <div class="column is-full">
+              <input class="is-checkradio is-primary" type="checkbox" name="{{ form.privacy_policy_read.name }}"
+                     id="{{ form.privacy_policy_read.id_for_label }}" required>
+              <label for="{{ form.privacy_policy_read.id_for_label }}"><span class="is-required">*</span> I have read
+                and agree to the <a href="{% url 'privacy_policy' %}">Warwick.gg privacy policy</a>.</label>
+            </div>
             <div class="column is-narrow">
               <div class="field is-grouped is-grouped-right">
                 <div class="control">
@@ -61,5 +58,5 @@
         </form>
       </div>
     </div>
-  </div>
+  </section>
 {% endblock %}

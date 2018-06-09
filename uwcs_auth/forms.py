@@ -38,6 +38,7 @@ class SignupForm(forms.Form):
     uni_id = forms.CharField(max_length=11,
                              help_text='If you are an associate member then use the ID provided by the SU')
     nickname = forms.CharField(max_length=50, required=False)
+    privacy_policy_read = forms.BooleanField()
 
     def signup(self, request, user):
         pass

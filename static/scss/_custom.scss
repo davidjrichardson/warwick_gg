@@ -1,5 +1,15 @@
 @import "sass/utilities/mixins";
 
+.site-wrapper {
+  display: flex;
+  min-height: 100vh;
+  flex-direction: column;
+
+  & .site-content {
+    flex: 1;
+  }
+}
+
 .warwickgg-title {
   font-family: "Jaapokki Subtract", sans-serif;
   text-transform: uppercase;
@@ -223,10 +233,10 @@
 
 // Sign-in page
 input {
-  transition: all 0.2s ease-in-out;
+  transition: border $speed ease-in-out, box-shadow $speed ease-in-out;
 
   & ~ .icon {
-    transition: all 0.2s ease-in-out;
+    transition: color 0.2s ease-in-out;
   }
 }
 
@@ -234,9 +244,32 @@ a {
   transition: color 0.2s ease-in-out;
 }
 
-.title-container.level.level.level {
+.title-container {
   margin-top: 4rem;
   margin-bottom: 0;
+
+  & h1 a {
+    transition: color $speed ease-in-out;
+
+    color: $uwcs_blue;
+
+    & span {
+      position: relative;
+      top: 0;
+
+      transition: top $speed ease-in-out, color $speed ease-in-out;
+    }
+  }
+
+  & h1 a:hover {
+    color: $link;
+
+    & span {
+      top: 3px;
+
+      color: white;
+    }
+  }
 
   @include mobile {
     margin-top: 3rem;
@@ -248,8 +281,6 @@ body hr {
 }
 
 .warwickgg-signin {
-  padding: 0 1rem;
-
   & .notification {
     width: 100%;
   }

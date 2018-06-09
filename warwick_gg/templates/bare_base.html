@@ -19,12 +19,8 @@
 
   {% block extra_css %}{% endblock %}
 </head>
-<body class="site-wrapper {% block template_classname %}{% endblock %}">
-<div class="site-content">
+<body class="{% block template_classname %}{% endblock %}">
 {% block content %}{% endblock %}
-</div>
-
-{% include 'includes/footer.html' %}
 
 {% block extra_js %}{% endblock %}
 </body>

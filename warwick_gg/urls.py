@@ -18,17 +18,17 @@ from django.contrib import admin
 from django.urls import path, include, re_path
 from django.views.static import serve
 
-from warwick_gg.views import HomePageView, EventSlugRedirectView
+from warwick_gg.views import HomePageView, EventSlugRedirectView, PrivacyPolicyView
 
 urlpatterns = [
     path('', HomePageView.as_view(), name='home'),
+    path('privacy', PrivacyPolicyView.as_view(), name='privacy_policy'),
     path('dashboard/', include('dashboard.urls')),
     path('accounts/', include('allauth.urls')),
     path('avatar/', include('avatar.urls')),
     path('admin/', admin.site.urls),
     path('events/', include('events.urls')),
-  
-    # TODO: Make this a child of events?
+
     path('seating/', include('seating.urls')),
   
     # Event slug short url redirect

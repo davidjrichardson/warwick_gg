@@ -2,9 +2,9 @@
 @font-face {
   font-family: "Jaapokki Subtract";
   src: url("/static/fonts/jaapokkisubtract-regular.eot") format("eot"),
-        url("/static/fonts/jaapokkisubtract-regular.woff") format("woff"),
-        url("/static/fonts/jaapokkisubtract-regular.ttf") format("ttf"),
-        url("/static/fonts/jaapokkisubtract-regular.svg") format("svg");
+  url("/static/fonts/jaapokkisubtract-regular.woff") format("woff"),
+  url("/static/fonts/jaapokkisubtract-regular.ttf") format("ttf"),
+  url("/static/fonts/jaapokkisubtract-regular.svg") format("svg");
 }
 
 // Custom variables
@@ -37,8 +37,6 @@ $primary: $uwcs_blue;
 //$fullhd: $desktop;
 //$widescreen: $desktop;
 
-
-// TODO: Handle hover states ($link_hover, $link-border, $link-actives)
 $body-background-color: $warwickgg_black;
 
 // Custom form input colours
@@ -95,3 +93,6 @@ $tabs-boxed-link-hover-border-bottom-color: lighten($warwickgg_dark_grey, 10%);
 $tabs-boxed-link-active-background-color: $uwcs_blue;
 $tabs-boxed-link-active-border-color: $tabs-boxed-link-active-background-color;
 $tabs-boxed-link-active-border-bottom-color: $tabs-boxed-link-active-background-color;
+
+//Footer
+$footer-background-color: $warwickgg_dark_grey;

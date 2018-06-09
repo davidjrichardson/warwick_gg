@@ -12,31 +12,24 @@
 
 {% block extra_js %}
   <script type="text/javascript">
-  document.getElementById('notificationDelete').addEventListener('click', function (ev) {
-      ev.target.parentNode.remove();
-  })
+      document.getElementById('notificationDelete').addEventListener('click', function (ev) {
+          ev.target.parentNode.remove();
+      })
   </script>
 {% endblock %}
 
 {% block content %}
-  <div class="level title-container">
+  <section class="section">
     <div class="container">
-      <a href="/">
-        <h1 class="warwickgg-title has-text-centered">Warwick<span class="superscript">.gg</span></h1>
-      </a>
-    </div>
-  </div>
-  <div class="level">
-    <div class="container">
+      <div class="title-container">
+        <h1 class="warwickgg-title has-text-centered"><a href="/">Warwick<span class="superscript">.gg</span></a></h1>
+      </div>
       <div class="columns">
         <div class="column is-half-desktop is-4-fullhd is-offset-4-fullhd is-offset-one-quarter-desktop">
-          <p class="instructions has-text-centered">Please sign in using your UWCS account or your warwick.gg account details below:</p>
+          <p class="instructions has-text-centered">Please sign in using your UWCS account or your warwick.gg account
+            details below:</p>
         </div>
       </div>
-    </div>
-  </div>
-  <div class="level">
-    <div class="container">
       <div class="columns">
         <div class="column is-half-desktop is-4-fullhd is-offset-4-fullhd is-offset-one-quarter-desktop">
           {% if form.non_field_errors %}
@@ -94,7 +87,8 @@
                 <a class="help" href="{% url 'account_reset_password' %}">Forgot your password?</a>
               </div>
               <div class="field">
-                <input class="is-checkradio is-primary" type="checkbox" name="{{ form.remember.name }}" id="{{ form.remember.id_for_label }}">
+                <input class="is-checkradio is-primary" type="checkbox" name="{{ form.remember.name }}"
+                       id="{{ form.remember.id_for_label }}">
                 <label for="{{ form.remember.id_for_label }}">Remember me?</label>
               </div>
               {% if redirect_field_value %}
@@ -121,11 +115,12 @@
           <div class="level">
             <div class="container">
               <hr/>
-              <p class="has-text-centered">Don't have a warwick.gg account? You can sign up <a href="{{ signup_url }}">here</a>.</p>
+              <p class="has-text-centered">Don't have a warwick.gg account? You can sign up <a
+                  href="{{ signup_url }}">here</a>.</p>
             </div>
           </div>
         </div>
       </div>
     </div>
-  </div>
+  </section>
 {% endblock %}
