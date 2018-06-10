@@ -42,8 +42,7 @@ class EventView(View):
             has_signed_up = EventSignup.objects.for_event(event, request.user).exists()
 
         if has_signed_up:
-            signups = EventSignup.objects.all_for_event(event).exclude(comment__isnull=True, comment=None).order_by(
-                '-created_at').all()
+            signups = event.signups
         else:
             signups = []
 

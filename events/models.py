@@ -91,9 +91,14 @@ class Event(models.Model):
 
         return signups
 
+    def signups_all(self):
+        signups = EventSignup.objects.filter(event=self, is_unsigned_up=False).order_by('-created_at').all()
+
+        return signups
+
     @property
     def signup_count(self):
-        return len(self.signups)
+        return len(self.signups_all)
 
     @property
     def signups_left(self):
