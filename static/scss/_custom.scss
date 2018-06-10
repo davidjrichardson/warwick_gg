@@ -550,6 +550,19 @@ div.navbar-dropdown {
   }
 }
 
+#tournament-index-link {
+  & i {
+    position: relative;
+    left: 0;
+
+    transition: left $speed ease-in-out;
+  }
+
+  &:hover i {
+    left: 3px;
+  }
+}
+
 .title {
   font-family: 'Titillium Web', sans-serif;
   font-weight: 700;
@@ -584,9 +597,14 @@ div.navbar-dropdown {
   }
 }
 
-.tournament-box.column {
+.tournament-box {
   box-shadow: 0 0 0 rgba(black, 0);
-  background-color: transparent;
+  background-color: lighten($warwickgg_black, 3%);
+
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  height: 100%;
 
   padding: 1.25rem;
 
@@ -596,8 +614,21 @@ div.navbar-dropdown {
 
   color: rgba(255, 255, 255, 0.87);
 
-  &:hover,
-  &:focus {
+  & .content ul {
+    list-style: none;
+    margin-left: 0;
+  }
+
+  &.empty {
+    & p i {
+      color: lighten($warwickgg_dark_grey, 5%);
+      margin-bottom: 2rem;
+      margin-top: 0.33rem;
+    }
+  }
+
+  &:not(.empty):hover,
+  &:not(.empty):focus {
     box-shadow: 0 3px 6px rgba(black, 0.1);
     background-color: $warwickgg_dark_grey;
 

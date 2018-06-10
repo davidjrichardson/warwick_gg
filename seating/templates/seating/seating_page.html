@@ -38,17 +38,15 @@
 {% endblock %}
 
 {% block body %}
-  {% if HAS_LAUNCHED %}
-    <nav class="breadcrumb" aria-label="breadcrumbs">
-      <div class="container">
-        <ul>
-          <li><a href="{% url 'event_index' %}">Events</a></li>
-          <li><a href="{% url 'event_home' slug=event.slug %}">{{ event.title }}</a></li>
-          <li class="is-active"><a href="#">Seating Plan</a></li>
-        </ul>
-      </div>
-    </nav>
-  {% endif %}
+  <nav class="breadcrumb" aria-label="breadcrumbs">
+    <div class="container">
+      <ul>
+        <li><a href="{% url 'event_index' %}">Events</a></li>
+        <li><a href="{% url 'event_home' slug=event.slug %}">{{ event.title }}</a></li>
+        <li class="is-active"><a href="#">Seating Plan</a></li>
+      </ul>
+    </div>
+  </nav>
 
   <div class="notification is-warning is-hidden-desktop">
     <div class="container">
@@ -64,8 +62,8 @@
           <h2 class="title is-2">Seating Plan for {{ event.title }}</h2>
           <h6 class="subtitle is-6">Click <a href="{% url 'seating_faqs' %}">here</a> to see the seating plan FAQs</h6>
           <div class="notification is-danger is-hidden" id="seating-error-notification">
-              <button class="delete"></button>
-              <span>
+            <button class="delete"></button>
+            <span>
               </span>
           </div>
 
@@ -73,7 +71,7 @@
         <div class="column is-narrow button-wrapper">
           {% if has_signed_up or is_exec %}
             <button class="button is-primary" id="seating-commit-button" type="button" disabled>
-                <i class="fas fa-save"></i>Save
+              <i class="fas fa-save"></i>Save
             </button>
           {% endif %}
         </div>

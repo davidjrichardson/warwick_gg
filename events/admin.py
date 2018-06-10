@@ -11,7 +11,6 @@ class TournamentAdmin(admin.ModelAdmin):
     list_filter = ['requires_attendance']
 
 
-
 @admin.register(SeatingRoom)
 class SeatingRoomAdmin(admin.ModelAdmin):
     list_display = ('name', 'seating_plan_svg')
@@ -22,7 +21,7 @@ class EventAdmin(admin.ModelAdmin):
     date_hierarchy = 'start'
     list_display = ('title', 'location', 'start', 'end', 'hosted_by', 'is_ongoing')
     list_filter = (
-    'hosted_by', 'cost_member', 'cost_non_member', 'has_photography', 'has_livestream', 'seating_location')
+        'hosted_by', 'cost_member', 'cost_non_member', 'has_photography', 'has_livestream', 'seating_location')
     search_fields = ('title', 'location')
 
 

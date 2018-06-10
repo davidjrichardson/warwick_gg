@@ -6,7 +6,7 @@ from django.shortcuts import render
 from django.utils import timezone
 from django.views import View
 
-from events.models import Event
+from events.models import Event, Tournament
 
 
 class DashboardIndexView(LoginRequiredMixin, View):
@@ -22,11 +22,14 @@ class DashboardIndexView(LoginRequiredMixin, View):
         # Clean out the django messages buffer
         _ = list(messages.get_messages(request))
 
+        tournaments = tournaments = Tournament.objects.filter(start__gte=timezone.now()).order_by('start').all()
+
         # TODO: Get tournaments
 
         ctx = {
             'event': next_event,
             'just_finished': just_finished,
-            'event_signups_open': next_event.signups_open(request.user) if next_event else False
+            'event_signups_open': next_event.signups_open(request.user) if next_event else False,
+            'tournaments': tournaments
         }
         return render(request, self.template_name, ctx)

@@ -41,17 +41,23 @@
           </h1>
           <h2 class="subtitle is-6 has-text-centered">
             {% if event.is_ongoing %}
-              Finishes in <span id="countdown-output" data-countdown-to="{{ event.end|date:'c' }}"></span> ({{ event.end|date:'P l jS F Y' }})
+              Finishes in <span id="countdown-output" data-countdown-to="{{ event.end|date:'c' }}"></span> (
+              {{ event.end|date:'P l jS F Y' }})
             {% else %}
               {% if not event_signups_open %}
                 {% if event.signup_start_fresher %}
                   Signups open for freshers in
-                  <span id="countdown-output" data-countdown-to="{{ event.signup_start_fresher|date:'c' }}"></span> ({{ event.signup_start_fresher|date:'P l jS F Y' }})
+                  <span id="countdown-output" data-countdown-to="{{ event.signup_start_fresher|date:'c' }}"></span> (
+                  {{ event.signup_start_fresher|date:'P l jS F Y' }})
                 {% else %}
-                  Signups open in <span id="countdown-output" data-countdown-to="{{ event.signup_start|date:'c' }}"></span> ({{ event.signup_start|date:'P l jS F Y' }})
+                  Signups open in
+                  <span id="countdown-output" data-countdown-to="{{ event.signup_start|date:'c' }}"></span> (
+                  {{ event.signup_start|date:'P l jS F Y' }})
                 {% endif %}
               {% else %}
-                Signups are now open! Click <strong><a href="{% url 'event_home' slug=event.slug %}#signup">here</a></strong> to start signing up for {{ event.title }}.
+                Signups are now open! Click
+                <strong><a href="{% url 'event_home' slug=event.slug %}#signup">here</a></strong> to start signing up
+                for {{ event.title }}.
               {% endif %}
             {% endif %}
           </h2>
@@ -87,17 +93,25 @@
         </div>
         <div class="level-right">
           <div class="level-item">
-            <a href="{# TODO: Add link here #}">See more <i class="fas fa-chevron-right"></i></a>
+            <a id="tournament-index-link" href="{% url 'tournament_index' %}">See more <i
+                class="fas fa-chevron-right"></i></a>
           </div>
         </div>
       </div>
-      <div class="level">
-        {% comment %}<h1>You have not signed up to any tournaments yet. You can see upcoming tournaments <a href="# {# TODO: Replace this link #}">here</a>.</h1>{% endcomment %}
-        <div class="columns">
-          {% include 'dashboard/includes/tournament-partial.html' %}
-          {% include 'dashboard/includes/tournament-partial.html' %}
-          {% include 'dashboard/includes/tournament-partial.html' %}
-        </div>
+      <div class="columns is-centered">
+        {% for tournament in tournaments %}
+          {% include 'dashboard/includes/tournament-partial.html' with tournament=tournament %}
+        {% endfor %}
+
+        {% if not tournaments or tournaments|length < 3 %}
+          <div class="column is-4">
+          <div class="tournament-box empty has-text-centered">
+
+            <p class=""><i class="fas fa-trophy fa-6x"></i></p>
+            <p class="has-text-centered">There are no more upcoming tournaments for the moment. Check again soon!</p>
+          </div>
+          </div>
+        {% endif %}
       </div>
     </div>
   </section>

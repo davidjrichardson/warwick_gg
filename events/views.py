@@ -15,7 +15,7 @@ from django.views.decorators.csrf import csrf_protect
 from stripe import Charge, StripeError, Refund
 
 from events.forms import SignupForm
-from events.models import Event, EventSignup
+from events.models import Event, EventSignup, Tournament
 from seating.models import Seating
 from uwcs_auth.models import WarwickGGUser
 
@@ -57,6 +57,31 @@ class EventView(View):
         }
 
         return render(request, self.template_name, context=ctx)
+
+
+class TournamentView(View):
+    template_name = 'events/tournament_home.html'
+
+    def get(self, request, slug):
+        tournament = get_object_or_404(Tournament, slug=slug)
+
+        ctx = {
+            'tournament': tournament
+        }
+        render(request, self.template_name, context=ctx)
+
+
+class TournamentIndexView(LoginRequiredMixin, View):
+    template_name = 'events/tournament_index.html'
+    login_url = '/accounts/login/'
+
+    def get(self, request):
+        tournaments = Tournament.objects.filter(start__gte=timezone.now()).order_by('start').all()
+
+        ctx = {
+            'tournaments': tournaments
+        }
+        render(request, self.template_name, context=ctx)
 
 
 class DeleteCommentView(LoginRequiredMixin, UserPassesTestMixin, View):
