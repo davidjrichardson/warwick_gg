@@ -11,14 +11,13 @@
     {% avatar signup.user 128 class='rounded-image image is-64x64' %}
   </figure>
   <div class="media-content">
-    <div class="content comment-wrapper">
+    <div class="content">
       <p>
         <strong {% if signup.profile.nickname %}class="tooltip is-tooltip-primary"
                 data-tooltip="{{ signup.user.get_full_name }}"{% endif %}>{{ signup.profile.long_name }}</strong>
         <small>Signed up at {{ signup.created_at|date:'P l jS F Y' }}</small>
-        <br/>
-        {{ signup.comment }}
       </p>
+      <p class="overflow-hidden">{{ signup.comment }}</p>
     </div>
   </div>
   {% if is_exec %}
