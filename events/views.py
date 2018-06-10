@@ -140,6 +140,13 @@ class SignupChargeView(LoginRequiredMixin, View):
             messages.error(request, 'You\'re already signed up to that event.', extra_tags='is-danger')
             return redirect('event_home', slug=event.slug)
 
+        print(event.signup_count, event.signup_limit)
+
+        # Check if there is still space left
+        if event.signup_count == event.signup_limit:
+            messages.error(request, 'There\'s no more space for that event, sorry.', extra_tags='is-danger')
+            return redirect('event_home', slug=event.slug)
+
         profile = WarwickGGUser.objects.get(user=request.user)
 
         # If the event is hosted by UWCS

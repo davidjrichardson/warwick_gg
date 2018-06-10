@@ -114,7 +114,8 @@ class Event(models.Model):
             return self.signup_start
 
     def signups_open(self, user):
-        return self.signup_start_for_user(user) < timezone.now() <= self.signup_end
+        return self.signup_start_for_user(
+            user) < timezone.now() <= self.signup_end and self.signup_count < self.signup_limit
 
     @property
     def is_ongoing(self):
