@@ -97,12 +97,13 @@
             return;
 
         const seat = this;
-        if (currentSeatHasUser[seat.dataset.seatId] === undefined)
+        if (currentSeatHasUser[seat.dataset.seatId] === undefined) {
             giveSeatToUser(seat, draggingUser.user_id);
+            if (revisionNumber === null)
+                commitRevision();
+        }
 
         dragStop(event);
-        if (revisionNumber === null)
-            commitRevision();
     }
 
     function dragStopOnUnassigned(event) {
@@ -356,6 +357,7 @@
 
                 currentSeatHasUser = {};
                 unassignedUsers = [];
+                users.splice(0, users.length);
 
                 currentRevision.seated.forEach(userSeat => {
                     currentSeatHasUser[userSeat.seat_id] = userSeat.user_id;
@@ -367,6 +369,7 @@
                     unassignedUsers.push(userSeat);
                 });
 
+                svgDom.querySelector('defs').innerHTML = '';
                 users.forEach(user => {
                     createSvgPattern(avatarIdForUser(user), user.avatar);
                 });
