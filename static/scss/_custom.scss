@@ -908,8 +908,13 @@ article.media {
 
     background-color: $warwickgg_dark_grey;
 
-    & p {
+    & > p {
       margin-bottom: 1rem;
+    }
+
+    & .content ul {
+      margin-left: 0;
+      list-style: none;
     }
 
     box-shadow: 0px 0px 4px rgba(0, 0, 0, 0.23);
@@ -931,10 +936,6 @@ article.media {
           text-decoration: underline;
         }
       }
-    }
-
-    &:nth-of-type(even) {
-      //background-color: lighten($warwickgg_dark_grey, 5%);
     }
   }
 }

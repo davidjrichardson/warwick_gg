@@ -1,0 +1,15 @@
+{% load markdown_deux_tags %}
+
+<div class="tile is-child{% if tournament.is_ongoing %} is-ongoing{% endif %}">
+  {% if tournament.is_ongoing %}
+    <p><i class="fas fa-clock"></i> In progress</p>
+  {% endif %}
+  {% if tournament.signups_open and not tournament.is_ongoing %}
+    <p class="has-text-success"><i class="fas fa-user-plus"></i> Signups are open</p>
+  {% endif %}
+  <h3 class="is-3 title"><a href="{% url 'tournament_home' slug=tournament.slug %}">{{ tournament.title }}</a></h3>
+  <h6 class="is-6 subtitle">{{ tournament.start|date:'P l jS F Y' }} - {{ tournament.end|date:'P l jS F Y' }}</h6>
+  <div class="content">
+    {{ tournament.description|markdown }}
+  </div>
+</div>

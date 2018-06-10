@@ -60,7 +60,7 @@ class EventView(View):
 
 
 class TournamentView(View):
-    template_name = 'events/tournament_home.html'
+    template_name = 'tournaments/tournament_home.html'
 
     def get(self, request, slug):
         tournament = get_object_or_404(Tournament, slug=slug)
@@ -68,11 +68,11 @@ class TournamentView(View):
         ctx = {
             'tournament': tournament
         }
-        render(request, self.template_name, context=ctx)
+        return render(request, self.template_name, context=ctx)
 
 
 class TournamentIndexView(LoginRequiredMixin, View):
-    template_name = 'events/tournament_index.html'
+    template_name = 'tournaments/tournament_index.html'
     login_url = '/accounts/login/'
 
     def get(self, request):
@@ -81,7 +81,7 @@ class TournamentIndexView(LoginRequiredMixin, View):
         ctx = {
             'tournaments': tournaments
         }
-        render(request, self.template_name, context=ctx)
+        return render(request, self.template_name, context=ctx)
 
 
 class DeleteCommentView(LoginRequiredMixin, UserPassesTestMixin, View):

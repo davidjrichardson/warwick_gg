@@ -16,11 +16,11 @@
           <div class="navbar-item {% if "/dashboard/" in request.path %}is-active{% endif %}">
             <a href="{% url 'dashboard_index' %}">Dashboard</a>
           </div>
-          <div class="navbar-item {% if "/events/" in request.path %}is-active{% endif %}">
+          <div class="navbar-item {% if "/events/" in request.path and "tournaments" not in request.path %}is-active{% endif %}">
             <a href="{% url 'event_index' %}">Events</a>
           </div>
-          <div class="navbar-item {% if "/tournaments/" in request.path %}is-active{% endif %}">
-            <a href="#">Tournaments</a>
+          <div class="navbar-item {% if "tournaments" in request.path %}is-active{% endif %}">
+            <a href="{% url 'tournament_index' %}">Tournaments</a>
           </div>
           <div class="navbar-item has-dropdown is-hoverable">
             <a href="#" class="navbar-link">Links</a>

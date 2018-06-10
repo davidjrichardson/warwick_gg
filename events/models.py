@@ -149,6 +149,10 @@ class Tournament(models.Model):
     def signups_open(self):
         return self.signup_start < timezone.now() <= self.signup_end
 
+    @property
+    def is_onging(self):
+        return timezone.now() < self.end
+
     def get_absolute_url(self):
         return '/events/tournament/{slug}'.format(slug=self.slug)
 
