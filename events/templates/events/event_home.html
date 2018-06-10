@@ -131,7 +131,7 @@
           <ul class="has-bullets">
             <li><strong>Signups open:</strong> {{ event.signup_start|date:'P l jS F Y' }}</li>
             <li><strong>Signups close:</strong> {{ event.signup_end|date:'P l jS F Y' }}</li>
-            <li><strong>Spaces left:</strong> {{ event.signup_limit }}</li>
+            <li><strong>Spaces left:</strong> {{ signups_remaining }} (of {{ event.signup_limit }})</li>
             <li><strong>Attendance cost:</strong> CompSoc/Esports members: {% if event.cost_member == 0 %}Free{% else %}
               £{{ event.cost_member }}{% endif %}, Other*: £{{ event.cost_non_member }}</li>
           </ul>

@@ -51,6 +51,7 @@ class EventView(View):
             'has_signed_up': has_signed_up,
             'signups_open': event.signups_open(request.user),
             'signup_start': event.signup_start_for_user(request.user),
+            'signups_remaining': event.signup_limit - event.signup_count,
             'signups': signups,
             'is_exec': WarwickGGUser.objects.get(user=request.user).is_exec if request.user.is_authenticated else False
         }
