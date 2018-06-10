@@ -18,11 +18,12 @@ from django.contrib import admin
 from django.urls import path, include, re_path
 from django.views.static import serve
 
-from warwick_gg.views import HomePageView, EventSlugRedirectView, PrivacyPolicyView
+from warwick_gg.views import HomePageView, EventSlugRedirectView, PrivacyPolicyView, AboutView
 
 urlpatterns = [
     path('', HomePageView.as_view(), name='home'),
     path('privacy', PrivacyPolicyView.as_view(), name='privacy_policy'),
+    path('about', AboutView.as_view(), name='about'),
     path('dashboard/', include('dashboard.urls')),
     path('accounts/', include('allauth.urls')),
     path('avatar/', include('avatar.urls')),

@@ -11,6 +11,13 @@ class HomePageView(View):
         return render(request, self.template_name)
 
 
+class AboutView(View):
+    template_name = 'about.html'
+
+    def get(self, request):
+        return render(request, self.template_name)
+
+
 class PrivacyPolicyView(View):
     template_name = 'privacy_policy.html'
 
