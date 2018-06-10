@@ -58,6 +58,8 @@
 
           if (window.location.hash === '#signup') {
               document.querySelector('li a[data-target="signup-container"]').parentNode.classList.add('is-active');
+          } else if (window.location.hash === '#tournaments') {
+              document.querySelector('li a[data-target="tournament-container"]').parentNode.classList.add('is-active');
           } else {
               document.querySelector('li a[data-target="info-container"]').parentNode.classList.add('is-active');
           }
@@ -116,6 +118,9 @@
         <ul id="tab-container">
           <li><a href="#" data-target="info-container">Info</a></li>
           <li><a href="#" data-target="signup-container">Sign ups</a></li>
+          {% if tournaments %}
+            <li><a href="#" data-target="tournament-container">Tournaments</a></li>
+          {% endif %}
         </ul>
       </div>
       <div class="container" id="info-container">
@@ -124,6 +129,23 @@
           {{ event.description|markdown }}
         </div>
       </div>
+
+      {% if tournaments %}
+        <div class="container" id="tournament-container">
+          <h4 class="is-4 title">Tournaments</h4>
+          <div class="content">
+            <p>Here you can find out about the tournament{{ tournaments|pluralize }} that will be happening
+              at {{ event.title }}.</p>
+          </div>
+          <div class="tournament-container">
+            <div class="columns is-multiline">
+              {% for tournament in tournaments %}
+                {% include 'dashboard/includes/tournament-partial.html' with tournament=tournament %}
+              {% endfor %}
+            </div>
+          </div>
+        </div>
+      {% endif %}
 
       <div class="container is-hidden" id="signup-container">
         <h4 class="is-4 title">Sign up information</h4>
@@ -194,7 +216,8 @@
           <div class="signup-tile">
             <div class="tile-left">
               <h4 class="title is-4">Register to sign up</h4>
-              <p>To sign up for {{ event.title }}, you need to have logged into your Warwick.gg account! To log in or sign up click <a href="{% url 'account_login' %}">here</a>.</p>
+              <p>To sign up for {{ event.title }}, you need to have logged into your Warwick.gg account! To log in or
+                sign up click <a href="{% url 'account_login' %}">here</a>.</p>
             </div>
           </div>
         {% endif %}

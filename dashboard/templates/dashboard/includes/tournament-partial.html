@@ -2,11 +2,14 @@
 
 <div class="column is-4">
   <a href="{% url 'tournament_home' slug=tournament.slug %}" class="tournament-box">
-  <h3 class="title">{{ tournament.title }}</h3>
-  <h6 class="subtitle is-6">{{ tournament.start|date:'P l jS F Y' }}</h6>
-  <div class="content">
-    {{ tournament.description|markdown }}
-{#    <small><span class="signed-up"><i class="fas fa-check"></i> You're signed up</span></small>#}
-  </div>
-</a>
+    <h3 class="title">{{ tournament.title }}</h3>
+    <h6 class="subtitle is-6">{{ tournament.start|date:'P l jS F Y' }}</h6>
+    <div class="content">
+      {{ tournament.description|markdown }}
+      {% if tournament.signups_open %}
+        <small class="has-text-success"><i class="fas fa-user-plus"></i> Signups are open</small>
+      {% endif %}
+      {#    <small><span class="signed-up"><i class="fas fa-check"></i> You're signed up</span></small>#}
+    </div>
+  </a>
 </div>

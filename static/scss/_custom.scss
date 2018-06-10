@@ -901,39 +901,59 @@ article.media {
 // Event index page
 .events-container {
   & .tile.is-child {
-    padding: 1rem;
     margin-bottom: 1rem;
 
-    border-radius: $radius-large;
+    & a {
+      display: flex;
+      flex-direction: column;
 
-    background-color: $warwickgg_dark_grey;
+      transition: background-color $speed ease-in-out, box-shadow $speed ease-in-out;
 
-    & > p {
-      margin-bottom: 1rem;
-    }
+      padding: 1rem;
 
-    & .content ul {
-      margin-left: 0;
-      list-style: none;
-    }
+      box-shadow: 0 0 0 transparent;
+      background-color: $warwickgg_dark_grey;
+      border-radius: $radius-large;
 
-    box-shadow: 0px 0px 4px rgba(0, 0, 0, 0.23);
+      &:hover {
+        box-shadow: 0px 0px 4px rgba(0, 0, 0, 0.23);
 
-    &.is-ongoing {
-      background-color: $uwcs_blue;
-
-      & .subtitle {
-        color: rgba(white, 0.87);
+        background-color: lighten($warwickgg_dark_grey, 5%);
       }
 
-      box-shadow: 0px 0px 4px rgba($warwickgg_blue_shadow, 0.23);
+      & > p,
+      & > small {
+        margin-bottom: 1rem;
+      }
 
-      & h3.title.is-3 a {
-        color: white;
 
-        &:hover,
-        &:focus {
-          text-decoration: underline;
+
+      & .content {
+        margin-top: -1rem;
+        color: rgba(white, 0.87);
+
+        & ul {
+          margin-left: 0;
+          list-style: none;
+        }
+      }
+
+      &.is-ongoing {
+        background-color: $uwcs_blue;
+
+        & .subtitle {
+          color: rgba(white, 0.87);
+        }
+
+        box-shadow: 0px 0px 4px rgba($warwickgg_blue_shadow, 0.23);
+
+        & h3.title.is-3 a {
+          color: white;
+
+          &:hover,
+          &:focus {
+            text-decoration: underline;
+          }
         }
       }
     }

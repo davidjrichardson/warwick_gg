@@ -124,6 +124,11 @@ class Event(models.Model):
             return False
 
 
+class TournamentManager(models.Manager):
+    def for_event(self, event):
+        return self.filter(for_event=event)
+
+
 class Tournament(models.Model):
     id = models.IntegerField(primary_key=True)
 
@@ -144,6 +149,8 @@ class Tournament(models.Model):
 
     # Routing
     slug = models.SlugField(max_length=40, unique=True)
+
+    objects = TournamentManager()
 
     def __str__(self):
         return self.title
