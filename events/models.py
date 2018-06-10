@@ -145,6 +145,9 @@ class Tournament(models.Model):
     # Routing
     slug = models.SlugField(max_length=40, unique=True)
 
+    def __str__(self):
+        return self.title
+
     @property
     def signups_open(self):
         return self.signup_start < timezone.now() <= self.signup_end
