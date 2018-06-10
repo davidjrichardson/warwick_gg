@@ -64,9 +64,11 @@ class TournamentView(View):
 
     def get(self, request, slug):
         tournament = get_object_or_404(Tournament, slug=slug)
+        tournament_event = Event.objects.get(id=tournament.for_event.id) if tournament.for_event else None
 
         ctx = {
-            'tournament': tournament
+            'tournament': tournament,
+            'tournament_event': tournament_event,
         }
         return render(request, self.template_name, context=ctx)
 

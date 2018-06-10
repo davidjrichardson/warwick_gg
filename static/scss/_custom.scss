@@ -939,3 +939,11 @@ article.media {
     }
   }
 }
+
+// Tournament home page
+.warwickgg-tournament-home {
+  & .content ul {
+    margin-left: 0;
+    list-style: none;
+  }
+}

@@ -1,0 +1,52 @@
+{% extends 'dashboard/navbar_base.html' %}
+
+{% load markdown_deux_tags %}
+
+{% block title %}{{ tournament.title }} | Warwick.gg{% endblock %}
+
+{% block template_classname %}warwickgg-tournament-home{% endblock %}
+
+{% block body %}
+  {% if request.user.is_authenticated %}
+    <nav class="breadcrumb" aria-label="breadcrumbs">
+      <div class="container">
+        <ul>
+          <li><a href="{% url 'tournament_index' %}">Tournaments</a></li>
+          <li class="is-active"><a href="#">{{ tournament.title }}</a></li>
+        </ul>
+      </div>
+    </nav>
+  {% endif %}
+
+  <section class="section">
+    <div class="container">
+      <h2 class="title is-2">{{ tournament.title }}</h2>
+      <h6 class="subtitle is-6">{{ tournament.start|date:'P l jS F Y' }} - {{ tournament.end|date:'P l jS F Y' }}</h6>
+      <div class="content">
+        <h4>Tournament information</h4>
+        {{ tournament.description|markdown }}
+        <h4>Signup information</h4>
+        <ul class="has-bullets">
+          <li><strong>Signups open:</strong> {{ tournament.signup_start|date:'P l jS F Y' }}</li>
+          <li><strong>Signups close:</strong> {{ tournament.signup_end|date:'P l jS F Y' }}</li>
+        </ul>
+        {% if tournament.signups_open %}
+          <p>Signups are open! The sign up form is available here: <a
+              href="{{ tournament.signup_form }}">{{ tournament.signup_form }}</a></p>
+        {% endif %}
+      </div>
+      {% if tournament_event %}
+        <div class="signup-tile">
+          <div class="tile-left">
+            <h4 class="title is-4">{{ tournament_event.title }}</h4>
+            <p>This tournament is being run as part of <a
+                href="{% url 'event_home' slug=tournament_event.slug %}">{{ tournament_event.title }}</a>!
+              {% if tournament.requires_attendance %}To take part you must also be attending this event, so please make sure you've signed up to it as well.{% else %}You
+                don't need to attend to take part but you might be missing out on other tournaments and opportunities.{% endif %}</p>
+          </div>
+        </div>
+      {% endif %}
+    </div>
+  </section>
+
+{% endblock %}
