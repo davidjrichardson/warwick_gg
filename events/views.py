@@ -16,6 +16,7 @@ from stripe import Charge, StripeError, Refund
 
 from events.forms import SignupForm
 from events.models import Event, EventSignup
+from seating.models import Seating
 from uwcs_auth.models import WarwickGGUser
 
 
@@ -265,6 +266,8 @@ class UnsignupConfirmView(LoginRequiredMixin, View):
         signup.is_unsigned_up = True
         signup.unsigned_up_at = timezone.now()
         signup.save()
+        # Remove all seating references
+        Seating.objects.for_event(event).filter(user=request.user).delete()
 
         messages.info(request, 'Successfully un-signed up from {event}.'.format(event=event.title),
                       extra_tags='is-info')
