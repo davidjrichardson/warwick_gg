@@ -101,7 +101,7 @@
             giveSeatToUser(seat, draggingUser.user_id);
 
         dragStop(event);
-        if(revisionNumber === null)
+        if (revisionNumber === null)
             commitRevision();
     }
 
@@ -112,7 +112,7 @@
         giveUnassignedToUser(draggingUser.user_id);
 
         dragStop(event);
-        if(revisionNumber === null)
+        if (revisionNumber === null)
             commitRevision();
     }
 
@@ -264,13 +264,13 @@
         };
         const eventSubmitUrl = '/seating/api/submit/' + eventId;
         ajax(eventSubmitUrl, 'POST', 'json=' + JSON.stringify(layout), (status, response) => {
-            if(status !== 200) {
+            if (status !== 200) {
                 enableSave();
                 addError('There was an error saving your changes.');
             }
             else {
                 finishSave('Saved');
-                if(response.length && isExec) {
+                if (response.length && isExec) {
                     addRevision(JSON.parse(response).revision);
                     revisionNumber = null;
                 }
@@ -279,17 +279,19 @@
     }
 
     function addRevision(revision) {
-        seatingRevisions.unshift(revision);
+        if (seatingRevisions.find(a => a.number === revision.number) === undefined) {
+            seatingRevisions.unshift(revision);
 
-        const listElement = document.createElement('li');
-        const anchor = document.createElement('a');
-        anchor.dataset.revisionId = revision.number;
-        anchor.appendChild(document.createTextNode(revision.name));
-        anchor.classList.add('revision');
-        anchor.addEventListener('click', onClickRevision);
+            const listElement = document.createElement('li');
+            const anchor = document.createElement('a');
+            anchor.dataset.revisionId = revision.number;
+            anchor.appendChild(document.createTextNode(revision.name));
+            anchor.classList.add('revision');
+            anchor.addEventListener('click', onClickRevision);
 
-        listElement.appendChild(anchor);
-        revisionLogDom.insertBefore(listElement, revisionLogDom.childNodes[0]);
+            listElement.appendChild(anchor);
+            revisionLogDom.insertBefore(listElement, revisionLogDom.childNodes[0]);
+        }
     }
 
     function disableSave() {
@@ -313,7 +315,7 @@
 
         http.open(method, url, true);
         http.setRequestHeader('X-CSRFToken', csrf);
-        if(method !== 'GET')
+        if (method !== 'GET')
             http.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
 
         http.onload = function () {
@@ -325,7 +327,7 @@
         try {
             http.send(body);
         }
-        catch(e) {
+        catch (e) {
             callback(http.status, http.response);
         }
     }
@@ -342,11 +344,11 @@
 
     function updateToRevision(revision = null) {
         let eventSeatingUrl = '/seating/api/seats/' + eventId;
-        if(revision !== null)
+        if (revision !== null)
             eventSeatingUrl = eventSeatingUrl + '?revision=' + revision;
 
         ajax(eventSeatingUrl, 'GET', null, (status, response) => {
-            if(status !== 200) {
+            if (status !== 200) {
                 addError('The seating configuration could not be retrieved.');
             }
             else {
@@ -372,7 +374,7 @@
                 refreshUnassigned();
                 refreshSeats();
 
-                if(revision !== null) {
+                if (revision !== null) {
                     revisionNumber = revision;
                     enableSave();
                 }
@@ -381,12 +383,12 @@
     }
 
     function updateRevisionList() {
-        if(!isExec)
+        if (!isExec)
             return;
 
         const eventRevisionsUrl = '/seating/api/revisions/' + eventId;
         ajax(eventRevisionsUrl, 'GET', null, (status, response) => {
-            if(status !== 200) {
+            if (status !== 200) {
                 addError('The current revision log could not be retrieved.');
             }
             else {
@@ -434,7 +436,7 @@
         updateToRevision(null);
         updateRevisionList();
         setInterval(() => {
-            if(!dragging && revisionNumber === null)
+            if (!dragging && revisionNumber === null)
                 updateToRevision(null);
 
             updateRevisionList();
