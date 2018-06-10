@@ -1,8 +1,14 @@
-<div class="tile is-child {% if event.is_ongoing %}is-ongoing{% endif %}">
+{% load event_tags %}
+
+<div class="tile is-child{% if event.is_ongoing %} is-ongoing{% endif %}">
+  {% if event.is_ongoing %}
+    <p><i class="fas fa-clock"></i> In progress</p>
+  {% endif %}
+  {% signups_open request.user event as open_signups %}
+  {% if open_signups and not event.is_ongoing %}
+    <p class="has-text-success"><i class="fas fa-user-plus"></i> Signups are open</p>
+  {% endif %}
   <h3 class="is-3 title"><a href="{% url 'event_home' slug=event.slug %}">{{ event.title }}</a></h3>
   <h6 class="is-6 subtitle"><strong>{{ event.location }}</strong>, {{ event.start|date:'P l jS F Y' }}
-        - {{ event.end|date:'P l jS F Y' }}</h6>
-  {% if event.is_ongoing %}
-    <p>In progress</p>
-  {% endif %}
+    - {{ event.end|date:'P l jS F Y' }}</h6>
 </div>
