@@ -91,6 +91,7 @@ class Event(models.Model):
 
         return signups
 
+    @property
     def signups_all(self):
         signups = EventSignup.objects.filter(event=self, is_unsigned_up=False).order_by('-created_at').all()
 
