@@ -1,6 +1,7 @@
 import xml.etree.ElementTree as ET
 
 import requests
+from allauth.socialaccount.models import SocialAccount
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
@@ -75,7 +76,10 @@ class DeleteCommentView(LoginRequiredMixin, UserPassesTestMixin, View):
         return HttpResponse()
 
 
-def check_membership(api_token, uni_id, request, society):
+def check_membership(api_token, profile, request, society):
+    if society == 'UWCS':
+        return SocialAccount.objects.filter(user=profile.user).exists()
+
     membership_url = 'https://www.warwicksu.com/membershipapi/listMembers/{token}/'.format(token=api_token)
     api_call = requests.get(membership_url)
 
@@ -83,7 +87,7 @@ def check_membership(api_token, uni_id, request, society):
         xml_root = ET.fromstring(api_call.text)
         members = list(map(lambda x: x.find('UniqueID').text, xml_root))
 
-        return uni_id in members
+        return profile.uni_id in members
     else:
         messages.error(request,
                        'There was an error checking your {soc} membership, please contact an exec member.'.format(
@@ -111,13 +115,13 @@ class SignupChargeView(LoginRequiredMixin, View):
 
         # If the event is hosted by UWCS
         if 'UWCS' in event.hosted_by:
-            uwcs_member = check_membership(settings.UWCS_API_KEY, profile.uni_id, request, 'UWCS')
+            uwcs_member = check_membership(settings.UWCS_API_KEY, profile, request, 'UWCS')
         else:
             uwcs_member = False
 
         # If the event is hosted by Esports
         if 'WE' in event.hosted_by:
-            esports_member = check_membership(settings.ESPORTS_API_KEY, profile.uni_id, request, 'Esports')
+            esports_member = check_membership(settings.ESPORTS_API_KEY, profile, request, 'Esports')
         else:
             esports_member = False
 
@@ -187,13 +191,13 @@ class SignupFormView(LoginRequiredMixin, View):
 
         # If the event is hosted by UWCS
         if 'UWCS' in event.hosted_by:
-            uwcs_member = check_membership(settings.UWCS_API_KEY, profile.uni_id, request, 'UWCS')
+            uwcs_member = check_membership(settings.UWCS_API_KEY, profile, request, 'UWCS')
         else:
             uwcs_member = False
 
         # If the event is hosted by Esports
         if 'WE' in event.hosted_by:
-            esports_member = check_membership(settings.ESPORTS_API_KEY, profile.uni_id, request, 'Esports')
+            esports_member = check_membership(settings.ESPORTS_API_KEY, profile, request, 'Esports')
         else:
             esports_member = False
 
