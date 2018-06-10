@@ -3,6 +3,7 @@ chardet==3.0.4
 defusedxml==0.5.0
 Django==2.0.2
 django-allauth==0.35.0
+django-anymail==3.0
 django-appconf==1.0.2
 django-avatar==4.1.0
 django-bower==5.2.0

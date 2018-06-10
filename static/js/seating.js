@@ -5,6 +5,7 @@
 
     let seatingRevisions = [];
     let unassignedUsers;
+    let revisionNumber = null;
 
     let currentSeatHasUser;
     let dragging = false;
@@ -100,6 +101,8 @@
             giveSeatToUser(seat, draggingUser.user_id);
 
         dragStop(event);
+        if(revisionNumber === null)
+            commitRevision();
     }
 
     function dragStopOnUnassigned(event) {
@@ -109,6 +112,8 @@
         giveUnassignedToUser(draggingUser.user_id);
 
         dragStop(event);
+        if(revisionNumber === null)
+            commitRevision();
     }
 
     function handleTouchEnd(event) {
@@ -265,8 +270,10 @@
             }
             else {
                 finishSave('Saved');
-                if(response.length && isExec)
+                if(response.length && isExec) {
                     addRevision(JSON.parse(response).revision);
+                    revisionNumber = null;
+                }
             }
         });
     }
@@ -365,8 +372,10 @@
                 refreshUnassigned();
                 refreshSeats();
 
-                if(revision !== null)
+                if(revision !== null) {
+                    revisionNumber = revision;
                     enableSave();
+                }
             }
         });
     }
@@ -424,6 +433,12 @@
 
         updateToRevision(null);
         updateRevisionList();
+        setInterval(() => {
+            if(!dragging && revisionNumber === null)
+                updateToRevision(null);
+
+            updateRevisionList();
+        }, 5000);
     });
 
 })();
