@@ -11,7 +11,7 @@
     {% avatar signup.user 128 class='rounded-image image is-64x64' %}
   </figure>
   <div class="media-content">
-    <div class="content">
+    <div class="content comment-wrapper">
       <p>
         <strong {% if signup.profile.nickname %}class="tooltip is-tooltip-primary"
                 data-tooltip="{{ signup.user.get_full_name }}"{% endif %}>{{ signup.profile.long_name }}</strong>
