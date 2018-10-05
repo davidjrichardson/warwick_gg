@@ -3,6 +3,7 @@ from functools import reduce
 
 from django.conf import settings
 from django.db import models
+from django.template.defaultfilters import date as dateformat
 from django.utils import timezone
 from markdown_deux.templatetags.markdown_deux_tags import markdown_allowed
 from multiselectfield import MultiSelectField
@@ -107,9 +108,12 @@ class Event(models.Model):
 
     def signup_start_for_user(self, user):
         if self.signup_start_fresher:
-            profile = WarwickGGUser.objects.get(user=user)
+            if not user.is_authenticated:
+                return self.signup_start
+            else:
+                profile = WarwickGGUser.objects.get(user=user)
 
-            return self.signup_start_fresher if profile.is_fresher else self.signup_start
+                return self.signup_start_fresher if profile.is_fresher else self.signup_start
         else:
             return self.signup_start
 

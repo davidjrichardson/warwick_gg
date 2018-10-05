@@ -151,7 +151,11 @@
         <h4 class="is-4 title">Sign up information</h4>
         <div class="content">
           <ul class="has-bullets">
-            <li><strong>Signups open:</strong> {{ event.signup_start|date:'P l jS F Y' }}</li>
+            {% if event.signup_start_fresher %}
+              <li><strong>Signups open:</strong> {{ event.signup_start_fresher|date:'P l jS F Y' }} for freshers, {{ event.signup_start|date:'P l jS F Y' }} for everyone else</li>
+            {% else %}
+              <li><strong>Signups open:</strong> {{ event.signup_start|date:'P l jS F Y' }}</li>
+            {% endif %}
             <li><strong>Signups close:</strong> {{ event.signup_end|date:'P l jS F Y' }}</li>
             <li><strong>Spaces left:</strong> {{ signups_remaining }} (of {{ event.signup_limit }})</li>
             <li><strong>Attendance cost:</strong> CompSoc/Esports members: {% if event.cost_member == 0 %}Free{% else %}
@@ -207,7 +211,8 @@
                 {% else %}
                   {% if event.signup_count == event.signup_limit %}
                     <h4 class="is-4 title">Signups full</h4>
-                    <p>Signups for {{ event.title }} have filled up! Check back frequently to see if anyone has opened up a space.</p>
+                    <p>Signups for {{ event.title }} have filled up! Check back frequently to see if anyone has opened
+                      up a space.</p>
                   {% else %}
                     <h4 class="is-4 title">Signups opening soon</h4>
                     <p>Signups for {{ event.title }} arent open just yet. They open
@@ -222,7 +227,7 @@
             <div class="tile-left">
               <h4 class="title is-4">Register to sign up</h4>
               <p>To sign up for {{ event.title }}, you need to have logged into your Warwick.gg account! To log in or
-                sign up click <a href="{% url 'account_login' %}">here</a>.</p>
+                sign up, click <a href="{% url 'account_login' %}">here</a>.</p>
             </div>
           </div>
         {% endif %}
