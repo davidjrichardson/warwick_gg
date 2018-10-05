@@ -170,10 +170,6 @@ STATIC_URL = '/static/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 MEDIA_URL = '/media/'
 
-SVG_DIRS = [
-    os.path.join(PROJECT_DIR, 'media', 'seating')
-]
-
 # Django Compressor
 PROJECT_PATH = os.path.abspath(os.path.dirname(__file__))
 BOWER_COMPONENTS_ROOT = os.path.join(PROJECT_PATH, "../components")
