@@ -28,6 +28,7 @@ class DashboardIndexView(LoginRequiredMixin, View):
 
         ctx = {
             'event': next_event,
+            'event_signup_for_user': next_event.signup_start_for_user(request.user),
             'just_finished': just_finished,
             'event_signups_open': next_event.signups_open(request.user) if next_event else False,
             'tournaments': tournaments

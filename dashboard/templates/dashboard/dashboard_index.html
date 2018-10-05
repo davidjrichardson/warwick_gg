@@ -45,15 +45,9 @@
               {{ event.end|date:'P l jS F Y' }})
             {% else %}
               {% if not event_signups_open %}
-                {% if event.signup_start_fresher %}
-                  Signups open for freshers in
-                  <span id="countdown-output" data-countdown-to="{{ event.signup_start_fresher|date:'c' }}"></span> (
-                  {{ event.signup_start_fresher|date:'P l jS F Y' }})
-                {% else %}
-                  Signups open in
-                  <span id="countdown-output" data-countdown-to="{{ event.signup_start|date:'c' }}"></span> (
-                  {{ event.signup_start|date:'P l jS F Y' }})
-                {% endif %}
+                Signups open in
+                <span id="countdown-output" data-countdown-to="{{ event_signup_for_user|date:'c' }}"></span> (
+                {{ event.signup_start|date:'P l jS F Y' }})
               {% else %}
                 Signups are now open! Click
                 <strong><a href="{% url 'event_home' slug=event.slug %}#signup">here</a></strong> to start signing up
@@ -105,11 +99,11 @@
 
         {% if not tournaments or tournaments|length < 3 %}
           <div class="column is-4">
-          <div class="tournament-box empty has-text-centered">
+            <div class="tournament-box empty has-text-centered">
 
-            <p class=""><i class="fas fa-trophy fa-6x"></i></p>
-            <p class="has-text-centered">There are no more upcoming tournaments for the moment. Check again soon!</p>
-          </div>
+              <p class=""><i class="fas fa-trophy fa-6x"></i></p>
+              <p class="has-text-centered">There are no more upcoming tournaments for the moment. Check again soon!</p>
+            </div>
           </div>
         {% endif %}
       </div>
