@@ -1,4 +1,5 @@
 import json
+import os
 
 from avatar.templatetags.avatar_tags import avatar_url
 from django.contrib.auth import get_user_model
@@ -196,13 +197,17 @@ class SeatingView(LoginRequiredMixin, View):
 
         # Check if the user has signed up
         has_signed_up = EventSignup.objects.for_event(event, request.user).exists()
-        seating_plan = event.seating_location if event.has_seating else None
+        # Get the filename for the seating plan SVG
+        if event.seating_location:
+            plan_svg = os.path.basename(event.seating_location.seating_plan_svg.name)
+        else:
+            plan_svg = None
 
         ctx = {
             'event': event,
             'has_signed_up': has_signed_up,
             'is_exec': WarwickGGUser.objects.get(user=self.request.user).is_exec,
             'slug': slug,
-            'seating_plan': seating_plan,
+            'seating_svg': plan_svg
         }
         return render(request, self.template_name, context=ctx)
