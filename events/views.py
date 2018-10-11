@@ -116,7 +116,7 @@ def check_membership(api_token, profile, request, society):
         xml_root = ET.fromstring(api_call.text)
         members = list(map(lambda x: x.find('UniqueID').text, xml_root))
 
-        return profile.uni_id in members
+        return profile.uni_id.lower().strip('u') in members
     else:
         messages.error(request,
                        'There was an error checking your {soc} membership, please contact an exec member.'.format(
