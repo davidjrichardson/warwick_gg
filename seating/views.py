@@ -166,7 +166,8 @@ class SeatingRoomRevisionListAPIView(UserPassesTestMixin, LoginRequiredMixin, Vi
     raise_exception = True
 
     def test_func(self):
-        return WarwickGGUser.objects.get(user=self.request.user).is_exec if self.request.user.is_authenticated else False
+        return WarwickGGUser.objects.get(
+            user=self.request.user).is_exec if self.request.user.is_authenticated else False
 
     def get(self, request, event_id):
         event = get_object_or_404(Event, id=event_id)

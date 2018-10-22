@@ -79,7 +79,8 @@ TEMPLATES = [
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
         'DIRS': [
             os.path.join(PROJECT_DIR, 'templates'),
-            os.path.join(PROJECT_DIR, 'templates', 'allauth')
+            os.path.join(PROJECT_DIR, 'templates', 'allauth'),
+            os.path.join(BASE_DIR, 'media', 'seating')
         ],
         'APP_DIRS': True,
         'OPTIONS': {
