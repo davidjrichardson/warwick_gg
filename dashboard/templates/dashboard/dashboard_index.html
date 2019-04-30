@@ -1,13 +1,13 @@
 {% extends 'dashboard/navbar_base.html' %}
 
-{% load static %}
+{% load static dashboard_tags %}
 
 {% block title %}Warwick.gg Dashboard{% endblock %}
 
 {% block template_classname %}warwickgg-dash{% endblock %}
 
 {% block js %}
-  {% if event and not just_finished %}
+  {% if event or just_finished %}
     <script type="text/javascript" src="{% static 'js/countdown.en.min.js' %}"></script>
     <script type="text/javascript">
         document.addEventListener('DOMContentLoaded', function () {
@@ -34,43 +34,64 @@
   <section class="hero is-primary is-bold is-large">
     <div class="hero-body">
       <div class="container">
-        {% if event and not just_finished %}
-          <h1 class="title has-text-centered is-2">
-            {% if event.is_ongoing %}In progress:{% else %}Next event:{% endif %}
-            <a href="{% url 'event_home' slug=event.slug %}">{{ event.title }}</a>
-          </h1>
-          <h2 class="subtitle is-6 has-text-centered">
+        {% if event or just_finished %}
+          {% if event and just_finished %}
+            {# Events with signups take precedence over just finished #}
+            {% signups_are_open request.user event as is_open %}
             {% if event.is_ongoing %}
-              Finishes in <span id="countdown-output" data-countdown-to="{{ event.end|date:'c' }}"></span> (
-              {{ event.end|date:'P l jS F Y' }})
+              <h1 class="title has-text-centered is-2">
+                In progress: <a href="{% url 'event_home' slug=event.slug %}">{{ event.title }}</a>
+              </h1>
+              <h2 class="subtitle has-text-centered is-6">
+                Finishes in <span id="countdown-output" data-countdown-to="{{ event.end|date:'c' }}"></span>
+                ({{ event.end|date:'P l jS F Y' }})
+              </h2>
+              {# Signups are open #}
+            {% elif is_open %}
+              <h1 class="title has-text-centered is-2">
+                Next event: <a href="{% url 'event_home' slug=event.slug %}">{{ event.title }}</a>
+              </h1>
+              <h2 class="subtitle has-text-centered is-6">
+                Signups are now open! Click <strong><a
+                  href="{% url 'event_home' slug=event.slug %}#signup">here</a></strong> to start signing up
+                for {{ event.title }}.
+              </h2>
             {% else %}
-              {% if not event_signups_open %}
-                Signups open in
-                <span id="countdown-output" data-countdown-to="{{ event_signup_for_user|date:'c' }}"></span> (
-                {{ event.signup_start|date:'P l jS F Y' }})
-              {% else %}
+              <h1 class="title has-text-centered is-2">
+                Just finished: <a href="{% url 'event_home' slug=just_finished.slug %}">{{ just_finished.title }}</a>
+              </h1>
+              <h2 class="subtitle has-text-centered is-6">Thanks to all of those who came along!</h2>
+            {% endif %}
+          {% elif event %}
+            {% signups_are_open request.user event as is_open %}
+            <h1 class="title has-text-centered is-2">
+              {% if event.is_ongoing %}In progress:{% else %}Next event:{% endif %}
+              <a href="{% url 'event_home' slug=event.slug %}">{{ event.title }}</a>
+            </h1>
+            <h2 class="subtitle has-text-centered is-6">
+              {% if event.is_ongoing %}
+                Finishes in <span id="countdown-output" data-countdown-to="{{ event.end|date:'c' }}"></span>
+                ({{ event.end|date:'P l jS F Y' }})
+              {% elif is_open %}
                 Signups are now open! Click
                 <strong><a href="{% url 'event_home' slug=event.slug %}#signup">here</a></strong> to start signing up
                 for {{ event.title }}.
+              {% else %}
+                {% user_signup_date request.user event as signup_date %}
+                Signups open in
+                <span id="countdown-output" data-countdown-to="{{ signup_date|date:'c' }}"></span>
+                ({{ event.signup_start|date:'P l jS F Y' }})
               {% endif %}
-            {% endif %}
-          </h2>
-        {% else %}
-          {% if just_finished %}
+            </h2>
+          {% elif just_finished %}
             <h1 class="title has-text-centered is-2">
               Just finished: <a href="{% url 'event_home' slug=just_finished.slug %}">{{ just_finished.title }}</a>
             </h1>
-            <h2 class="subtitle is-6 has-text-centered">
-              Thanks to all of those who came along!
-            </h2>
-          {% else %}
-            <h1 class="title has-text-centered is-2">
-              No upcoming events
-            </h1>
-            <h2 class="subtitle is-6 has-text-centered">
-              There are no upcoming events. Check back soon for updates!
-            </h2>
+            <h2 class="subtitle is-6 has-text-centered">Thanks to all of those who came along!</h2>
           {% endif %}
+        {% else %}
+          <h1 class="title has-text-centered is-2">No upcoming events</h1>
+          <h2 class="subtitle has-text-centered is-6">Come back again soon for info on our next event.</h2>
         {% endif %}
       </div>
     </div>
@@ -100,7 +121,6 @@
         {% if not tournaments or tournaments|length < 3 %}
           <div class="column is-4">
             <div class="tournament-box empty has-text-centered">
-
               <p class=""><i class="fas fa-trophy fa-6x"></i></p>
               <p class="has-text-centered">There are no more upcoming tournaments for the moment. Check again soon!</p>
             </div>
