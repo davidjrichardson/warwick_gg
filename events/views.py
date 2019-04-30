@@ -12,7 +12,8 @@ from django.utils import timezone
 from django.utils.decorators import method_decorator
 from django.views import View
 from django.views.decorators.csrf import csrf_protect
-from stripe import Charge, StripeError, Refund
+from stripe import Charge, Refund
+from stripe.error import StripeError
 
 from events.forms import SignupForm
 from events.models import Event, EventSignup, Tournament
