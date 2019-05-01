@@ -6,6 +6,38 @@
 
 {% block js %}
   <script type="text/javascript">
+      String.prototype.trimLeft = function (charlist) {
+          if (charlist === undefined)
+              charlist = "\s";
+
+          return this.replace(new RegExp("^[" + charlist + "]+"), "");
+      };
+
+      function showTab(tabName) {
+          let selectedTab = document.querySelector(`li a[data-target="${tabName}-container"]`);
+          let selectedContainer = document.getElementById(`${tabName}-container`);
+
+          if (!selectedTab) {
+              selectedTab = document.querySelector('li a[data-target="info-container"]');
+              selectedContainer = document.getElementById('info-container');
+          }
+
+          // Hide all tabs and containers that aren't the ones to be shown
+          document.querySelectorAll(`#tab-container li.is-active a:not([data-target="${tabName}-container"])`)
+              .forEach(function (tab) {
+                  tab.parentNode.classList.remove('is-active');
+              });
+
+          document.querySelectorAll(`.tab-content.is-active:not(#${tabName}-container)`)
+              .forEach(function (container) {
+                  container.classList.remove('is-active');
+              });
+
+          // Show the correct tab/container
+          selectedTab.parentNode.classList.add('is-active');
+          selectedContainer.classList.add('is-active');
+      }
+
       document.addEventListener('DOMContentLoaded', function () {
           {% if messages %}
               const notificationClose = document.getElementById('notification-close');
@@ -54,37 +86,15 @@
               });
           {% endif %}
 
-          const tabs = document.querySelectorAll('#tab-container li a');
-
-          if (window.location.hash === '#signup') {
-              document.querySelector('li a[data-target="signup-container"]').parentNode.classList.add('is-active');
-          } else if (window.location.hash === '#tournaments') {
-              document.querySelector('li a[data-target="tournament-container"]').parentNode.classList.add('is-active');
-          } else {
-              document.querySelector('li a[data-target="info-container"]').parentNode.classList.add('is-active');
+          if (window.location.hash) {
+              showTab(window.location.hash.trimLeft('#'));
           }
 
-          tabs.forEach(function (tab) {
-              let target = document.getElementById(tab.getAttribute('data-target'));
-
-              // Hide all of the containers by default
-              if (tab.parentNode.classList.contains('is-active')) {
-                  target.classList.remove('is-hidden');
-              } else {
-                  target.classList.add('is-hidden');
-              }
-
-
-              tab.addEventListener('click', function (ev) {
-                  tabs.forEach(function (tab) {
-                      tab.parentNode.classList.remove('is-active');
-                      document.getElementById(tab.getAttribute('data-target')).classList.add('is-hidden');
-                  });
-
-                  ev.target.parentNode.classList.add('is-active');
-                  document.getElementById(ev.target.getAttribute('data-target')).classList.remove('is-hidden');
+          document.querySelectorAll('#tab-container li a').forEach(function (tab) {
+              tab.addEventListener('click', function () {
+                  showTab(tab.getAttribute('data-target').replace('-container', ''));
               });
-          })
+          });
       });
   </script>
 {% endblock %}
@@ -116,14 +126,14 @@
         - {{ event.end|date:'P l jS F Y' }}</h4>
       <div class="tabs is-boxed">
         <ul id="tab-container">
-          <li><a href="#" data-target="info-container">Info</a></li>
-          <li><a href="#" data-target="signup-container">Sign ups</a></li>
+          <li class="is-active"><a href="#info" data-target="info-container">Info</a></li>
+          <li><a href="#signup" data-target="signup-container">Sign ups</a></li>
           {% if tournaments %}
-            <li><a href="#" data-target="tournament-container">Tournaments</a></li>
+            <li><a href="#tournaments" data-target="tournaments-container">Tournaments</a></li>
           {% endif %}
         </ul>
       </div>
-      <div class="container" id="info-container">
+      <div class="tab-content container is-active" id="info-container">
         <h4 class="is-4 title">Event information</h4>
         <div class="content">
           {{ event.description|markdown }}
@@ -131,7 +141,7 @@
       </div>
 
       {% if tournaments %}
-        <div class="container" id="tournament-container">
+        <div class="tab-content container" id="tournaments-container">
           <h4 class="is-4 title">Tournaments</h4>
           <div class="content">
             <p>Here you can find out about the tournament{{ tournaments|pluralize }} that will be happening
@@ -147,12 +157,14 @@
         </div>
       {% endif %}
 
-      <div class="container is-hidden" id="signup-container">
+      <div class="tab-content container" id="signup-container">
         <h4 class="is-4 title">Sign up information</h4>
         <div class="content">
           <ul class="has-bullets">
             {% if event.signup_start_fresher %}
-              <li><strong>Signups open:</strong> {{ event.signup_start_fresher|date:'P l jS F Y' }} for freshers, {{ event.signup_start|date:'P l jS F Y' }} for everyone else</li>
+              <li><strong>Signups open:</strong> {{ event.signup_start_fresher|date:'P l jS F Y' }} for
+                freshers, {{ event.signup_start|date:'P l jS F Y' }} for everyone else
+              </li>
             {% else %}
               <li><strong>Signups open:</strong> {{ event.signup_start|date:'P l jS F Y' }}</li>
             {% endif %}

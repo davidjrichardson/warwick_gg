@@ -649,6 +649,14 @@ div.navbar-dropdown {
   display: none;
 }
 
+.tab-content {
+  display: none;
+
+  &.is-active {
+    display: block;
+  }
+}
+
 .is-row-reverse-order {
   flex-direction: row-reverse;
 }
