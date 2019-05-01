@@ -203,6 +203,13 @@ class Ticket(models.Model):
     def is_valid(self):
         return self.status == self.COMPLETE
 
+    def __str__(self):
+        return '<Ticket status={status}>'.format(status={
+            self.COMPLETE: 'COMPLETE',
+            self.IN_PROGRESS: 'IN_PROGRESS',
+            self.REFUNDED: 'REFUNDED'
+        }[self.status])
+
     class Meta:
         ordering = ['created_at']
 
@@ -215,12 +222,12 @@ class EventSignup(models.Model):
 
     # If a user has un-signed up, their signup will persist to preserve transaction information
     # This flag will determine if a signup has been removed.
+    # TODO: Remove these fields
     is_unsigned_up = models.BooleanField(default=False)
     unsigned_up_at = models.DateTimeField(blank=True, null=True)
 
     # Stripe transaction tokens in case of refund
-    transaction_token = models.TextField(blank=True)
-    refund_token = models.TextField(blank=True)
+    ticket = models.OneToOneField(Ticket, on_delete=models.CASCADE, blank=True, null=True)
 
     # Disclaimer signing
     photography_consent = models.BooleanField(default=False)
