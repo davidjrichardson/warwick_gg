@@ -232,7 +232,7 @@ class EventSignup(models.Model):
     event = models.ForeignKey(Event, on_delete=models.CASCADE)
     created_at = models.DateTimeField(default=timezone.now)
     # TODO: Figure out a way to do this - AJAX on the signup page?
-    comment = models.TextField(blank=True, null=True, max_length=255)
+    comment = models.TextField(blank=True, max_length=255)
 
     # If a user has un-signed up, their signup will persist to preserve transaction information
     # This flag will determine if a signup has been removed.
