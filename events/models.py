@@ -172,12 +172,15 @@ class Tournament(models.Model):
         return '/events/tournament/{slug}'.format(slug=self.slug)
 
 
-class EventSignupManager(models.Manager):
-    def for_event(self, event: Event, user):
-        return self.filter(event=event, user=user, is_unsigned_up=False)
+class TicketManager(models.Manager):
+    def for_event(self, event: Event):
+        return self.filter(eventsignup__event=event)
 
-    def all_for_event(self, event: Event):
-        return self.filter(event=event, is_unsigned_up=False)
+    def is_complete(self):
+        return self.filter(status=Ticket.COMPLETE)
+
+    def is_refunded(self):
+        return self.filter(status=Ticket.REFUNDED)
 
 
 class Ticket(models.Model):
@@ -200,6 +203,8 @@ class Ticket(models.Model):
     created_at = models.DateTimeField(default=timezone.now)
     last_updated_at = models.DateTimeField(default=timezone.now)
 
+    objects = TicketManager()
+
     def is_valid(self):
         return self.status == self.COMPLETE
 
@@ -214,10 +219,19 @@ class Ticket(models.Model):
         ordering = ['created_at']
 
 
+class EventSignupManager(models.Manager):
+    def for_event(self, event: Event, user):
+        return self.filter(event=event, user=user, is_unsigned_up=False)
+
+    def all_for_event(self, event: Event):
+        return self.filter(event=event, is_unsigned_up=False)
+
+
 class EventSignup(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     event = models.ForeignKey(Event, on_delete=models.CASCADE)
     created_at = models.DateTimeField(default=timezone.now)
+    # TODO: Figure out a way to do this - AJAX on the signup page?
     comment = models.TextField(blank=True, null=True, max_length=255)
 
     # If a user has un-signed up, their signup will persist to preserve transaction information
