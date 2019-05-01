@@ -1,6 +1,7 @@
 import xml.etree.ElementTree as ET
 
 import requests
+import stripe
 from allauth.socialaccount.models import SocialAccount
 from django.conf import settings
 from django.contrib import messages
@@ -11,8 +12,7 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.utils import timezone
 from django.utils.decorators import method_decorator
 from django.views import View
-from django.views.decorators.csrf import csrf_protect
-from stripe import Charge, Refund
+from django.views.decorators.csrf import csrf_protect, csrf_exempt
 from stripe.error import StripeError
 
 from events.forms import SignupForm
@@ -141,8 +141,6 @@ class SignupChargeView(LoginRequiredMixin, View):
             messages.error(request, 'You\'re already signed up to that event.', extra_tags='is-danger')
             return redirect('event_home', slug=event.slug)
 
-        print(event.signup_count, event.signup_limit)
-
         # Check if there is still space left
         if event.signup_count == event.signup_limit:
             messages.error(request, 'There\'s no more space for that event, sorry.', extra_tags='is-danger')
@@ -179,10 +177,21 @@ class SignupChargeView(LoginRequiredMixin, View):
             return redirect('event_signup', slug=event.slug)
 
         if signup_cost > 0:
-            token = request.POST.get('stripe_token')
             try:
-                charge = Charge.create(amount=int(signup_cost * 100), currency='gbp', source=token,
-                                       receipt_email=request.user.email)
+                # TODO: Move to the Checkout API
+                payment_session = stripe.checkout.session.Session.create(
+                    success_url='https://warwick.gg/events/{slug}'.format(slug=event.slug),
+                    cancel_url='https://warwick.gg/events/{slug}'.format(slug=event.slug),
+                    payment_method_types=['card'],
+                    line_items={
+                        'name': '{title} ticket'.format(title=event.title),
+                        'currency': 'gbp',
+                        'amount': int(signup_cost * 100),
+                        'quantity': 1,
+                        'description': 'A ticket to {title} run by the Uni of Warwick Computing Society'.format(
+                            title=event.title)
+                    }
+                )
             except StripeError:
                 # If there was an error with the request
                 messages.error(request,
@@ -190,20 +199,20 @@ class SignupChargeView(LoginRequiredMixin, View):
                                extra_tags='is-danger')
                 return redirect('event_signup', slug=event.slug)
 
-            if charge.paid:
-                signup = signup_form.save(commit=False)
-                signup.transaction_token = charge.stripe_id
-                signup.save()
-
-                messages.success(request, 'Signup successful!{seating}'.format(
-                    seating=' You can now reserve a seat on the seating plan.' if event.has_seating else ''),
-                                 extra_tags='is-success')
-                return redirect('event_home', slug=event.slug)
-            else:
-                messages.error(request,
-                               'There was an error processing your payment. Make sure you have sufficient balance and try again.',
-                               extra_tags='is-danger')
-                return redirect('event_signup', slug=event.slug)
+            # if charge.paid:
+            #     signup = signup_form.save(commit=False)
+            #     signup.transaction_token = charge.stripe_id
+            #     signup.save()
+            #
+            #     messages.success(request, 'Signup successful!{seating}'.format(
+            #         seating=' You can now reserve a seat on the seating plan.' if event.has_seating else ''),
+            #                      extra_tags='is-success')
+            #     return redirect('event_home', slug=event.slug)
+            # else:
+            #     messages.error(request,
+            #                    'There was an error processing your payment. Make sure you have sufficient balance and try again.',
+            #                    extra_tags='is-danger')
+            #     return redirect('event_signup', slug=event.slug)
         else:
             signup_form.save()
             messages.success(request, 'Signup successful!{seating}'.format(
@@ -240,16 +249,33 @@ class SignupFormView(LoginRequiredMixin, View):
 
         is_host_member = esports_member or uwcs_member
         signup_cost = event.cost_member if is_host_member else event.cost_non_member
-
         signup_form = SignupForm()
+
+        if signup_cost > 0:
+            checkout_session = stripe.checkout.session.Session.create(
+                success_url='https://4cd3200e.ngrok.io/events/{slug}#signup'.format(slug=event.slug),
+                cancel_url='https://4cd3200e.ngrok.io/events/{slug}#signup'.format(slug=event.slug),
+                customer_email=request.user.email,
+                payment_method_types=['card'],
+                line_items=[{
+                    'name': '{title} ticket'.format(title=event.title),
+                    'currency': 'gbp',
+                    'amount': int(signup_cost * 100),
+                    'quantity': 1,
+                    'description': 'A ticket to {title}, an event run by the Uni of Warwick Computing Society.'.format(
+                        title=event.title)
+                }]
+            )
+        else:
+            checkout_session = None
 
         ctx = {
             'event': event,
             'event_cost': signup_cost,
-            'stripe_cost': 100 * signup_cost,
             'is_host_member': is_host_member,
             'stripe_pubkey': settings.STRIPE_PUBLIC_KEY,
-            'signup_form': signup_form
+            'signup_form': signup_form,
+            'checkout_session': checkout_session.id if checkout_session else ''
         }
         return render(request, self.template_name, context=ctx)
 
@@ -274,6 +300,31 @@ class UnsignupFormView(LoginRequiredMixin, View):
         return render(request, self.template_name, context=ctx)
 
 
+class StripeWebhookView(View):
+    @method_decorator(csrf_exempt)
+    def dispatch(self, request, *args, **kwargs):
+        return super(StripeWebhookView, self).dispatch(request, *args, **kwargs)
+
+    def post(self, request):
+        payload = request.body
+        sig_header = request.META['HTTP_STRIPE_SIGNATURE']
+
+        try:
+            # Verify the Stripe signature
+            event = stripe.Webhook.construct_event(payload, sig_header, settings.STRIPE_WEBHOOK_KEY)
+        except ValueError:
+            return HttpResponse(status=400)
+        except stripe.error.SignatureVerificationError:
+            return HttpResponse(status=400)
+
+        # if event['type'] == 'checkout.session.completed':
+        #     TODO: Checkout session for a user has completed
+        print(event['type'])
+        print(event['data']['object'])
+
+        return HttpResponse(status=200)
+
+
 class UnsignupConfirmView(LoginRequiredMixin, View):
     login_url = '/accounts/login/'
 
@@ -292,7 +343,7 @@ class UnsignupConfirmView(LoginRequiredMixin, View):
         # If the
         if signup.transaction_token:
             try:
-                refund = Refund.create(charge=signup.transaction_token)
+                refund = stripe.Refund.create(charge=signup.transaction_token)
                 signup.refund_token = refund.stripe_id
             except StripeError:
                 messages.error(request,

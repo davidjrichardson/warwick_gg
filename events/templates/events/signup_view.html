@@ -6,45 +6,21 @@
 
 {% block js %}
   {% if event_cost > 0 %}
-    <script src="https://checkout.stripe.com/checkout.js"></script>
+    <script src="https://js.stripe.com/v3/"></script>
   {% endif %}
   <script type="text/javascript">
       document.addEventListener('DOMContentLoaded', function () {
           {% if event_cost > 0 %}
-              const signupForm = document.getElementById('signup-form');
-              const handler = StripeCheckout.configure({
-                  key: '{{ stripe_pubkey }}',
-                  image: '{% static 'img/uwcs.png' %}',
-                  locale: 'auto',
-                  zipCode: true,
-                  billingAddress: true,
-                  email: '{{ request.user.email }}',
-                  token: function (token) {
-                      console.log(token);
-
-                      let tokenInput = document.createElement('input');
-                      tokenInput.setAttribute('type', 'hidden');
-                      tokenInput.setAttribute('name', 'stripe_token');
-                      tokenInput.setAttribute('value', token.id);
-
-                      signupForm.appendChild(tokenInput);
-                      signupForm.submit();
-                  }
-              });
+              var stripe = Stripe('{{ stripe_pubkey }}');
 
               document.getElementById('stripe-button').addEventListener('click', function (ev) {
-                  handler.open({
-                      name: 'UWCS',
-                      description: 'Signup fee for {{ event.title }}',
-                      currency: 'gbp',
-                      amount: {{ stripe_cost }}
-                  });
                   ev.stopImmediatePropagation();
                   ev.preventDefault();
-              });
 
-              window.addEventListener('popstate', function () {
-                  handler.close();
+                  stripe.redirectToCheckout({
+                      sessionId: '{{ checkout_session }}'
+                  }).then(function (result) {
+                  })
               });
           {% endif %}
 

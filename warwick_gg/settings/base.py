@@ -19,7 +19,10 @@ BASE_DIR = os.path.dirname(PROJECT_DIR)
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/2.0/howto/deployment/checklist/
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [
+    '4cd3200e.ngrok.io',
+    '*.4cd3200e.ngrok.io'
+]
 
 # Application definition
 
@@ -209,5 +212,6 @@ ESPORTS_API_KEY = os.environ.get('ESPORTS_API_KEY')
 # Stripe API keys
 STRIPE_PUBLIC_KEY = os.environ.get('STRIPE_PUBLIC_KEY')
 STRIPE_PRIVATE_KEY = os.environ.get('STRIPE_PRIVATE_KEY')
+STRIPE_WEBHOOK_KEY = os.environ.get('STRIPE_WEBHOOK_KEY')
 
 stripe.api_key = STRIPE_PRIVATE_KEY
