@@ -222,7 +222,6 @@ class EventSignup(models.Model):
 
     # If a user has un-signed up, their signup will persist to preserve transaction information
     # This flag will determine if a signup has been removed.
-    # TODO: Remove these fields
     is_unsigned_up = models.BooleanField(default=False)
     unsigned_up_at = models.DateTimeField(blank=True, null=True)
 
@@ -241,6 +240,9 @@ class EventSignup(models.Model):
     @property
     def profile(self):
         return WarwickGGUser.objects.get(user=self.user)
+
+    def is_valid(self):
+        return (not self.is_unsigned_up) and self.ticket.is_valid()
 
     def __str__(self):
         return '{user}\'s signup to {event}'.format(user=self.user, event=self.event)
