@@ -180,6 +180,33 @@ class EventSignupManager(models.Manager):
         return self.filter(event=event, is_unsigned_up=False)
 
 
+class Ticket(models.Model):
+    COMPLETE = 'C'
+    REFUNDED = 'R'
+    IN_PROGRESS = 'P'
+
+    TICKET_STATUSES = (
+        (COMPLETE, 'Complete'),
+        (REFUNDED, 'Refunded'),
+        (IN_PROGRESS, 'In progress')
+    )
+
+    charge_id = models.TextField()
+    status = models.CharField(
+        max_length=1,
+        choices=TICKET_STATUSES,
+        default=IN_PROGRESS
+    )
+    created_at = models.DateTimeField(default=timezone.now)
+    last_updated_at = models.DateTimeField(default=timezone.now)
+
+    def is_valid(self):
+        return self.status == self.COMPLETE
+
+    class Meta:
+        ordering = ['created_at']
+
+
 class EventSignup(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     event = models.ForeignKey(Event, on_delete=models.CASCADE)
