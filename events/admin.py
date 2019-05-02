@@ -1,7 +1,7 @@
 from django.contrib import admin
 
 # Register your models here.
-from events.models import Event, SeatingRoom, EventSignup, Tournament
+from events.models import Event, SeatingRoom, EventSignup, Tournament, Ticket
 
 
 @admin.register(Tournament)
@@ -25,7 +25,13 @@ class EventAdmin(admin.ModelAdmin):
     search_fields = ('title', 'location')
 
 
-# TODO: Create admin page for Tickets
+@admin.register(Ticket)
+class TicketAdmin(admin.ModelAdmin):
+    date_hierarchy = 'created_at'
+    list_display = ('user', 'created_at', 'status', 'comment', 'last_updated_at', 'charge_id')
+    list_filter = ('user', 'status')
+    search_fields = ('user__first_name', 'user__last_name')
+
 
 @admin.register(EventSignup)
 class EventSignupAdmin(admin.ModelAdmin):
