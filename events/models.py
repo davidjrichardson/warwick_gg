@@ -201,8 +201,8 @@ class Ticket(models.Model):
         (CREATED, 'Created')
     )
 
-    id = models.IntegerField(primary_key=True)
-    charge_id = models.TextField()
+    id = models.AutoField(primary_key=True)
+    charge_id = models.TextField(blank=True)
     status = models.CharField(
         max_length=1,
         choices=TICKET_STATUSES,
@@ -211,6 +211,7 @@ class Ticket(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     created_at = models.DateTimeField(default=timezone.now)
     last_updated_at = models.DateTimeField(default=timezone.now)
+    comment = models.TextField(blank=True)
 
     objects = TicketManager()
 
@@ -265,6 +266,7 @@ class EventSignup(models.Model):
     def profile(self):
         return WarwickGGUser.objects.get(user=self.user)
 
+    @property
     def is_valid(self):
         return (not self.is_unsigned_up) and self.ticket.is_valid()
 

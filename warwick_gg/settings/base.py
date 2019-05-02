@@ -19,10 +19,7 @@ BASE_DIR = os.path.dirname(PROJECT_DIR)
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/2.0/howto/deployment/checklist/
 
-ALLOWED_HOSTS = [
-    '4cd3200e.ngrok.io',
-    '*.4cd3200e.ngrok.io'
-]
+ALLOWED_HOSTS = []
 
 # Application definition
 

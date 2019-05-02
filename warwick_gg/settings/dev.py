@@ -5,6 +5,11 @@ from .base import *
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
+ALLOWED_HOSTS += [
+    'cacd1f8f.ngrok.io',
+    '*.cacd1f8f.ngrok.io',
+]
+
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'l33th4x0rs'
 

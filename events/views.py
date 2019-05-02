@@ -1,4 +1,6 @@
+import json
 import xml.etree.ElementTree as ET
+from datetime import datetime
 
 import requests
 import stripe
@@ -16,7 +18,7 @@ from django.views.decorators.csrf import csrf_protect, csrf_exempt
 from stripe.error import StripeError
 
 from events.forms import SignupForm
-from events.models import Event, EventSignup, Tournament
+from events.models import Event, EventSignup, Tournament, Ticket
 from seating.models import Seating
 from uwcs_auth.models import WarwickGGUser
 
@@ -162,10 +164,6 @@ class SignupChargeView(LoginRequiredMixin, View):
 
         signup_cost = event.cost_member if esports_member or uwcs_member else event.cost_non_member
 
-        # If the user should be charged but there's no stripe token then error
-        if signup_cost > 0 and not request.POST.get('stripe_token'):
-            return HttpResponseBadRequest()
-
         # If there was an issue processing the signup form then error - there shouldn't be any reason since
         # all of the fields are optional but ???
         signup = EventSignup(user=request.user, event=event)
@@ -177,42 +175,8 @@ class SignupChargeView(LoginRequiredMixin, View):
             return redirect('event_signup', slug=event.slug)
 
         if signup_cost > 0:
-            try:
-                # TODO: Move to the Checkout API
-                payment_session = stripe.checkout.session.Session.create(
-                    success_url='https://warwick.gg/events/{slug}'.format(slug=event.slug),
-                    cancel_url='https://warwick.gg/events/{slug}'.format(slug=event.slug),
-                    payment_method_types=['card'],
-                    line_items={
-                        'name': '{title} ticket'.format(title=event.title),
-                        'currency': 'gbp',
-                        'amount': int(signup_cost * 100),
-                        'quantity': 1,
-                        'description': 'A ticket to {title} run by the Uni of Warwick Computing Society'.format(
-                            title=event.title)
-                    }
-                )
-            except StripeError:
-                # If there was an error with the request
-                messages.error(request,
-                               'There was an error processing the payment. Please check your balance and try again later.',
-                               extra_tags='is-danger')
-                return redirect('event_signup', slug=event.slug)
-
-            # if charge.paid:
-            #     signup = signup_form.save(commit=False)
-            #     signup.transaction_token = charge.stripe_id
-            #     signup.save()
-            #
-            #     messages.success(request, 'Signup successful!{seating}'.format(
-            #         seating=' You can now reserve a seat on the seating plan.' if event.has_seating else ''),
-            #                      extra_tags='is-success')
-            #     return redirect('event_home', slug=event.slug)
-            # else:
-            #     messages.error(request,
-            #                    'There was an error processing your payment. Make sure you have sufficient balance and try again.',
-            #                    extra_tags='is-danger')
-            #     return redirect('event_signup', slug=event.slug)
+            # This shouldn't happen since the Stripe checkout should have taken over
+            return HttpResponseBadRequest()
         else:
             signup_form.save()
             messages.success(request, 'Signup successful!{seating}'.format(
@@ -252,9 +216,20 @@ class SignupFormView(LoginRequiredMixin, View):
         signup_form = SignupForm()
 
         if signup_cost > 0:
+            new_ticket = Ticket(user=profile.user)
+            new_ticket.save()
+
+            ticket_json = json.dumps({
+                'ticket': new_ticket.id,
+                'event': event.id,
+                'created_at': timezone.now().strftime('%Y-%m-%dT%H:%M:%S%z')
+            })
+
+            # TODO: Replace this with a configurable string
             checkout_session = stripe.checkout.session.Session.create(
-                success_url='https://4cd3200e.ngrok.io/events/{slug}#signup'.format(slug=event.slug),
-                cancel_url='https://4cd3200e.ngrok.io/events/{slug}#signup'.format(slug=event.slug),
+                success_url='https://cacd1f8f.ngrok.io/events/{slug}#signup'.format(slug=event.slug),
+                cancel_url='https://cacd1f8f.ngrok.io/events/{slug}#signup'.format(slug=event.slug),
+                client_reference_id=ticket_json,
                 customer_email=request.user.email,
                 payment_method_types=['card'],
                 line_items=[{
@@ -317,10 +292,61 @@ class StripeWebhookView(View):
         except stripe.error.SignatureVerificationError:
             return HttpResponse(status=400)
 
-        # if event['type'] == 'checkout.session.completed':
-        #     TODO: Checkout session for a user has completed
-        print(event['type'])
-        print(event['data']['object'])
+        if event['type'] == 'checkout.session.completed':
+            session = event['data']['object']
+            ticket_info = json.loads(session['client_reference_id'])
+            ticket_created_at = datetime.strptime(ticket_info['created_at'], '%Y-%m-%dT%H:%M:%S%z')
+
+            # If the ticket was created after the current time, then something screwy is going on
+            if ticket_created_at > timezone.now():
+                return HttpResponse(status=400)
+
+            event = Event.objects.get(id__exact=ticket_info['event'])
+            ticket = Ticket.objects.get(id__exact=ticket_info['ticket'])
+            user = ticket.user
+
+            # Create the event signup for the user
+            signup = EventSignup(user=user, event=event, ticket=ticket)
+
+            # Check the charge
+            payment = stripe.PaymentIntent.retrieve(session['payment_intent'])
+            charge = payment['charges']['data'][0]
+
+            # Update the ticket
+            ticket.status = Ticket.IN_PROGRESS
+            ticket.last_updated_at = timezone.now()
+            ticket.charge_id = charge['id']
+
+            if charge['paid']:
+                ticket.status = Ticket.COMPLETE
+
+            ticket.save()
+            signup.save()
+        elif event['type'] == 'charge.succeeded':
+            charge = event['data']['object']
+
+            try:
+                ticket = Ticket.objects.get(charge_id__exact=charge['id'])
+            except Ticket.DoesNotExist:
+                # The ticket doesn't exist for some reason, refund the charge and 400
+                return HttpResponse(400)
+
+            if charge['paid']:
+                ticket.status = Ticket.COMPLETE
+                ticket.last_updated_at = timezone.now()
+                ticket.save()
+        elif event['type'] == 'charge.refunded':
+            charge = event['data']['object']
+
+            try:
+                ticket = Ticket.objects.get(charge_id__exact=charge['id'])
+                ticket.status = Ticket.REFUNDED
+                ticket.last_updated_at = timezone.now()
+                ticket.comment = 'Refunded at {time}'.format(time=timezone.now().strftime('%Y-%m-%dT%H:%M:%S%z'))
+                ticket.save()
+            except Ticket.DoesNotExist:
+                # Nothing needs to be done since the ticket doesn't exist and the refund has been processed
+                pass
 
         return HttpResponse(status=200)
 
