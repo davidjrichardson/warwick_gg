@@ -3,7 +3,6 @@ from functools import reduce
 
 from django.conf import settings
 from django.db import models
-from django.template.defaultfilters import date as dateformat
 from django.utils import timezone
 from markdown_deux.templatetags.markdown_deux_tags import markdown_allowed
 from multiselectfield import MultiSelectField
@@ -81,6 +80,9 @@ class Event(models.Model):
 
     def __str__(self):
         return self.title
+
+    def __bytes__(self):
+        return bytes(self.title.encode()) + bytes(self.id) + bytes(str(self.start).encode())
 
     def get_absolute_url(self):
         return '/events/{slug}'.format(slug=self.slug)
@@ -179,6 +181,9 @@ class TicketManager(models.Manager):
     def is_complete(self):
         return self.filter(status=Ticket.COMPLETE)
 
+    def is_created(self):
+        return self.filter(status=Ticket.CREATED)
+
     def is_refunded(self):
         return self.filter(status=Ticket.REFUNDED)
 
@@ -187,19 +192,23 @@ class Ticket(models.Model):
     COMPLETE = 'C'
     REFUNDED = 'R'
     IN_PROGRESS = 'P'
+    CREATED = 'N'
 
     TICKET_STATUSES = (
         (COMPLETE, 'Complete'),
         (REFUNDED, 'Refunded'),
-        (IN_PROGRESS, 'In progress')
+        (IN_PROGRESS, 'In progress'),
+        (CREATED, 'Created')
     )
 
+    id = models.IntegerField(primary_key=True)
     charge_id = models.TextField()
     status = models.CharField(
         max_length=1,
         choices=TICKET_STATUSES,
-        default=IN_PROGRESS
+        default=CREATED
     )
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     created_at = models.DateTimeField(default=timezone.now)
     last_updated_at = models.DateTimeField(default=timezone.now)
 
@@ -209,11 +218,12 @@ class Ticket(models.Model):
         return self.status == self.COMPLETE
 
     def __str__(self):
-        return '<Ticket status={status}>'.format(status={
+        return '<Ticket id={id} user={user} status={status}>'.format(status={
             self.COMPLETE: 'COMPLETE',
             self.IN_PROGRESS: 'IN_PROGRESS',
-            self.REFUNDED: 'REFUNDED'
-        }[self.status])
+            self.REFUNDED: 'REFUNDED',
+            self.CREATED: 'CREATED',
+        }[self.status], id=self.id, user=self.user)
 
     class Meta:
         ordering = ['created_at']
@@ -240,7 +250,7 @@ class EventSignup(models.Model):
     unsigned_up_at = models.DateTimeField(blank=True, null=True)
 
     # Stripe transaction tokens in case of refund
-    ticket = models.OneToOneField(Ticket, on_delete=models.CASCADE, blank=True, null=True)
+    ticket = models.OneToOneField(Ticket, related_name='signup', on_delete=models.CASCADE, blank=True, null=True)
 
     # Disclaimer signing
     photography_consent = models.BooleanField(default=False)
