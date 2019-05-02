@@ -88,13 +88,10 @@
               <p class="has-text-centered">Since you're a member of {{ event.hosted_by|pluralize:"one or more of" }} the
                 hosting
                 societ{{ event.hosted_by|pluralize:'y,ies' }}, entry to this event will cost
-                <strong>£{{ event_cost }}</strong>. Please
-                fill out the form below to sign up!</p>
+                <strong>£{{ event_cost }}</strong>. Click the &quot;Pay using Stripe&quot; button to buy your ticket!</p>
             {% else %}
               <p class="has-text-centered">Sign ups to this event cost <strong>£{{ event_cost }}</strong>. To sign up,
-                please fill in the
-                form below to pay for
-                entry and sign up!</p>
+                please click the &quot;Pay using Stripe&quot; button to buy your ticket!</p>
             {% endif %}
           {% else %}
             {% if is_host_member %}
@@ -109,29 +106,33 @@
           {% endif %}
         </div>
         <div class="column is-6">
-          <form id="signup-form" action="{% url 'event_charge' %}" method="post">
-            {% csrf_token %}
-            <input type="hidden" name="event_id" value="{{ event.id }}">
-
-            <div class="field">
-              <label class="label" for="{{ signup_form.comment.id_for_label }}">Sign up message</label>
+          {% if event_cost > 0 %}
+            <div class="field is-grouped is-grouped-centered">
               <div class="control">
+                <button class="button is-primary" id="stripe-button">Pay using Stripe</button>
+              </div>
+            </div>
+          {% else %}
+            <form id="signup-form" action="{% url 'event_charge' %}" method="post">
+              {% csrf_token %}
+              <input type="hidden" name="event_id" value="{{ event.id }}">
+
+              <div class="field">
+                <label class="label" for="{{ signup_form.comment.id_for_label }}">Sign up message</label>
+                <div class="control">
                 <textarea class="textarea" name="{{ signup_form.comment.name }}"
                           id="{{ signup_form.comment.id_for_label }}" maxlength="255"
                           placeholder="A sign up message (optional)"></textarea>
-                <p class="help">Maximum length: 255 characters</p>
+                  <p class="help">Maximum length: 255 characters</p>
+                </div>
               </div>
-            </div>
-            <div class="field is-grouped is-grouped-right">
-              <div class="control">
-                {% if event_cost > 0 %}
-                  <button class="button is-primary" id="stripe-button">Pay using Stripe</button>
-                {% else %}
+              <div class="field is-grouped is-grouped-right">
+                <div class="control">
                   <button class="button is-primary" type="submit">Sign up</button>
-                {% endif %}
+                </div>
               </div>
-            </div>
-          </form>
+            </form>
+          {% endif %}
           <hr/>
           <p>Note: Society membership is checked when you load this page. If you've just joined a society, try
             refreshing the page.</p>
