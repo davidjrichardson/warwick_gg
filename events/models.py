@@ -253,9 +253,6 @@ class EventSignup(models.Model):
     # Stripe transaction tokens in case of refund
     ticket = models.OneToOneField(Ticket, related_name='signup', on_delete=models.CASCADE, blank=True, null=True)
 
-    # Disclaimer signing
-    photography_consent = models.BooleanField(default=False)
-
     objects = EventSignupManager()
 
     @property
@@ -266,9 +263,8 @@ class EventSignup(models.Model):
     def profile(self):
         return WarwickGGUser.objects.get(user=self.user)
 
-    @property
     def is_valid(self):
-        return (not self.is_unsigned_up) and self.ticket.is_valid()
+        return (not self.is_unsigned_up) and (self.ticket.is_valid() if self.ticket else True)
 
     def __str__(self):
         return '{user}\'s signup to {event}'.format(user=self.user, event=self.event)

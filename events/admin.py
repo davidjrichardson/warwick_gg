@@ -25,9 +25,11 @@ class EventAdmin(admin.ModelAdmin):
     search_fields = ('title', 'location')
 
 
+# TODO: Create admin page for Tickets
+
 @admin.register(EventSignup)
 class EventSignupAdmin(admin.ModelAdmin):
     date_hierarchy = 'created_at'
-    list_display = ('event', 'long_name', 'created_at', 'photography_consent')
-    list_filter = ('is_unsigned_up', 'photography_consent')
+    list_display = ('event', 'long_name', 'created_at')
+    list_filter = ('is_unsigned_up', )
     search_fields = ['comment', 'event__title', 'user__first_name', 'user__last_name']

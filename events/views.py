@@ -213,7 +213,6 @@ class SignupFormView(LoginRequiredMixin, View):
 
         is_host_member = esports_member or uwcs_member
         signup_cost = event.cost_member if is_host_member else event.cost_non_member
-        signup_form = SignupForm()
 
         if signup_cost > 0:
             new_ticket = Ticket(user=profile.user)
@@ -249,7 +248,6 @@ class SignupFormView(LoginRequiredMixin, View):
             'event_cost': signup_cost,
             'is_host_member': is_host_member,
             'stripe_pubkey': settings.STRIPE_PUBLIC_KEY,
-            'signup_form': signup_form,
             'checkout_session': checkout_session.id if checkout_session else ''
         }
         return render(request, self.template_name, context=ctx)
@@ -262,7 +260,7 @@ class UnsignupFormView(LoginRequiredMixin, View):
     def get(self, request, slug):
         event = get_object_or_404(Event, slug=slug)
 
-        has_signed_up = EventSignup.objects.for_event(event, request.user).exists()
+        has_signed_up = list(filter(lambda x: x.is_valid(), EventSignup.objects.for_event(event, request.user).all()))
 
         if not has_signed_up:
             messages.error(request, 'You cannot un-signup from an event you\'re not signed up to.',
@@ -366,11 +364,11 @@ class UnsignupConfirmView(LoginRequiredMixin, View):
                            extra_tags='is-danger')
             return redirect('event_home', slug=event.slug)
 
-        # If the
-        if signup.transaction_token:
+        # If the signup has a ticket then it needs to be refunded
+        if signup.ticket:
             try:
-                refund = stripe.Refund.create(charge=signup.transaction_token)
-                signup.refund_token = refund.stripe_id
+                # Nothing else needs to be done since the webhook will deal with the rest of this
+                stripe.Refund.create(charge=signup.ticket.charge_id)
             except StripeError:
                 messages.error(request,
                                'There was an error processing your refund. Please contact a member of the exec.',

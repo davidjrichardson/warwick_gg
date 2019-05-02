@@ -122,19 +122,6 @@
                 <p class="help">Maximum length: 255 characters</p>
               </div>
             </div>
-
-            {% if event.has_photography %}
-              <div class="field">
-                <input class="is-checkradio" id="{{ signup_form.photography_consent.id_for_label }}"
-                       name="{{ signup_form.photography_consent.name }}" type="checkbox">
-                <label for="{{ signup_form.photography_consent.id_for_label }}">I consent to having my photograph
-                  taken</label>
-                <p class="help is-hidden" id="checked-help">By giving consent you agree to the possible use of any
-                  photographs of you in published materials by the event hosts or sponsors.</p>
-                <p class="help" id="unchecked-help">Without consent you still may end up in the background of some
-                  photographs. If you would like to not be included, please let the photographer know.</p>
-              </div>
-            {% endif %}
             <div class="field is-grouped is-grouped-right">
               <div class="control">
                 {% if event_cost > 0 %}

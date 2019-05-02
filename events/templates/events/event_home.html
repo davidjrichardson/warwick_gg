@@ -182,6 +182,12 @@
               you would like to not appear on the stream then do talk to one of the event organisers on the day.
             </p>
           {% endif %}
+          {% if event.has_photography %}
+            <p>
+              <strong>Note:</strong> There is a possibility of photography at this event. If you would like to not
+              appear in any photographs, please talk to one of the event organisers on the day.
+            </p>
+          {% endif %}
         </div>
         {% if request.user.is_authenticated %}
           {% if has_signed_up %}
