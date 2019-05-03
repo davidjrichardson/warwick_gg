@@ -56,6 +56,8 @@ class EventView(View):
         else:
             signups = []
 
+        # TODO: Provide a form to change/submit the user's comment
+
         ctx = {
             'event': event,
             'has_signed_up': has_signed_up,
@@ -69,6 +71,15 @@ class EventView(View):
         }
 
         return render(request, self.template_name, context=ctx)
+
+
+class UpdateCommentView(LoginRequiredMixin, View):
+    login_url = '/accounts/login/'
+
+    @method_decorator(csrf_protect, name='dispatch')
+    def post(self, request):
+        # TODO: update the comment
+        pass
 
 
 class TournamentView(View):
