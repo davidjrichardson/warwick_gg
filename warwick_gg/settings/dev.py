@@ -6,8 +6,8 @@ from .base import *
 DEBUG = True
 
 ALLOWED_HOSTS += [
-    'cacd1f8f.ngrok.io',
-    '*.cacd1f8f.ngrok.io',
+    f'{CHECKOUT_BASE_URL}',
+    f'*.{CHECKOUT_BASE_URL}',
 ]
 
 # SECURITY WARNING: keep the secret key used in production secret!

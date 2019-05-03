@@ -131,49 +131,6 @@ class Event(models.Model):
             return False
 
 
-class TournamentManager(models.Manager):
-    def for_event(self, event):
-        return self.filter(for_event=event)
-
-
-class Tournament(models.Model):
-    id = models.IntegerField(primary_key=True)
-
-    # Tournament display information
-    title = models.CharField(max_length=100)
-    description = models.TextField(blank=True, help_text=markdown_allowed())
-    start = models.DateTimeField(default=timezone.now)
-    end = models.DateTimeField(default=timezone.now)
-
-    # TODO: handle signups through warwick.gg itself rather than an external signup form.
-    signup_form = models.URLField()
-    signup_start = models.DateTimeField(default=timezone.now)
-    signup_end = models.DateTimeField(default=timezone.now)
-
-    # Associated event
-    for_event = models.ForeignKey(Event, on_delete=models.CASCADE, blank=True, null=True)
-    requires_attendance = models.BooleanField(default=False)
-
-    # Routing
-    slug = models.SlugField(max_length=40, unique=True)
-
-    objects = TournamentManager()
-
-    def __str__(self):
-        return self.title
-
-    @property
-    def signups_open(self):
-        return self.signup_start < timezone.now() <= self.signup_end
-
-    @property
-    def is_onging(self):
-        return timezone.now() < self.end
-
-    def get_absolute_url(self):
-        return '/events/tournament/{slug}'.format(slug=self.slug)
-
-
 class TicketManager(models.Manager):
     def for_event(self, event: Event):
         return self.filter(eventsignup__event=event)
@@ -271,3 +228,63 @@ class EventSignup(models.Model):
 
     class Meta:
         ordering = ['created_at']
+
+
+class TournamentManager(models.Manager):
+    def for_event(self, event):
+        return self.filter(for_event=event)
+
+
+class Tournament(models.Model):
+    id = models.IntegerField(primary_key=True)
+
+    # Tournament display information
+    title = models.CharField(max_length=100)
+    description = models.TextField(blank=True, help_text=markdown_allowed())
+    start = models.DateTimeField(default=timezone.now)
+    end = models.DateTimeField(default=timezone.now)
+
+    # TODO: handle signups through warwick.gg itself rather than an external signup form.
+    signup_form = models.URLField()
+    signup_start = models.DateTimeField(default=timezone.now)
+    signup_end = models.DateTimeField(default=timezone.now)
+
+    # Associated event
+    for_event = models.ForeignKey(Event, on_delete=models.CASCADE, blank=True, null=True)
+    requires_attendance = models.BooleanField(default=False)
+
+    # Routing
+    slug = models.SlugField(max_length=40, unique=True)
+
+    objects = TournamentManager()
+
+    def __str__(self):
+        return self.title
+
+    @property
+    def signups_open(self):
+        return self.signup_start < timezone.now() <= self.signup_end
+
+    @property
+    def is_onging(self):
+        return timezone.now() < self.end
+
+    def get_absolute_url(self):
+        return '/events/tournament/{slug}'.format(slug=self.slug)
+
+
+# class TournamentSignupManager(models.Manager):
+#     pass
+#
+#
+# class TournamentSignup(models.Model):
+#     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+#     tournament = models.ForeignKey(Tournament, on_delete=models.CASCADE)
+#     created_at = models.DateTimeField(default=timezone.now)
+#     # TODO: Figure out a way to do this - AJAX on the signup page?
+#     comment = models.TextField(blank=True, max_length=255)
+#
+#     # Stripe transaction tokens in case of refund
+#     ticket = models.OneToOneField(Ticket, related_name='signup', on_delete=models.CASCADE, blank=True, null=True)
+#
+#     objects = TournamentSignupManager()

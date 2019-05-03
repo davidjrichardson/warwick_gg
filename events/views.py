@@ -224,10 +224,9 @@ class SignupFormView(LoginRequiredMixin, View):
                 'created_at': timezone.now().strftime('%Y-%m-%dT%H:%M:%S%z')
             })
 
-            # TODO: Replace this with a configurable string
             checkout_session = stripe.checkout.session.Session.create(
-                success_url='https://cacd1f8f.ngrok.io/events/{slug}#signup'.format(slug=event.slug),
-                cancel_url='https://cacd1f8f.ngrok.io/events/{slug}#signup'.format(slug=event.slug),
+                success_url='https://{base}/events/{slug}#signup'.format(base=settings.CHECKOUT_BASE_URL, slug=event.slug),
+                cancel_url='https://{base}/events/{slug}#signup'.format(base=settings.CHECKOUT_BASE_URL, slug=event.slug),
                 client_reference_id=ticket_json,
                 customer_email=request.user.email,
                 payment_method_types=['card'],

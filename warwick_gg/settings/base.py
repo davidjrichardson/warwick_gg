@@ -211,4 +211,7 @@ STRIPE_PUBLIC_KEY = os.environ.get('STRIPE_PUBLIC_KEY')
 STRIPE_PRIVATE_KEY = os.environ.get('STRIPE_PRIVATE_KEY')
 STRIPE_WEBHOOK_KEY = os.environ.get('STRIPE_WEBHOOK_KEY')
 
+# Stripe checkout URL
+CHECKOUT_BASE_URL = os.environ.get('CHECKOUT_BASE_URL')
+
 stripe.api_key = STRIPE_PRIVATE_KEY
