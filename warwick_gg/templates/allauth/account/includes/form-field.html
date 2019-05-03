@@ -4,9 +4,11 @@
       {% if custom_label %}{{ custom_label }}{% else %}{{ field.label }}{% endif %}{% if field.field.required %}
         <span class="is-required">*</span>{% endif %}</label>
     <div class="control">
-      <textarea class="textarea {% if form.non_field_errors or field.errors %}is-danger{% endif %}"
-                name="{{ field.name }}" id="{{ field.id_for_label }}"
-                placeholder="{{ field.label }}" {% if field.field.required %}required{% endif %}></textarea>
+      <textarea
+          class="textarea {% if form.non_field_errors or field.errors %}is-danger{% endif %} {% if read_only %}is-static{% endif %}"
+          name="{{ field.name }}" id="{{ field.id_for_label }}"
+          placeholder="{{ field.label }}" {% if field.field.required %}required{% endif %}
+          {% if read_only %}readonly{% endif %}></textarea>
     </div>
   {% elif field.field.widget.input_type == 'checkbox' %}
     <div class="control">
@@ -23,12 +25,13 @@
         <span class="is-required">*</span>{% endif %}</label>
     <div
         class="control {% if field.field.widget.input_type == 'email' or field.field.widget.input_type == 'password' %}has-icons-left{% endif %}">
-      <input class="input {% if form.non_field_errors or field.errors %}is-danger{% endif %}"
+      <input class="input {% if form.non_field_errors or field.errors %}is-danger{% endif %} {% if read_only %}is-static{% endif %}"
              name="{{ field.name }}" id="{{ field.id_for_label }}"
              placeholder="{% if custom_label %}{{ custom_label }}{% else %}{{ field.label }}{% endif %}"
              type="{{ field.field.widget.input_type }}"
              {% if field.field.required %}required{% endif %}
-             {% if field.value %}value="{{ field.value }}"{% endif %}>
+             {% if field.value %}value="{{ field.value }}"{% endif %}
+             {% if read_only %}readonly{% endif %}>
       {% if field.field.widget.input_type == 'email' or field.field.widget.input_type == 'password' %}
         <span class="icon is-small is-left">
           {% if field.field.widget.input_type == 'email' %}

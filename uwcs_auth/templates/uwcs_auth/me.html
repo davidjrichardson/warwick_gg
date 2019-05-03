@@ -10,9 +10,23 @@
           const $editButton = document.getElementById('edit-button');
           const $form = document.getElementById('profile-form');
           const $cancelButton = document.getElementById('form-cancel');
+          const $saveButton = document.getElementById('form-save');
           const $notificationDelete = document.getElementById('notification-delete');
           const $notification = document.getElementById('response-notification');
           const $csrf = Cookies.get('csrftoken');
+
+          let $editList = [];
+
+          document.querySelectorAll('#profile-form .control input:not(#uni-id)').forEach(function (item) {
+              item.setAttribute('data-value', item.value);
+              item.addEventListener('input', function (ev) {
+                  let $target = ev.target;
+
+                  if ($editList.indexOf($target) === -1) {
+                      $editList.push($target);
+                  }
+              });
+          });
 
           $form.addEventListener('submit', function (ev) {
               ev.preventDefault();
@@ -47,17 +61,15 @@
                           value.classList.remove('is-danger');
                       });
 
-                      document.getElementById('account-edit').classList.add('is-hidden');
-                      document.getElementById('account-info').classList.remove('is-hidden');
-                      $editButton.classList.remove('is-hidden');
-
-                      $response = JSON.parse($http.responseText);
-
-                      if ($response.hasOwnProperty('values')) {
-                          Object.keys($response['values']).forEach(function (value) {
-                              document.getElementById(value).innerText = $response['values'][value];
+                      $saveButton.classList.add('is-hidden');
+                      $cancelButton.classList.add('is-hidden');
+                      document.querySelectorAll('#profile-form .control input:not(#uni-id)')
+                          .forEach(function (item) {
+                              item.setAttribute('data-value', item.value);
+                              item.readOnly = true;
+                              item.classList.add('is-static');
                           });
-                      }
+                      $editButton.classList.remove('is-hidden');
                   } else if ($http.status === 400 && $http.readyState === 4) {
                       // If the update failed
                       $notification.classList.remove('is-hidden');
@@ -77,6 +89,9 @@
                           });
                       }
                   }
+
+                  // Clear the edit list
+                  $editList.length = 0;
               };
 
               $http.open($form.method, $form.action);
@@ -99,8 +114,13 @@
               ev.preventDefault();
               ev.stopImmediatePropagation();
 
-              document.getElementById('account-edit').classList.remove('is-hidden');
-              document.getElementById('account-info').classList.add('is-hidden');
+              $saveButton.classList.remove('is-hidden');
+              $cancelButton.classList.remove('is-hidden');
+              document.querySelectorAll('#profile-form .control input:not(#uni-id)')
+                  .forEach(function (item) {
+                      item.readOnly = false;
+                      item.classList.remove('is-static');
+                  });
               $editButton.classList.add('is-hidden');
               $notification.classList.add('is-hidden');
 
@@ -111,9 +131,19 @@
               ev.preventDefault();
               ev.stopImmediatePropagation();
 
-              document.getElementById('account-edit').classList.add('is-hidden');
-              document.getElementById('account-info').classList.remove('is-hidden');
+              $saveButton.classList.add('is-hidden');
+              $cancelButton.classList.add('is-hidden');
+              document.querySelectorAll('#profile-form .control input:not(#uni-id)')
+                  .forEach(function (item) {
+                      item.readOnly = true;
+                      item.classList.add('is-static');
+                  });
               $editButton.classList.remove('is-hidden');
+
+              // Iterate over the edits that have been made and remove them
+              $editList.forEach(function (item) {
+                  item.value = item.getAttribute('data-value');
+              });
 
               return false;
           });
@@ -138,7 +168,8 @@
             <h2 class="is-2 title">
               Your profile
             </h2>
-            <a href="#" title="Edit your profile" id="edit-button" class="button is-secondary"> <i class="fas fa-edit"></i></a>
+            <a href="#" title="Edit your profile" id="edit-button" class="button is-secondary"> <i
+                class="fas fa-edit"></i></a>
           </div>
         </div>
       </div>
@@ -172,8 +203,13 @@
             <span id="notification-text"></span>
             <button id="notification-delete" class="delete"></button>
           </div>
-          <div class="level" id="account-info">
+          {% comment %}<div class="level" id="account-info">
             <div class="columns is-multiline">
+              <div class="column is-full">
+                <h3 class="title is-4">
+                  Gaming info
+                </h3>
+              </div>
               <div class="column is-half">
                 <p>
                   <strong>Nickname: </strong><br/>
@@ -194,6 +230,36 @@
               </div>
               <div class="column is-half">
                 <p>
+                  <strong>Steam user:</strong><br/>
+                  <span id="steam-user">
+                    {% if profile_form.steam_user.value %}
+                      {{ profile_form.steam_user.value }}
+                    {% else %}
+                      No Steam username set
+                    {% endif %}
+                  </span>
+                </p>
+              </div>
+              <div class="column is-half">
+                <p>
+                  <strong>Battle.NET user:</strong><br/>
+                  <span id="battle-net-user">
+                    {% if profile_form.battle_net_user.value %}
+                      {{ profile_form.battle_net_user.value }}
+                    {% else %}
+                      No Battle.NET username set
+                    {% endif %}
+                  </span>
+                </p>
+              </div>
+              <div class="column is-full">
+                <hr/>
+                <h4 class="title is-4">
+                  Contact info
+                </h4>
+              </div>
+              <div class="column is-half">
+                <p>
                   <strong>First name: </strong><br/>
                   <span id="first_name">{{ user_form.first_name.value }}</span>
                 </p>
@@ -211,12 +277,17 @@
                 </p>
               </div>
             </div>
-          </div>
-          <div class="level is-hidden" id="account-edit">
+          </div>{% endcomment %}
+          <div class="level" id="account-info">
             <form id="profile-form" method="post" action="{% url 'user_profile' %}">
               <div class="columns is-multiline">
+                <div class="column is-full">
+                  <h3 class="title is-4">
+                    Gaming info
+                  </h3>
+                </div>
                 <div class="column is-half">
-                  {% include 'allauth/account/includes/form-field.html' with field=profile_form.nickname %}
+                  {% include 'allauth/account/includes/form-field.html' with field=profile_form.nickname read_only=True %}
                 </div>
                 <div class="column is-half">
                   <div class="field">
@@ -227,21 +298,33 @@
                   </div>
                 </div>
                 <div class="column is-half">
-                  {% include 'allauth/account/includes/form-field.html' with field=user_form.first_name %}
+                  {% include 'allauth/account/includes/form-field.html' with field=profile_form.steam_user read_only=True %}
                 </div>
                 <div class="column is-half">
-                  {% include 'allauth/account/includes/form-field.html' with field=user_form.last_name %}
+                  {% include 'allauth/account/includes/form-field.html' with field=profile_form.battle_net_user read_only=True %}
                 </div>
                 <div class="column is-full">
-                  {% include 'allauth/account/includes/form-field.html' with field=user_form.email %}
+                  <hr/>
+                  <h4 class="title is-4">
+                    Contact info
+                  </h4>
+                </div>
+                <div class="column is-half">
+                  {% include 'allauth/account/includes/form-field.html' with field=user_form.first_name read_only=True %}
+                </div>
+                <div class="column is-half">
+                  {% include 'allauth/account/includes/form-field.html' with field=user_form.last_name read_only=True %}
+                </div>
+                <div class="column is-full">
+                  {% include 'allauth/account/includes/form-field.html' with field=user_form.email read_only=True %}
                 </div>
                 <div class="column is-full">
                   <div class="field is-grouped is-grouped-right">
                     <div class="control">
-                      <button class="button is-primary" type="submit">Save</button>
+                      <button class="button is-primary is-hidden" id="form-save" type="submit">Save</button>
                     </div>
                     <div class="control">
-                      <button class="button is-secondary" id="form-cancel" type="submit">Cancel</button>
+                      <button class="button is-secondary is-hidden" id="form-cancel" type="submit">Cancel</button>
                     </div>
                   </div>
                 </div>

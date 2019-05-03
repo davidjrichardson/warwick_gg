@@ -7,7 +7,11 @@ from uwcs_auth.models import WarwickGGUser
 class ProfileForm(forms.ModelForm):
     class Meta:
         model = WarwickGGUser
-        fields = ['nickname']
+        fields = ['nickname', 'steam_user', 'battle_net_user']
+        widgets = {
+            'steam_user': forms.TextInput(attrs={'placeholder': 'None set'}),
+            'battle_net_user': forms.TextInput(attrs={'placeholder': 'None set'})
+        }
 
 
 class UserForm(forms.ModelForm):

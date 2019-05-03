@@ -11,6 +11,9 @@ class WarwickGGUser(models.Model):
     uni_id = models.CharField(max_length=11)
     nickname = models.CharField(max_length=30, blank=True)
 
+    steam_user = models.CharField(max_length=32, blank=True)
+    battle_net_user = models.CharField('Battle.NET user', max_length=32, blank=True)
+
     def __str__(self):
         return '{uni_id} - {nick} for user {id}'.format(uni_id=self.uni_id,
                                                         nick=self.nickname if self.nickname else "no nickname",
