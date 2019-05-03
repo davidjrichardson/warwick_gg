@@ -191,39 +191,49 @@
     & path#dot-1 {
       animation: yellow-dot-fill 18s ease-in-out -9s infinite;
     }
+
     & path#dot-2 {
       animation: yellow-dot-fill 18s ease-in-out -8.85s infinite;
     }
+
     & path#dot-3 {
       animation: blue-dot-fill 18s ease-in-out -8.7s infinite;
     }
+
     & path#dot-4 {
       animation: blue-dot-fill 18s ease-in-out -8.55s infinite;
     }
+
     // Shield animation
     & g#shield {
       animation: shield-float 9s ease-in-out infinite
     }
+
     // Pizza animation
     & g#pizza {
       animation: pizza-float 7s ease-in-out -1.67s infinite
     }
+
     // Dot background animation
     & circle#dot-1,
     & circle#dot-5 {
       animation: circle-float 6s ease-in-out infinite, circle-fade 11s ease-in-out -1.5s infinite
     }
+
     & circle#dot-2,
     & circle#dot-7 {
       animation: circle-float 8s ease-in-out -1s infinite, circle-fade 7s ease-in-out infinite
     }
+
     & circle#dot-3 {
       animation: circle-float 11s ease-in-out -0.5s infinite, circle-fade 13s ease-in-out -2s infinite
     }
+
     & circle#dot-4,
     & circle#dot-6 {
       animation: circle-float 7s ease-in-out infinite, circle-fade 10s ease-in-out -4s infinite
     }
+
     & circle#dot-8,
     & circle#dot-9 {
       animation: circle-float 10s ease-in-out -2s infinite, circle-fade 6s ease-in-out infinite
@@ -828,6 +838,25 @@ article.media {
   display: flex;
   flex-wrap: nowrap;
 
+  &.in-progress {
+    background-color: $warwickgg_light_blue;
+
+    color: rgba($black, 0.7);
+
+    & .title {
+      color: rgba($black, 0.6);
+    }
+
+    & a {
+      color: rgba($black, 0.7);
+
+      &:hover,
+      &:focus {
+        color: rgba($black, 0.87);
+      }
+    }
+  }
+
   & .tile-left {
     display: block;
     flex: 1;
@@ -937,7 +966,6 @@ article.media {
       & > small {
         margin-bottom: 1rem;
       }
-
 
 
       & .content {

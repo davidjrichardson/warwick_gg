@@ -172,8 +172,11 @@ class Ticket(models.Model):
 
     objects = TicketManager()
 
-    def is_valid(self):
+    def is_complete(self):
         return self.status == self.COMPLETE
+
+    def is_valid(self):
+        return self.status != self.CREATED
 
     def __str__(self):
         return '<Ticket id={id} user={user} status={status}>'.format(status={
@@ -221,7 +224,13 @@ class EventSignup(models.Model):
         return WarwickGGUser.objects.get(user=self.user)
 
     def is_valid(self):
-        return (not self.is_unsigned_up) and (self.ticket.is_valid() if self.ticket else True)
+        return (not self.is_unsigned_up) and (self.ticket.is_complete() if self.ticket else True)
+
+    def ticket_status(self):
+        if self.ticket:
+            return self.ticket.status
+        else:
+            return False
 
     def __str__(self):
         return '{user}\'s signup to {event}'.format(user=self.user, event=self.event)

@@ -220,9 +220,17 @@
               </div>
             {% endif %}
           {% else %}
-            <div class="signup-tile">
+            {% if ticket_status %}
+              <div class="signup-tile {% if ticket_status == 'P' %}in-progress{% endif %}">
+            {% else %}
+              <div class="signup-tile">
+            {% endif %}
               <div class="tile-left">
-                {% if signups_open %}
+                {% if ticket_status and ticket_status == 'P' %}
+                  <h4 class="is-4 title">Your sign up is in progress</h4>
+                  <p>Your sign up for {{ event.title }} is currently in progress and we are waiting for your payment to complete. Check back in a few minutes for any updates!</p>
+                  <p>If your sign up is stuck or you are having trouble, please contact CompSoc/Esports exec.</p>
+                {% elif signups_open %}
                   <h4 class="is-4 title">Signup to {{ event.title }}</h4>
                   <p>Signups are open for {{ event.title }}! Click <a href="{% url 'event_signup' slug=event.slug %}">here</a>
                     to sign up.</p>

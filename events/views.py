@@ -42,7 +42,14 @@ class EventView(View):
 
         has_signed_up = False
         if request.user.is_authenticated:
-            has_signed_up = EventSignup.objects.for_event(event, request.user).exists()
+            has_signed_up = list(
+                filter(lambda x: x.is_valid(), EventSignup.objects.for_event(event, request.user).all()))
+
+        try:
+            ticket_status = list(filter(lambda x: x.ticket,
+                                        EventSignup.objects.for_event(event, request.user).all())).pop().ticket_status()
+        except:
+            ticket_status = False
 
         if has_signed_up:
             signups = event.signups
@@ -52,6 +59,7 @@ class EventView(View):
         ctx = {
             'event': event,
             'has_signed_up': has_signed_up,
+            'ticket_status': ticket_status,
             'signups_open': event.signups_open(request.user),
             'signup_start': event.signup_start_for_user(request.user),
             'signups_remaining': event.signup_limit - event.signup_count,
@@ -138,7 +146,8 @@ class SignupChargeView(LoginRequiredMixin, View):
 
         event = get_object_or_404(Event, id=request.POST.get('event_id'))
 
-        has_signed_up = EventSignup.objects.for_event(event, request.user).exists()
+        has_signed_up = list(
+            filter(lambda x: x.is_complete(), EventSignup.objects.for_event(event, request.user).all()))
         if has_signed_up:
             messages.error(request, 'You\'re already signed up to that event.', extra_tags='is-danger')
             return redirect('event_home', slug=event.slug)
@@ -192,7 +201,8 @@ class SignupFormView(LoginRequiredMixin, View):
     def get(self, request, slug):
         event = get_object_or_404(Event, slug=slug)
 
-        has_signed_up = EventSignup.objects.for_event(event, request.user).exists()
+        has_signed_up = list(
+            filter(lambda x: x.is_complete(), EventSignup.objects.for_event(event, request.user).all()))
         if has_signed_up:
             messages.error(request, 'You\'re already signed up to that event.', extra_tags='is-danger')
             return redirect('event_home', slug=slug)
@@ -225,8 +235,10 @@ class SignupFormView(LoginRequiredMixin, View):
             })
 
             checkout_session = stripe.checkout.session.Session.create(
-                success_url='https://{base}/events/{slug}#signup'.format(base=settings.CHECKOUT_BASE_URL, slug=event.slug),
-                cancel_url='https://{base}/events/{slug}#signup'.format(base=settings.CHECKOUT_BASE_URL, slug=event.slug),
+                success_url='https://{base}/events/{slug}#signup'.format(base=settings.CHECKOUT_BASE_URL,
+                                                                         slug=event.slug),
+                cancel_url='https://{base}/events/{slug}#signup'.format(base=settings.CHECKOUT_BASE_URL,
+                                                                        slug=event.slug),
                 client_reference_id=ticket_json,
                 customer_email=request.user.email,
                 payment_method_types=['card'],
@@ -259,7 +271,8 @@ class UnsignupFormView(LoginRequiredMixin, View):
     def get(self, request, slug):
         event = get_object_or_404(Event, slug=slug)
 
-        has_signed_up = list(filter(lambda x: x.is_valid(), EventSignup.objects.for_event(event, request.user).all()))
+        has_signed_up = list(
+            filter(lambda x: x.is_complete(), EventSignup.objects.for_event(event, request.user).all()))
 
         if not has_signed_up:
             messages.error(request, 'You cannot un-signup from an event you\'re not signed up to.',
