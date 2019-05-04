@@ -40,33 +40,35 @@ class EventView(View):
     def get(self, request, slug):
         event = get_object_or_404(Event, slug=slug)
 
-        has_signed_up = False
+        signup = None
+        ticket_status = None
         if request.user.is_authenticated:
-            has_signed_up = list(
-                filter(lambda x: x.is_valid(), EventSignup.objects.for_event(event, request.user).all()))
+            try:
+                signup = list(
+                    filter(lambda x: x.is_valid(), EventSignup.objects.for_event(event, request.user).all())).pop()
+                ticket_status = list(filter(lambda x: x.ticket, EventSignup.objects.for_event(event,
+                                                                                              request.user).all())).pop().ticket_status()
+            except:
+                signup = None
+                ticket_status = None
 
-        try:
-            ticket_status = list(filter(lambda x: x.ticket,
-                                        EventSignup.objects.for_event(event, request.user).all())).pop().ticket_status()
-        except:
-            ticket_status = False
-
-        if has_signed_up:
+        if signup:
             signups = event.signups
         else:
             signups = []
 
-        # TODO: Provide a form to change/submit the user's comment
+        comment_form = SignupForm(instance=signup)
 
         ctx = {
             'event': event,
-            'has_signed_up': has_signed_up,
+            'has_signed_up': signup,
             'ticket_status': ticket_status,
             'signups_open': event.signups_open(request.user),
             'signup_start': event.signup_start_for_user(request.user),
             'signups_remaining': event.signup_limit - event.signup_count,
             'signups': signups,
             'tournaments': Tournament.objects.for_event(event),
+            'comment_form': comment_form,
             'is_exec': WarwickGGUser.objects.get(user=request.user).is_exec if request.user.is_authenticated else False
         }
 

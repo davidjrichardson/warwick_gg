@@ -210,43 +210,81 @@
               {% endif %}
             </div>
 
-            {% if signups %}
+            {% if has_signed_up %}
               <div id="comments-container" class="comment-container">
                 <hr/>
-                <h4 class="title is-4" id="comments-title">Signup Comments</h4>
-                {% for signup in signups %}
-                  {% include 'events/includes/signup-comment.html' with signup=signup count=forloop.counter0 %}
+                <h4 class="title formsis-4" id="comments-title">Signup Comments</h4>
+
+                {% if not signup.comment and not signups %}
+
+                {% endif %}
+
+                {% for s in signups %}
+                  {% include 'events/includes/signup-comment.html' with signup=s count=forloop.counter0 %}
+                {% empty %}
+                  <div class="">
+                    There are no comments here - be the first:
+                    <form id="comment-form" method="post" action="{% url 'update_comment' %}">
+                      {% csrf_token %}
+
+                      <div class="columns is-multiline">
+                        <div class="column is-full">
+                          {% include 'allauth/account/includes/form-field.html' with field=comment_form.comment custom_label='Your comment' %}
+                        </div>
+                        <div class="column is-full">
+                          <div class="field is-grouped is-grouped-right">
+                            <div class="control">
+                              <button class="button is-primary" id="form-save" type="submit">Save</button>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </form>
+                  </div>
                 {% endfor %}
               </div>
             {% endif %}
+
+            {% comment %}{% if signups %}
+              <div id="comments-container" class="comment-container">
+                <hr/>
+                <h4 class="title is-4" id="comments-title">Signup Comments</h4>
+
+                {% for s in signups %}
+                  {% include 'events/includes/signup-comment.html' with signup=s count=forloop.counter0 %}
+                {% endfor %}
+              </div>
+            {% endif %}{% endcomment %}
           {% else %}
             {% if ticket_status %}
               <div class="signup-tile {% if ticket_status == 'P' %}in-progress{% endif %}">
             {% else %}
               <div class="signup-tile">
             {% endif %}
-              <div class="tile-left">
-                {% if ticket_status and ticket_status == 'P' %}
-                  <h4 class="is-4 title">Your sign up is in progress</h4>
-                  <p>Your sign up for {{ event.title }} is currently in progress and we are waiting for your payment to complete. Check back in a few minutes for any updates!</p>
-                  <p>If your sign up is stuck or you are having trouble, please contact CompSoc/Esports exec.</p>
-                {% elif signups_open %}
-                  <h4 class="is-4 title">Signup to {{ event.title }}</h4>
-                  <p>Signups are open for {{ event.title }}! Click <a href="{% url 'event_signup' slug=event.slug %}">here</a>
-                    to sign up.</p>
-                {% else %}
-                  {% if event.signup_count == event.signup_limit %}
-                    <h4 class="is-4 title">Signups full</h4>
-                    <p>Signups for {{ event.title }} have filled up! Check back frequently to see if anyone has opened
-                      up a space.</p>
-                  {% else %}
-                    <h4 class="is-4 title">Signups opening soon</h4>
-                    <p>Signups for {{ event.title }} arent open just yet. They open
-                      at {{ signup_start|date:'P l jS F Y' }}, so check back then!</p>
-                  {% endif %}
-                {% endif %}
-              </div>
-            </div>
+          <div class="tile-left">
+            {% if ticket_status and ticket_status == 'P' %}
+              <h4 class="is-4 title">Your sign up is in progress</h4>
+              <p>Your sign up for {{ event.title }} is currently in progress and we are waiting for your payment to
+                complete. Check back in a few minutes for any updates!</p>
+              <p>If your sign up is stuck or you are having trouble, please contact CompSoc/Esports exec.</p>
+            {% elif signups_open %}
+              <h4 class="is-4 title">Signup to {{ event.title }}</h4>
+              <p>Signups are open for {{ event.title }}! Click <a
+                  href="{% url 'event_signup' slug=event.slug %}">here</a>
+                to sign up.</p>
+            {% else %}
+              {% if event.signup_count == event.signup_limit %}
+                <h4 class="is-4 title">Signups full</h4>
+                <p>Signups for {{ event.title }} have filled up! Check back frequently to see if anyone has opened
+                  up a space.</p>
+              {% else %}
+                <h4 class="is-4 title">Signups opening soon</h4>
+                <p>Signups for {{ event.title }} arent open just yet. They open
+                  at {{ signup_start|date:'P l jS F Y' }}, so check back then!</p>
+              {% endif %}
+            {% endif %}
+          </div>
+          </div>
           {% endif %}
         {% else %}
           <div class="signup-tile">
@@ -257,7 +295,7 @@
             </div>
           </div>
         {% endif %}
+        </div>
       </div>
     </div>
-  </div>
 {% endblock %}
