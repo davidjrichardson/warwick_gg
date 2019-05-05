@@ -80,8 +80,26 @@ class UpdateCommentView(LoginRequiredMixin, View):
 
     @method_decorator(csrf_protect, name='dispatch')
     def post(self, request):
-        # TODO: update the comment
-        pass
+        if not request.POST.get('event-slug'):
+            return HttpResponseBadRequest()
+
+        event = get_object_or_404(Event, slug=request.POST.get('event-slug'))
+        try:
+            signup = [x for x in EventSignup.objects.for_event(event, user=request.user) if x.is_valid()].pop()
+        except:
+            return HttpResponseBadRequest()
+
+        signup_form = SignupForm(request.POST, instance=signup)
+
+        if not signup_form.is_valid():
+            messages.error(request,
+                           'There was an error updating your comment, double check everything is in order and try again.',
+                           extra_tags='is-danger')
+            return HttpResponseBadRequest()
+
+        # Update the signup
+        signup.save()
+        return HttpResponse(status=200)
 
 
 class TournamentView(View):
