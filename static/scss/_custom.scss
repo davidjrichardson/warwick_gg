@@ -794,6 +794,39 @@ a.button.is-primary {
   transition: all $speed ease-in-out;
 }
 
+.comment {
+  flex-wrap: wrap;
+
+  & .media-left,
+  & .media-right {
+    flex: 0 1 auto;
+  }
+
+  & .media-content {
+    flex: 1 1 auto;
+  }
+
+  @include mobile {
+    & .media-content {
+      margin-top: 16px;
+    }
+
+    & .media-right {
+      flex: 1 1 100%;
+
+      margin-left: 0;
+      margin-top: 16px;
+    }
+  }
+}
+
+.media-right {
+  & .button:hover,
+  & .button:focus {
+    top: 0;
+  }
+}
+
 div.columns.comment-divider {
   margin-bottom: 1.5rem;
   margin-top: 1.5rem;

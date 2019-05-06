@@ -16,21 +16,29 @@
         <strong {% if signup.profile.nickname %}class="tooltip is-tooltip-primary"
                 data-tooltip="{{ signup.user.get_full_name }}"{% endif %}>{{ signup.profile.long_name }}</strong>
         <small>Signed up at {{ signup.created_at|date:'P l jS F Y' }}</small>
+
       </p>
       <p class="overflow-hidden">{{ signup.comment }}</p>
     </div>
   </div>
-  {% if is_exec %}
-    <div class="media-right">
-      <div class="buttons is-right">
-        <a href="#signup"
-           class="button is-small is-secondary comment-delete"
-           data-comment-id="{{ signup.id }}">
-          <span class="icon is-small">
-            <i class="fas fa-trash"></i>
-          </span>
-        </a>
-      </div>
+  <div class="media-right">
+    <div class="buttons has-addons is-right">
+      <a href="#signup" id="comment-edit"
+         class="button is-small is-secondary"
+         data-comment-id="{{ signup.id }}">
+        <span class="icon is-small">
+          <i class="fas fa-edit"></i>
+        </span>
+        <span>Edit</span>
+      </a>
+      <a href="#signup"
+         class="button is-small is-secondary comment-delete"
+         data-comment-id="{{ signup.id }}">
+        <span class="icon is-small">
+          <i class="fas fa-trash"></i>
+        </span>
+        <span>Delete</span>
+      </a>
     </div>
-  {% endif %}
+  </div>
 </article>

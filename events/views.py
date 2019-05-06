@@ -99,6 +99,7 @@ class UpdateCommentView(LoginRequiredMixin, View):
 
         # Update the signup
         signup.save()
+        # TODO: Return the HTML to be inserted
         return HttpResponse(status=200)
 
 
@@ -143,6 +144,8 @@ class DeleteCommentView(LoginRequiredMixin, UserPassesTestMixin, View):
         signup = get_object_or_404(EventSignup, id=request.POST.get('comment-id'))
         signup.comment = None
         signup.save()
+
+        # TODO: Return the HTML for the comment list
 
         return HttpResponse()
 

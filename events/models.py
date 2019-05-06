@@ -90,7 +90,7 @@ class Event(models.Model):
     @property
     def signups(self):
         signups = EventSignup.objects.filter(event=self, is_unsigned_up=False).exclude(comment__exact='').order_by(
-            '-created_at').all()
+            'commented_at', '-created_at').all()
 
         return signups
 
@@ -202,8 +202,9 @@ class EventSignup(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     event = models.ForeignKey(Event, on_delete=models.CASCADE)
     created_at = models.DateTimeField(default=timezone.now)
-    # TODO: Figure out a way to do this - AJAX on the signup page?
+
     comment = models.TextField(blank=True, max_length=1024)
+    commented_at = models.DateTimeField(blank=True, null=True)
 
     # If a user has un-signed up, their signup will persist to preserve transaction information
     # This flag will determine if a signup has been removed.
