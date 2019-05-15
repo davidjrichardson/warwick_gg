@@ -795,11 +795,10 @@ a.button.is-primary {
 }
 
 .comment {
-  flex-wrap: wrap;
 
   & .media-left,
   & .media-right {
-    flex: 0 1 auto;
+    flex: 0 0 auto;
   }
 
   & .media-content {
@@ -807,6 +806,8 @@ a.button.is-primary {
   }
 
   @include mobile {
+    flex-wrap: wrap;
+
     & .media-content {
       margin-top: 16px;
     }
