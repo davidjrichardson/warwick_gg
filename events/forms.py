@@ -11,7 +11,10 @@ PLACEHOLDER_TEXTS = [
     '🚅🚅🚅',
     'Thanks for another £5 donation to RNJesus',
     'MOOP VEEN',
-    'According to all known laws of aviation, there is no way that a bee should be able to fly. Its wings are too small to get its fat little body off the ground.'
+    'According to all known laws of aviation, there is no way that a bee should be able to fly. Its wings are too small to get its fat little body off the ground.',
+    'KAREN YOU WITCH. RELEASE ME FROM THIS PLACEHOLDER TEXT AT ONCE.',
+    '🦀UWCS POWERLESS AGAINST A FLAMINGO🦀',
+    'olives--'
 ]
 
 
