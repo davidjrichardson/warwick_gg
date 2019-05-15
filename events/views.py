@@ -8,6 +8,7 @@ from allauth.socialaccount.models import SocialAccount
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.db.models.functions import Lower
 from django.http import HttpResponseBadRequest, HttpResponse
 from django.shortcuts import render, get_object_or_404, redirect
 from django.template.loader import render_to_string
@@ -46,10 +47,14 @@ class EventView(View):
             try:
                 signup = list(
                     filter(lambda x: x.is_valid(), EventSignup.objects.for_event(event, request.user).all())).pop()
-                ticket_status = list(filter(lambda x: x.ticket, EventSignup.objects.for_event(event,
-                                                                                              request.user).all())).pop().ticket_status()
-            except:
+            except IndexError:
                 signup = None
+
+            try:
+                ticket_status = list(
+                    filter(lambda x: x.ticket,
+                           EventSignup.objects.for_event(event, request.user).all())).pop().ticket_status()
+            except IndexError:
                 ticket_status = None
 
         if signup:
@@ -158,7 +163,8 @@ class DeleteCommentView(LoginRequiredMixin, View):
 
         signup = get_object_or_404(EventSignup, id=request.POST.get('comment-id'))
 
-        if signup.user == request.user:
+        if signup.user == request.user \
+                or 'exec' in self.request.user.groups.values_list(Lower('name'), flat=True):
             signup.comment = ''
             signup.save()
 
