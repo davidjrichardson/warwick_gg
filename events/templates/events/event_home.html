@@ -153,7 +153,6 @@
           {% if is_exec or has_signed_up %}
               let deleteLinks = document.querySelectorAll('.comment-delete');
               deleteLinks.forEach(function (button) {
-                  console.log(button);
                   button.addEventListener("click", function (ev) {
                       ev.preventDefault();
                       ev.stopImmediatePropagation();
