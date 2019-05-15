@@ -114,12 +114,14 @@ class UpdateCommentView(LoginRequiredMixin, View):
 
         event = signup.event
         signups = event.signups
+        is_exec = 'exec' in self.request.user.groups.values_list(Lower('name'), flat=True)
 
         context = {
             'event': event,
             'comment_form': signup_form,
             'signups': signups,
-            'has_signed_up': signup
+            'has_signed_up': signup,
+            'is_exec': is_exec
         }
         comments_html = render_to_string('events/partial/comments.html', context, request=request)
 
@@ -171,12 +173,14 @@ class DeleteCommentView(LoginRequiredMixin, View):
             event = signup.event
             comment_form = SignupForm(instance=signup)
             signups = event.signups
+            is_exec = 'exec' in self.request.user.groups.values_list(Lower('name'), flat=True)
 
             context = {
                 'event': event,
                 'comment_form': comment_form,
                 'signups': signups,
-                'has_signed_up': signup
+                'has_signed_up': signup,
+                'is_exec': is_exec
             }
             comments_html = render_to_string('events/partial/comments.html', context, request=request)
 
