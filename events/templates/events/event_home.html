@@ -38,50 +38,127 @@
           selectedContainer.classList.add('is-active');
       }
 
+      function bindFormSubmit() {
+          let submitButton = document.getElementById('form-save');
+          if (submitButton !== null) {
+              submitButton.addEventListener("click", function (ev) {
+                  ev.preventDefault();
+                  ev.stopImmediatePropagation();
+
+                  let textArea = document.getElementById('id_comment');
+                  if (textArea.value.length > 0) {
+                      let form = document.getElementById('comment-form');
+                      let formData = new FormData(form);
+                      sendComment(formData);
+                  }
+
+                  return false;
+              });
+          }
+      }
+
+      function bindCommentDeleteButtons() {
+          let deleteLinks = document.querySelectorAll('.comment-delete');
+          if (deleteLinks !== null) {
+              deleteLinks.forEach(function (button) {
+                  button.addEventListener("click", function (ev) {
+                      ev.preventDefault();
+                      ev.stopImmediatePropagation();
+
+                      deleteComment(button);
+
+                      return false;
+                  });
+              });
+          }
+      }
+
+      function displayNotification(message) {
+          let commentContainer = document.getElementById('comments-container');
+          let commentTitle = document.getElementById('comments-title');
+          let notification = document.createRange()
+              .createContextualFragment(message);
+
+          commentContainer.insertBefore(notification, commentTitle);
+          document.getElementById('notification-close')
+              .addEventListener('click', function (ev) {
+                  ev.target.parentNode.remove();
+              });
+      }
+
+      function sendComment(formData) {
+          const url = '/events/api/comment/update';
+          const csrf = Cookies.get('csrftoken');
+          const http = new XMLHttpRequest();
+
+          http.open('POST', url, true);
+          http.setRequestHeader('X-CSRFToken', csrf);
+          http.onreadystatechange = function () {
+              if (http.readyState === 4 && http.status === 200) {
+                  let commentContainer = document.getElementById('comments');
+                  commentContainer.innerHTML = http.responseText;
+
+                  bindFormSubmit();
+                  bindCommentDeleteButtons();
+              } else if (http.readyState === 4 && http.status === 403) {
+                  if (document.getElementById('notification-close')) {
+                      return;
+                  }
+
+                  displayNotification(http.responseText);
+              }
+          };
+          http.send(formData);
+      }
+
+      function deleteComment(button) {
+          const url = '/events/api/comment/delete';
+          const csrf = Cookies.get('csrftoken');
+          const http = new XMLHttpRequest();
+
+          http.open('POST', url, true);
+          http.setRequestHeader('X-CSRFToken', csrf);
+          http.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+          http.onreadystatechange = function () {
+              if (http.readyState === 4 && http.status === 200) {
+                  let commentContainer = document.getElementById('comments');
+                  commentContainer.innerHTML = http.responseText;
+
+                  bindFormSubmit();
+                  bindCommentDeleteButtons();
+              } else if (http.readyState === 4 && http.status === 403) {
+                  if (document.getElementById('notification-close')) {
+                      return;
+                  }
+
+                  displayNotification(http.responseText);
+              }
+          };
+          http.send('comment-id=' + button.getAttribute('data-comment-id'));
+      }
+
       document.addEventListener('DOMContentLoaded', function () {
+          bindFormSubmit();
+
           {% if messages %}
               const notificationClose = document.getElementById('notification-close');
 
               if (notificationClose != null) {
                   notificationClose.addEventListener('click', function (ev) {
                       ev.target.parentNode.remove();
-                  })
+                  });
               }
           {% endif %}
 
           {% if is_exec or has_signed_up %}
               let deleteLinks = document.querySelectorAll('.comment-delete');
-              deleteLinks.forEach(function (element) {
-                  element.addEventListener('click', function (ev) {
+              deleteLinks.forEach(function (button) {
+                  console.log(button);
+                  button.addEventListener("click", function (ev) {
                       ev.preventDefault();
                       ev.stopImmediatePropagation();
 
-                      const url = '/events/api/comment/delete';
-                      const csrf = Cookies.get('csrftoken');
-                      const http = new XMLHttpRequest();
-
-                      http.open('POST', url, true);
-                      http.setRequestHeader('X-CSRFToken', csrf);
-                      http.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
-                      http.onreadystatechange = function () {
-                          // If the element is not the last one
-                          if (element.parentNode.parentNode.nextElementSibling !== null) {
-                              if (element.parentNode.parentNode.nextElementSibling.classList.contains('comment-divider')) {
-                                  element.parentNode.parentNode.nextElementSibling.remove();
-                              }
-                          } else if (element.parentNode.parentNode.previousElementSibling !== null) {
-                              // Its the top comment
-                              if (element.parentNode.parentNode.previousElementSibling.classList.contains('comment-divider')) {
-                                  element.parentNode.parentNode.previousElementSibling.remove();
-                              } else if (element.parentNode.parentNode.previousElementSibling.id === 'comments-title') {
-                                  document.getElementById('comments-container').remove();
-                              }
-                          }
-                          element.parentNode.parentNode.remove();
-                      };
-                      http.send('comment-id=' + element.getAttribute('data-comment-id'));
-
-                      // TODO: Add the form back if the user deleting is deleting their own comment
+                      deleteComment(button);
 
                       return false;
                   });
@@ -216,67 +293,8 @@
               <div id="comments-container" class="comment-container">
                 <hr/>
                 <h4 class="title forms is-4" id="comments-title">Signup Comments</h4>
-                {# TODO: Change the layout of this so the API can respond with the HTML to insert #}
                 <div id="comments">
-                  {% if signups and not has_signed_up.comment %}
-                    <div class="content">
-                      <p>Excited about {{ event.title }}? Leave a comment below:</p>
-                      <form id="comment-form" method="post" action="{% url 'update_comment' %}">
-                        {% csrf_token %}
-                        <input type="hidden" name="event-slug" value="{{ event.slug }}">
-
-                        <div class="columns is-multiline">
-                          <div class="column is-full">
-                            {% include 'allauth/account/includes/form-field.html' with field=comment_form.comment custom_label='Your comment' %}
-                          </div>
-                          <div class="column is-full">
-                            <div class="field is-grouped is-grouped-right">
-                              <div class="control">
-                                <button class="button is-primary" id="form-save" type="submit">Submit</button>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                      </form>
-                      <hr/>
-                    </div>
-                    {% for s in signups %}
-                      {% include 'events/includes/signup-comment.html' with signup=s count=forloop.counter0 %}
-                    {% endfor %}
-                  {% elif signups and has_signed_up.comment %}
-                    {% for s in signups %}
-                      {% if s.id != has_signed_up.id %}
-                        {% include 'events/includes/signup-comment.html' with signup=s count=forloop.counter0 %}
-                      {% else %}
-                        {% include 'events/includes/signup-comment-editable.html' with signup=s count=forloop.counter0 %}
-                      {% endif %}
-                    {% endfor %}
-                  {% else %}
-                    {% for s in signups %}
-                      {% include 'events/includes/signup-comment.html' with signup=s count=forloop.counter0 %}
-                    {% empty %}
-                      <div class="content">
-                        <p>There are no comments here - be the first:</p>
-                        <form id="comment-form" method="post" action="{% url 'update_comment' %}">
-                          {% csrf_token %}
-                          <input type="hidden" name="event-slug" value="{{ event.slug }}">
-
-                          <div class="columns is-multiline">
-                            <div class="column is-full">
-                              {% include 'allauth/account/includes/form-field.html' with field=comment_form.comment custom_label='Your comment' %}
-                            </div>
-                            <div class="column is-full">
-                              <div class="field is-grouped is-grouped-right">
-                                <div class="control">
-                                  <button class="button is-primary" id="form-save" type="submit">Submit</button>
-                                </div>
-                              </div>
-                            </div>
-                          </div>
-                        </form>
-                      </div>
-                    {% endfor %}
-                  {% endif %}
+                  {% include 'events/partial/comments.html' with event=event comment_form=comment_form signups=signups has_signed_up=has_signed_up %}
                 </div>
               </div>
             {% endif %}

@@ -23,14 +23,15 @@
   </div>
   <div class="media-right">
     <div class="buttons has-addons is-right">
-      <a href="#signup" id="comment-edit"
+      {# TODO: Create a way to edit the comment #}
+      {% comment %}<a href="#signup" id="comment-edit"
          class="button is-small is-secondary"
          data-comment-id="{{ signup.id }}">
         <span class="icon is-small">
           <i class="fas fa-edit"></i>
         </span>
         <span>Edit</span>
-      </a>
+      </a>{% endcomment %}
       <a href="#signup"
          class="button is-small is-secondary comment-delete"
          data-comment-id="{{ signup.id }}">

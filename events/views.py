@@ -7,10 +7,11 @@ import stripe
 from allauth.socialaccount.models import SocialAccount
 from django.conf import settings
 from django.contrib import messages
-from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
-from django.db.models.functions import Lower
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import HttpResponseBadRequest, HttpResponse
 from django.shortcuts import render, get_object_or_404, redirect
+from django.template import RequestContext
+from django.template.loader import render_to_string
 from django.utils import timezone
 from django.utils.decorators import method_decorator
 from django.views import View
@@ -87,20 +88,38 @@ class UpdateCommentView(LoginRequiredMixin, View):
         try:
             signup = [x for x in EventSignup.objects.for_event(event, user=request.user) if x.is_valid()].pop()
         except:
-            return HttpResponseBadRequest()
+            notification = render_to_string('events/partial/notification.html', {
+                'type': 'danger',
+                'message': 'You aren\'t signed up to that event.'
+            })
+
+            return HttpResponse(status=403, content=notification)
 
         signup_form = SignupForm(request.POST, instance=signup)
 
         if not signup_form.is_valid():
-            messages.error(request,
-                           'There was an error updating your comment, double check everything is in order and try again.',
-                           extra_tags='is-danger')
-            return HttpResponseBadRequest()
+            notification = render_to_string('events/partial/notification.html', {
+                'type': 'danger',
+                'message': 'We couldn\'t update your comment, double check everything is in order and try again.'
+            })
+
+            return HttpResponse(status=403, content=notification)
 
         # Update the signup
         signup.save()
-        # TODO: Return the HTML to be inserted
-        return HttpResponse(status=200)
+
+        event = signup.event
+        signups = event.signups
+
+        context = {
+            'event': event,
+            'comment_form': signup_form,
+            'signups': signups,
+            'has_signed_up': signup
+        }
+        comments_html = render_to_string('events/partial/comments.html', context, request=request)
+
+        return HttpResponse(status=200, content=comments_html)
 
 
 class TournamentView(View):
@@ -130,11 +149,8 @@ class TournamentIndexView(LoginRequiredMixin, View):
         return render(request, self.template_name, context=ctx)
 
 
-class DeleteCommentView(LoginRequiredMixin, UserPassesTestMixin, View):
+class DeleteCommentView(LoginRequiredMixin, View):
     login_url = '/accounts/login/'
-
-    def test_func(self):
-        return 'exec' in self.request.user.groups.values_list(Lower('name'), flat=True)
 
     @method_decorator(csrf_protect, name='dispatch')
     def post(self, request):
@@ -142,12 +158,31 @@ class DeleteCommentView(LoginRequiredMixin, UserPassesTestMixin, View):
             return HttpResponseBadRequest()
 
         signup = get_object_or_404(EventSignup, id=request.POST.get('comment-id'))
-        signup.comment = None
-        signup.save()
 
-        # TODO: Return the HTML for the comment list
+        if signup.user == request.user:
+            signup.comment = ''
+            signup.save()
 
-        return HttpResponse()
+            event = signup.event
+            comment_form = SignupForm(instance=signup)
+            signups = event.signups
+
+            context = {
+                'event': event,
+                'comment_form': comment_form,
+                'signups': signups,
+                'has_signed_up': signup
+            }
+            comments_html = render_to_string('events/partial/comments.html', context, request=request)
+
+            return HttpResponse(status=200, content=comments_html)
+        else:
+            notification = render_to_string('events/partial/notification.html', {
+                'type': 'danger',
+                'message': 'You don\'t have exec privileges to delete that comment'
+            })
+
+            return HttpResponse(status=403, content=notification)
 
 
 def check_membership(api_token, profile, request, society):
