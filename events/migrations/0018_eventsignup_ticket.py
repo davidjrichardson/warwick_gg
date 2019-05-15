@@ -11,7 +11,7 @@ def forwards_func(apps, schema_editor):
     for signup in EventSignup.objects.all():
         # Create a Ticket object if it has transaction info in it and set its status
         if signup.transaction_token:
-            status = Ticket.REFUNDED if signup.refund_token else Ticket.COMPLETE
+            status = 'R' if signup.refund_token else 'C'
             ticket = Ticket(charge_id=signup.transaction_token, status=status)
 
             ticket.save()

@@ -10,7 +10,6 @@ from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import HttpResponseBadRequest, HttpResponse
 from django.shortcuts import render, get_object_or_404, redirect
-from django.template import RequestContext
 from django.template.loader import render_to_string
 from django.utils import timezone
 from django.utils.decorators import method_decorator
