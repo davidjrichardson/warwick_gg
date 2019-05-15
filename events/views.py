@@ -276,7 +276,7 @@ class SignupFormView(LoginRequiredMixin, View):
         event = get_object_or_404(Event, slug=slug)
 
         has_signed_up = list(
-            filter(lambda x: x.is_complete(), EventSignup.objects.for_event(event, request.user).all()))
+            filter(lambda x: x.is_valid(), EventSignup.objects.for_event(event, request.user).all()))
         if has_signed_up:
             messages.error(request, 'You\'re already signed up to that event.', extra_tags='is-danger')
             return redirect('event_home', slug=slug)
@@ -346,7 +346,7 @@ class UnsignupFormView(LoginRequiredMixin, View):
         event = get_object_or_404(Event, slug=slug)
 
         has_signed_up = list(
-            filter(lambda x: x.is_complete(), EventSignup.objects.for_event(event, request.user).all()))
+            filter(lambda x: x.is_valid(), EventSignup.objects.for_event(event, request.user).all()))
 
         if not has_signed_up:
             messages.error(request, 'You cannot un-signup from an event you\'re not signed up to.',
