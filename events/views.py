@@ -91,7 +91,7 @@ class UpdateCommentView(LoginRequiredMixin, View):
         event = get_object_or_404(Event, slug=request.POST.get('event-slug'))
         try:
             signup = [x for x in EventSignup.objects.for_event(event, user=request.user) if x.is_valid()].pop()
-        except:
+        except IndexError:
             notification = render_to_string('events/partial/notification.html', {
                 'type': 'danger',
                 'message': 'You aren\'t signed up to that event.'
@@ -175,11 +175,17 @@ class DeleteCommentView(LoginRequiredMixin, View):
             signups = event.signups
             is_exec = 'exec' in self.request.user.groups.values_list(Lower('name'), flat=True)
 
+            try:
+                user_signup = [x for x in EventSignup.objects.for_event(signup.event, user=request.user) if
+                               x.is_valid()].pop()
+            except IndexError:
+                user_signup = None
+
             context = {
                 'event': event,
                 'comment_form': comment_form,
                 'signups': signups,
-                'has_signed_up': signup,
+                'has_signed_up': user_signup,
                 'is_exec': is_exec
             }
             comments_html = render_to_string('events/partial/comments.html', context, request=request)
