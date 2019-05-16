@@ -3,7 +3,7 @@ import random
 from django import forms
 from django.forms import Widget
 
-from events.models import EventSignup
+from events.models import EventSignup, TournamentSignup
 
 PLACEHOLDER_TEXTS = [
     'Bottom text',
@@ -34,7 +34,18 @@ class Textarea(Widget):
         super().__init__(default_attrs)
 
 
-class SignupForm(forms.ModelForm):
+class TournamentSignupForm(forms.ModelForm):
+    class Meta:
+        model = TournamentSignup
+        fields = ['comment']
+        widgets = {
+            'comment': Textarea(attrs={
+                'placeholder': get_placeholder(),
+            })
+        }
+
+
+class EventSignupForm(forms.ModelForm):
     class Meta:
         model = EventSignup
         fields = ['comment']

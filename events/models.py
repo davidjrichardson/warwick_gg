@@ -307,15 +307,26 @@ class Tournament(models.Model):
         return dict(Tournament.PLATFORM_CHOICES)[self.platform]
 
     @property
+    def signup_count(self):
+        return len(TournamentSignup.objects.all_for_tournament(self).all())
+
+    @property
     def games_list(self):
         return list(map(lambda x: x.strip(), self.games.split(',')))
+
+    def user_signed_up(self, user):
+        return TournamentSignup.objects.for_tournament(self, user).exists()
 
     def get_absolute_url(self):
         return '/events/tournament/{slug}'.format(slug=self.slug)
 
 
 class TournamentSignupManager(models.Manager):
-    pass
+    def all_for_tournament(self, tournament):
+        return self.filter(tournament=tournament, is_unsigned_up=True)
+
+    def for_tournament(self, tournament, user):
+        return self.filter(tournament=tournament, user=user, is_unsigned_up=False)
 
 
 class TournamentSignup(models.Model):
@@ -324,6 +335,7 @@ class TournamentSignup(models.Model):
     created_at = models.DateTimeField(default=timezone.now)
     comment = models.TextField(blank=True, max_length=1024, default='')
 
-    platform_tag = models.CharField(max_length=64)
+    platform_tag = models.CharField(max_length=64, blank=True)
+    is_unsigned_up = models.BooleanField(default=False)
 
     objects = TournamentSignupManager()

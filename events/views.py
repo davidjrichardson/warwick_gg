@@ -18,8 +18,8 @@ from django.views import View
 from django.views.decorators.csrf import csrf_protect, csrf_exempt
 from stripe.error import StripeError
 
-from events.forms import SignupForm
-from events.models import Event, EventSignup, Tournament, Ticket
+from events.forms import EventSignupForm
+from events.models import Event, EventSignup, Tournament, Ticket, TournamentSignup
 from seating.models import Seating
 from uwcs_auth.models import WarwickGGUser
 
@@ -62,7 +62,7 @@ class EventView(View):
         else:
             signups = []
 
-        comment_form = SignupForm(instance=signup)
+        comment_form = EventSignupForm(instance=signup)
 
         ctx = {
             'event': event,
@@ -99,7 +99,7 @@ class UpdateCommentView(LoginRequiredMixin, View):
 
             return HttpResponse(status=403, content=notification)
 
-        signup_form = SignupForm(request.POST, instance=signup)
+        signup_form = EventSignupForm(request.POST, instance=signup)
 
         if not signup_form.is_valid():
             notification = render_to_string('events/partial/notification.html', {
@@ -134,13 +134,31 @@ class TournamentView(View):
 
     def get(self, request, slug):
         tournament = get_object_or_404(Tournament, slug=slug)
-        tournament_event = Event.objects.get(id=tournament.for_event.id) if tournament.for_event else None
+
+        try:
+            user_signup = TournamentSignup.objects.get(tournament=tournament, user=request.user, is_unsigned_up=False)
+        except TournamentSignup.DoesNotExist:
+            user_signup = None
 
         ctx = {
             'tournament': tournament,
-            'tournament_event': tournament_event,
+            'user_signup': user_signup,
         }
         return render(request, self.template_name, context=ctx)
+
+
+class TournamentSignupView(LoginRequiredMixin, View):
+    template_name = 'tournaments/tournament_home.html'
+    login_url = '/accounts/login/'
+
+    pass
+
+
+class TournamentUnsignupView(LoginRequiredMixin, View):
+    template_name = 'tournaments/tournament_home.html'
+    login_url = '/accounts/login/'
+
+    pass
 
 
 class TournamentIndexView(LoginRequiredMixin, View):
@@ -172,7 +190,7 @@ class DeleteCommentView(LoginRequiredMixin, View):
             signup.save()
 
             event = signup.event
-            comment_form = SignupForm(instance=signup)
+            comment_form = EventSignupForm(instance=signup)
             signups = event.signups
             is_exec = 'exec' in self.request.user.groups.values_list(Lower('name'), flat=True)
 
@@ -261,7 +279,7 @@ class SignupChargeView(LoginRequiredMixin, View):
         # If there was an issue processing the signup form then error - there shouldn't be any reason since
         # all of the fields are optional but ???
         signup = EventSignup(user=request.user, event=event)
-        signup_form = SignupForm(request.POST, instance=signup)
+        signup_form = EventSignupForm(request.POST, instance=signup)
         if not signup_form.is_valid():
             messages.error(request,
                            'There was an error processing your signup, double check everything is in order and try again.',

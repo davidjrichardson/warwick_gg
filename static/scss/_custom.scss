@@ -607,6 +607,10 @@ div.navbar-dropdown {
   }
 }
 
+hr.width-300 {
+  max-width: 300px;
+}
+
 .tournament-box {
   box-shadow: 0 0 0 rgba(black, 0);
   background-color: lighten($warwickgg_black, 3%);

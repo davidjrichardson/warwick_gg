@@ -24,7 +24,24 @@
       <h6 class="subtitle is-6">{{ tournament.start|date:'P l jS F Y' }} - {{ tournament.end|date:'P l jS F Y' }}</h6>
       <div class="content">
         <h4>Tournament information</h4>
+        <ul>
+          {% if tournament.platform == 'O' %}
+            <li><strong>Platform:</strong> {{ tournament.platform_other }}</li>
+          {% else %}
+            <li><strong>Platform:</strong> {{ tournament.platform_verbose }}</li>
+          {% endif %}
+          {% if tournament.for_event %}
+            <li><strong>Event:</strong> <a
+                href="{{ tournament.for_event.get_absolute_url }}">{{ tournament.for_event }}</a>
+              ({% if tournament.requires_attendance %}requires signup to {{ tournament.for_event }}{% else %}doesn't require signup{% endif %})
+            </li>
+          {% endif %}
+          {% if tournament.games %}
+            <li><strong>Game{{ tournament.games_list|pluralize }}</strong>: {{ tournament.games }}</li>
+          {% endif %}
+        </ul>
         {{ tournament.description|markdown }}
+        <hr class="width-300"/>
         <h4>Signup information</h4>
         <ul class="has-bullets">
           <li><strong>Signups open:</strong> {{ tournament.signup_start|date:'P l jS F Y' }}</li>
@@ -35,14 +52,37 @@
               href="{{ tournament.signup_form }}">{{ tournament.signup_form }}</a></p>
         {% endif %}
       </div>
-      {% if tournament_event %}
+      {% if request.user.is_authenticated %}
         <div class="signup-tile">
           <div class="tile-left">
-            <h4 class="title is-4">{{ tournament_event.title }}</h4>
-            <p>This tournament is being run as part of <a
-                href="{% url 'event_home' slug=tournament_event.slug %}">{{ tournament_event.title }}</a>!
-              {% if tournament.requires_attendance %}To take part you must also be attending this event, so please make sure you've signed up to it as well.{% else %}You
-                don't need to attend to take part but you might be missing out on other tournaments and opportunities.{% endif %}</p>
+            {% if user_signup %}
+              <h4 class="title is-4">Signed up</h4>
+              <p>You have already signed up to {{ tournament.title }} - click <a href="{% url 'tournament_unsignup' slug=tournament.slug %}">here</a> to un-signup.</p>
+            {% else %}
+              {% if tournament.signups_open %}
+                {% if tournament.signup_limit == tournament.signup_count %}
+                  <h4 class="title is-4">Signups for {{ tournament.title }} are closed</h4>
+                  <p>There are no more spaces to sign up to this tournament. Check back soon to see if there is any space!</p>
+                {% else %}
+                  <h4 class="title is-4">Signup to {{ tournament.title }}</h4>
+                  <p>Signups are open for {{ tournament.title }}! Click <a href="{% url 'tournament_signup' slug=tournament.slug %}">here</a> to sign up.</p>
+                {% endif %}
+              {% else %}
+                <h4 class="title is-4">Signups opening soon</h4>
+                <p>Signups for {{ tournament.title }} aren't open just yet. They open at {{ tournament.signup_start|date:'P l jS F Y' }}, so check back then!</p>
+              {% endif %}
+            {% endif %}
+          </div>
+        </div>
+
+        {% if user_signup %}
+          {# TODO: Comments #}
+        {% endif %}
+      {% else %}
+        <div class="signup-tile">
+          <div class="tile-left">
+            <h4 class="title is-4">Register to sign up</h4>
+            <p>To sign up for {{ tournament.title }}, you need to have logged into your Warwick.gg account! To log in or sign up, click <a href="{% url 'account_login' %}">here</a>.</p>
           </div>
         </div>
       {% endif %}
