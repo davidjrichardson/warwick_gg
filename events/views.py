@@ -161,6 +161,20 @@ class TournamentUnsignupView(LoginRequiredMixin, View):
     pass
 
 
+class TournamentSignupConfirmView(LoginRequiredMixin, View):
+    template_name = 'tournaments/tournament_home.html'
+    login_url = '/accounts/login/'
+
+    pass
+
+
+class TournamentUnsignupConfirmView(LoginRequiredMixin, View):
+    template_name = 'tournaments/tournament_home.html'
+    login_url = '/accounts/login/'
+
+    pass
+
+
 class TournamentIndexView(LoginRequiredMixin, View):
     template_name = 'tournaments/tournament_index.html'
     login_url = '/accounts/login/'
