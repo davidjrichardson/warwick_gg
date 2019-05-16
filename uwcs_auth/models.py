@@ -13,6 +13,7 @@ class WarwickGGUser(models.Model):
 
     steam_user = models.CharField(max_length=32, blank=True)
     battle_net_user = models.CharField('Battle.NET user', max_length=32, blank=True)
+    league_user = models.CharField('Summoner name', max_length=32, blank=True)
 
     def __str__(self):
         return '{uni_id} - {nick} for user {id}'.format(uni_id=self.uni_id,

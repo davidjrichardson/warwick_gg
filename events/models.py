@@ -246,6 +246,18 @@ class TournamentManager(models.Manager):
 
 
 class Tournament(models.Model):
+    PLATFORM_STEAM = 'S'
+    PLATFORM_BNET = 'B'
+    PLATFORM_LEAGUE = 'L'
+    PLATFORM_OTHER = 'O'
+
+    PLATFORM_CHOICES = (
+        (PLATFORM_STEAM, 'Steam'),
+        (PLATFORM_BNET, 'Battle.NET'),
+        (PLATFORM_LEAGUE, 'League of Legends'),
+        (PLATFORM_OTHER, 'Other')
+    )
+
     id = models.IntegerField(primary_key=True)
 
     # Tournament display information
@@ -254,10 +266,9 @@ class Tournament(models.Model):
     start = models.DateTimeField(default=timezone.now)
     end = models.DateTimeField(default=timezone.now)
 
-    # TODO: handle signups through warwick.gg itself rather than an external signup form.
-    signup_form = models.URLField()
-    signup_start = models.DateTimeField(default=timezone.now)
-    signup_end = models.DateTimeField(default=timezone.now)
+    tournament_platform = models.CharField(max_length=1, choices=PLATFORM_CHOICES,
+                                           help_text='If \"other\" please specify')
+    tournament_platform_other = models.CharField(max_length=64, blank=True)
 
     # Associated event
     for_event = models.ForeignKey(Event, on_delete=models.CASCADE, blank=True, null=True)
@@ -283,17 +294,16 @@ class Tournament(models.Model):
         return '/events/tournament/{slug}'.format(slug=self.slug)
 
 
-# class TournamentSignupManager(models.Manager):
-#     pass
-#
-#
-# class TournamentSignup(models.Model):
-#     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
-#     tournament = models.ForeignKey(Tournament, on_delete=models.CASCADE)
-#     created_at = models.DateTimeField(default=timezone.now)
-#     comment = models.TextField(blank=True, max_length=255)
-#
-#     # Stripe transaction tokens in case of refund
-#     ticket = models.OneToOneField(Ticket, related_name='signup', on_delete=models.CASCADE, blank=True, null=True)
-#
-#     objects = TournamentSignupManager()
+class TournamentSignupManager(models.Manager):
+    pass
+
+
+class TournamentSignup(models.Model):
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    tournament = models.ForeignKey(Tournament, on_delete=models.CASCADE)
+    created_at = models.DateTimeField(default=timezone.now)
+    comment = models.TextField(blank=True, max_length=1024, default='')
+
+    platform_tag = models.CharField(max_length=64)
+
+    objects = TournamentSignupManager()
