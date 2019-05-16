@@ -5,11 +5,34 @@
     <h3 class="title">{{ tournament.title }}</h3>
     <h6 class="subtitle is-6">{{ tournament.start|date:'P l jS F Y' }}</h6>
     <div class="content">
+      <ul>
+        {% if tournament.platform == 'O' %}
+          <li><strong>Platform:</strong> {{ tournament.platform_other }}</li>
+        {% else %}
+          <li><strong>Platform:</strong> {{ tournament.platform_verbose }}</li>
+        {% endif %}
+        {% if tournament.for_event %}
+          <li><strong>Event:</strong> {{ tournament.for_event }}</li>
+        {% endif %}
+        {% if tournament.games %}
+          <li><strong>Game{{ tournament.games_list|pluralize }}</strong>: {{ tournament.games }}</li>
+        {% endif %}
+      </ul>
       {{ tournament.description|markdown }}
+      {% if tournament.for_event %}
+        <p>
+          {% if tournament.requires_attendance %}
+            You will need to have signed up to {{ tournament.for_event }} to take part in this tournament.
+          {% else %}
+            You do not need to be signed up to {{ tournament.for_event }} to take part in this tournament.
+          {% endif %}
+        </p>
+      {% endif %}
+    {# TODO: Deal with signing up to show different text here #}
       {% if tournament.signups_open %}
         <small class="has-text-success"><i class="fas fa-user-plus"></i> Signups are open</small>
       {% endif %}
-      {#    <small><span class="signed-up"><i class="fas fa-check"></i> You're signed up</span></small>#}
+      <small><span class="signed-up"><i class="fas fa-check"></i> You're signed up</span></small>
     </div>
   </a>
 </div>

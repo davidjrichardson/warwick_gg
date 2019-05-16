@@ -47,7 +47,7 @@ class Event(models.Model):
         ('WE', 'Warwick Esports'),
     )
 
-    id = models.IntegerField(primary_key=True)
+    id = models.AutoField(primary_key=True)
 
     # Event display information
     title = models.CharField(max_length=100)
@@ -249,16 +249,22 @@ class Tournament(models.Model):
     PLATFORM_STEAM = 'S'
     PLATFORM_BNET = 'B'
     PLATFORM_LEAGUE = 'L'
+    PLATFORM_SWITCH = 'N'
+    PLATFORM_XBOX = 'X'
+    PLATFORM_PLAYSTATION = 'P'
     PLATFORM_OTHER = 'O'
 
     PLATFORM_CHOICES = (
         (PLATFORM_STEAM, 'Steam'),
         (PLATFORM_BNET, 'Battle.NET'),
         (PLATFORM_LEAGUE, 'League of Legends'),
+        (PLATFORM_SWITCH, 'Nintendo Switch'),
+        (PLATFORM_XBOX, 'Xbox One'),
+        (PLATFORM_PLAYSTATION, 'Playstation 4'),
         (PLATFORM_OTHER, 'Other')
     )
 
-    id = models.IntegerField(primary_key=True)
+    id = models.AutoField(primary_key=True)
 
     # Tournament display information
     title = models.CharField(max_length=100)
@@ -266,9 +272,15 @@ class Tournament(models.Model):
     start = models.DateTimeField(default=timezone.now)
     end = models.DateTimeField(default=timezone.now)
 
-    tournament_platform = models.CharField(max_length=1, choices=PLATFORM_CHOICES,
-                                           help_text='If \"other\" please specify')
-    tournament_platform_other = models.CharField(max_length=64, blank=True)
+    platform = models.CharField(max_length=1, choices=PLATFORM_CHOICES,
+                                help_text='If \"other\" please specify')
+    platform_other = models.CharField(max_length=64, blank=True)
+    games = models.CharField(max_length=1024, blank=True,
+                             help_text='A comma separated list of the game(s) played in this tournament')
+
+    signup_start = models.DateTimeField(default=timezone.now)
+    signup_end = models.DateTimeField(default=timezone.now)
+    signup_limit = models.IntegerField(blank=True, null=True)
 
     # Associated event
     for_event = models.ForeignKey(Event, on_delete=models.CASCADE, blank=True, null=True)
@@ -288,7 +300,15 @@ class Tournament(models.Model):
 
     @property
     def is_onging(self):
-        return timezone.now() < self.end
+        return self.start <= timezone.now() < self.end
+
+    @property
+    def platform_verbose(self):
+        return dict(Tournament.PLATFORM_CHOICES)[self.platform]
+
+    @property
+    def games_list(self):
+        return list(map(lambda x: x.strip(), self.games.split(',')))
 
     def get_absolute_url(self):
         return '/events/tournament/{slug}'.format(slug=self.slug)

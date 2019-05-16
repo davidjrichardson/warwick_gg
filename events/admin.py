@@ -6,6 +6,10 @@ from events.models import Event, SeatingRoom, EventSignup, Tournament, Ticket
 
 @admin.register(Tournament)
 class TournamentAdmin(admin.ModelAdmin):
+    fields = (
+        'title', 'games', 'platform', 'platform_other', 'start', 'end', 'description', 'for_event',
+        'requires_attendance', 'signup_start', 'signup_end', 'signup_limit', 'slug'
+    )
     date_hierarchy = 'start'
     list_display = ('title', 'start', 'end', 'for_event')
     list_filter = ['requires_attendance']
@@ -37,5 +41,5 @@ class TicketAdmin(admin.ModelAdmin):
 class EventSignupAdmin(admin.ModelAdmin):
     date_hierarchy = 'created_at'
     list_display = ('event', 'long_name', 'created_at')
-    list_filter = ('is_unsigned_up', )
+    list_filter = ('is_unsigned_up',)
     search_fields = ['comment', 'event__title', 'user__first_name', 'user__last_name']
