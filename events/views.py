@@ -110,6 +110,7 @@ class UpdateCommentView(LoginRequiredMixin, View):
             return HttpResponse(status=403, content=notification)
 
         # Update the signup
+        signup.commented_at = timezone.now()
         signup.save()
 
         event = signup.event
