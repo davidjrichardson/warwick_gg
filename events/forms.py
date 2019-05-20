@@ -14,7 +14,8 @@ PLACEHOLDER_TEXTS = [
     'According to all known laws of aviation, there is no way that a bee should be able to fly. Its wings are too small to get its fat little body off the ground.',
     'KAREN YOU WITCH. RELEASE ME FROM THIS PLACEHOLDER TEXT AT ONCE.',
     '🦀UWCS POWERLESS AGAINST A FLAMINGO🦀',
-    'olives--'
+    'olives--',
+    'olives++'
 ]
 
 
@@ -34,7 +35,7 @@ class Textarea(Widget):
         super().__init__(default_attrs)
 
 
-class TournamentSignupForm(forms.ModelForm):
+class TournamentCommentForm(forms.ModelForm):
     class Meta:
         model = TournamentSignup
         fields = ['comment']
@@ -43,6 +44,12 @@ class TournamentSignupForm(forms.ModelForm):
                 'placeholder': get_placeholder(),
             })
         }
+
+
+class TournamentSignupForm(forms.ModelForm):
+    class Meta:
+        model = TournamentSignup
+        fields = ['platform_tag']
 
 
 class EventSignupForm(forms.ModelForm):

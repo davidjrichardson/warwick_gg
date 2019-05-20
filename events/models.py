@@ -259,8 +259,8 @@ class Tournament(models.Model):
         (PLATFORM_BNET, 'Battle.NET'),
         (PLATFORM_LEAGUE, 'League of Legends'),
         (PLATFORM_SWITCH, 'Nintendo Switch'),
-        (PLATFORM_XBOX, 'Xbox One'),
-        (PLATFORM_PLAYSTATION, 'Playstation 4'),
+        (PLATFORM_XBOX, 'Xbox Live'),
+        (PLATFORM_PLAYSTATION, 'Playstation Network'),
         (PLATFORM_OTHER, 'Other')
     )
 
@@ -304,7 +304,17 @@ class Tournament(models.Model):
 
     @property
     def platform_verbose(self):
-        return dict(Tournament.PLATFORM_CHOICES)[self.platform]
+        return dict(Tournament.PLATFORM_CHOICES).get(self.platform).replace('Other', self.platform_other)
+
+    @property
+    def platform_icon(self):
+        return {
+            Tournament.PLATFORM_STEAM: 'steam',
+            Tournament.PLATFORM_BNET: 'battle-net',
+            Tournament.PLATFORM_XBOX: 'xbox',
+            Tournament.PLATFORM_PLAYSTATION: 'playstation',
+            Tournament.PLATFORM_SWITCH: 'nintendo-switch'
+        }.get(self.platform, None)
 
     @property
     def signup_count(self):
@@ -335,7 +345,7 @@ class TournamentSignup(models.Model):
     created_at = models.DateTimeField(default=timezone.now)
     comment = models.TextField(blank=True, max_length=1024, default='')
 
-    platform_tag = models.CharField(max_length=64, blank=True)
+    platform_tag = models.CharField(max_length=256)
     is_unsigned_up = models.BooleanField(default=False)
 
     objects = TournamentSignupManager()

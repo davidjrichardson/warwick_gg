@@ -18,7 +18,7 @@ from django.views import View
 from django.views.decorators.csrf import csrf_protect, csrf_exempt
 from stripe.error import StripeError
 
-from events.forms import EventSignupForm
+from events.forms import EventSignupForm, TournamentSignupForm
 from events.models import Event, EventSignup, Tournament, Ticket, TournamentSignup
 from seating.models import Seating
 from uwcs_auth.models import WarwickGGUser
@@ -147,11 +147,50 @@ class TournamentView(View):
         return render(request, self.template_name, context=ctx)
 
 
+def tag_for_platform(profile: WarwickGGUser, platform: str):
+    return {
+        Tournament.PLATFORM_STEAM: profile.steam_user,
+        Tournament.PLATFORM_BNET: profile.battle_net_user,
+        Tournament.PLATFORM_LEAGUE: profile.league_user,
+    }.get(platform, None)
+
+
 class TournamentSignupView(LoginRequiredMixin, View):
-    template_name = 'tournaments/tournament_home.html'
+    template_name = 'tournaments/tournament_signup.html'
     login_url = '/accounts/login/'
 
-    pass
+    def get(self, request, slug):
+        tournament = get_object_or_404(Tournament, slug=slug)
+        profile = WarwickGGUser.objects.get(user=request.user)
+
+        try:
+            user_signup = TournamentSignup.objects.get(tournament=tournament, user=request.user, is_unsigned_up=False)
+        except TournamentSignup.DoesNotExist:
+            user_signup = None
+
+        if user_signup:
+            messages.error(request, 'You\'re already signed up to that tournament.', extra_tags='is-danger')
+            return redirect('tournament_home', slug=slug)
+
+        # Check for a signup to the event (if one is needed)
+        if tournament.for_event and tournament.requires_attendance:
+            event_signups = list(map(lambda x: x.is_valid(),
+                                     EventSignup.objects.for_event(tournament.for_event, request.user).all()))
+            if not event_signups:
+                messages.error(request,
+                               'You need to sign up to {event} before you can sign up for this tournament.'.format(
+                                   event=tournament.for_event.title), extra_tags='is-danger')
+                return redirect('tournament_home', slug=slug)
+
+        platform_placeholder = tag_for_platform(profile, tournament.platform)
+        platform_form = TournamentSignupForm()
+
+        ctx = {
+            'tournament': tournament,
+            'form': platform_form,
+            'platform_placeholder': platform_placeholder
+        }
+        return render(request, self.template_name, context=ctx)
 
 
 class TournamentUnsignupView(LoginRequiredMixin, View):

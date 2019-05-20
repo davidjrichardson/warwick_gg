@@ -1023,6 +1023,10 @@ article.media {
       &.is-ongoing {
         background-color: $uwcs_blue;
 
+        & small {
+          color: rgba(white, 0.7);
+        }
+
         & .subtitle {
           color: rgba(white, 0.87);
         }
