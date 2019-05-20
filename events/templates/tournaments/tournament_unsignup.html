@@ -1,0 +1,66 @@
+{% extends 'dashboard/navbar_base.html' %}
+
+{% block title %}Un-signup from {{ tournament.title }} | Warwick.gg{% endblock %}
+
+{% block js %}
+  {% if messages %}
+    <script type="text/javascript">
+        document.addEventListener('DOMContentLoaded', function () {
+            const deleteNotification = document.getElementById('notification-close');
+
+            if (deleteNotification != null) {
+                deleteNotification.addEventListener('click', function (ev) {
+                    ev.target.parentNode.remove();
+                })
+            }
+        });
+    </script>
+  {% endif %}
+{% endblock %}
+
+{% block body %}
+  {% if HAS_LAUNCHED %}
+    <nav class="breadcrumb" aria-label="breadcrumbs">
+      <div class="container">
+        <ul>
+          <li><a href="{% url 'tournament_index' %}">Events</a></li>
+          <li><a href="{% url 'tournament_home' slug=tournament.slug %}">{{ tournament.title }}</a></li>
+          <li class="is-active"><a href="#">Sign up</a></li>
+        </ul>
+      </div>
+    </nav>
+  {% endif %}
+
+  <section class="section">
+    <div class="container">
+      <div class="columns is-centered is-multiline">
+        {% if messages %}
+          <div class="column is-7">
+            {% for message in messages %}
+              <div class="notification {% if message.tags %}{{ message.tags }}{% endif %}">
+                <button class="delete" id="notification-close"></button>
+                {{ message }}
+              </div>
+            {% endfor %}
+          </div>
+        {% endif %}
+
+        <div class="column is-7">
+          <h2 class="title is-2 has-text-centered">Un-signup from {{ tournament.title }}</h2>
+        </div>
+        <div class="column is-6">
+          <p class="has-text-centered">You're about to un-signup from {{ tournament.title }}. Click the button below to confirm this action.</p>
+          <form method="post" action="{% url 'tournament_unsignup_confirm' %}">
+            {% csrf_token %}
+            <input type="hidden" name="tournament_id" value="{{ tournament.id }}">
+            <div class="field is-grouped is-grouped-centered top-margin">
+              <div class="control">
+                <button class="button is-primary" type="submit">Un-signup</button>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </section>
+{% endblock %}
