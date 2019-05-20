@@ -1,4 +1,6 @@
 import json
+import sys
+
 from functools import reduce
 
 from django.conf import settings
@@ -323,6 +325,11 @@ class Tournament(models.Model):
     @property
     def games_list(self):
         return list(map(lambda x: x.strip(), self.games.split(',')))
+
+    @property
+    def signups_remaining(self):
+        return self.signup_limit - len(TournamentSignup.objects.all_for_tournament(self)) if self.signup_limit else \
+            sys.maxsize
 
     def user_signed_up(self, user):
         return TournamentSignup.objects.for_tournament(self, user).exists()

@@ -200,11 +200,41 @@ class TournamentUnsignupView(LoginRequiredMixin, View):
     pass
 
 
-class TournamentSignupConfirmView(LoginRequiredMixin, View):
-    template_name = 'tournaments/tournament_home.html'
+class TournamentSignupChargeView(LoginRequiredMixin, View):
     login_url = '/accounts/login/'
 
-    pass
+    @method_decorator(csrf_protect, name='dispatch')
+    def post(self, request):
+        if not request.POST.get('tournament_id'):
+            messages.error(request, 'Error signing up, refresh the form and try again', extra_tags='is-danger')
+            return redirect('tournament_index')
+
+        tournament = get_object_or_404(Tournament, id=request.POST.get('tournament_id'))
+
+        signup_exists = TournamentSignup.objects.for_tournament(tournament, request.user).exists()
+        if signup_exists:
+            messages.error(request, 'You\'re already signed up to {tournament}'.format(tournament=tournament.title),
+                           extra_tags='is-danger')
+            return redirect('tournament_home', slug=tournament.slug)
+
+        if tournament.signups_remaining <= 0:
+            messages.error(request, 'Cannot sign up because there are no more spaces in this tournament',
+                           extra_tags='is-danger')
+            return redirect('tournament_home', slug=tournament.slug)
+
+        signup = TournamentSignup(user=request.user, tournament=tournament)
+        signup_form = TournamentSignupForm(request.POST, instance=signup)
+        if not signup_form.is_valid():
+            messages.error(request, 'Failed to create a sign up for the tournament, refresh the form and try again',
+                           extra_tags='is-danger')
+            return redirect('tournament_home', slug=tournament.slug)
+
+        # Everything is good so we save the signup and redirect
+        signup_form.save()
+        messages.success(request, 'Success! You\'re signed up to {tournament}'.format(tournament=tournament.title),
+                         extra_tags='is-success')
+
+        return redirect('tournament_home', slug=tournament.slug)
 
 
 class TournamentUnsignupConfirmView(LoginRequiredMixin, View):

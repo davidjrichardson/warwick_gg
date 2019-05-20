@@ -6,6 +6,22 @@
 
 {% block template_classname %}warwickgg-tournament-home{% endblock %}
 
+{% block js %}
+  <script type="text/javascript">
+      document.addEventListener('DOMContentLoaded', function () {
+          {% if messages %}
+              const deleteNotification = document.getElementById('notification-close');
+
+              if (deleteNotification != null) {
+                  deleteNotification.addEventListener('click', function (ev) {
+                      ev.target.parentNode.parentNode.remove();
+                  })
+              }
+          {% endif %}
+      });
+  </script>
+{% endblock %}
+
 {% block body %}
   {% if request.user.is_authenticated %}
     <nav class="breadcrumb" aria-label="breadcrumbs">
@@ -16,6 +32,19 @@
         </ul>
       </div>
     </nav>
+  {% endif %}
+
+  {% if messages %}
+    <div class="container">
+      <div class="column is-full">
+        {% for message in messages %}
+          <div class="notification {% if message.tags %}{{ message.tags }}{% endif %}">
+            <button class="delete" id="notification-close"></button>
+            {{ message }}
+          </div>
+        {% endfor %}
+      </div>
+    </div>
   {% endif %}
 
   <section class="section">
@@ -33,7 +62,8 @@
           {% if tournament.for_event %}
             <li><strong>Event:</strong> <a
                 href="{{ tournament.for_event.get_absolute_url }}">{{ tournament.for_event }}</a>
-              ({% if tournament.requires_attendance %}requires signup to {{ tournament.for_event }}{% else %}doesn't require signup{% endif %})
+              ({% if tournament.requires_attendance %}requires signup to {{ tournament.for_event }}{% else %}doesn't
+                require signup{% endif %})
             </li>
           {% endif %}
           {% if tournament.games %}
@@ -57,19 +87,23 @@
           <div class="tile-left">
             {% if user_signup %}
               <h4 class="title is-4">Signed up</h4>
-              <p>You have already signed up to {{ tournament.title }} - click <a href="{% url 'tournament_unsignup' slug=tournament.slug %}">here</a> to un-signup.</p>
+              <p>You have already signed up to {{ tournament.title }} - click <a
+                  href="{% url 'tournament_unsignup' slug=tournament.slug %}">here</a> to un-signup.</p>
             {% else %}
               {% if tournament.signups_open %}
                 {% if tournament.signup_limit == tournament.signup_count %}
                   <h4 class="title is-4">Signups for {{ tournament.title }} are closed</h4>
-                  <p>There are no more spaces to sign up to this tournament. Check back soon to see if there is any space!</p>
+                  <p>There are no more spaces to sign up to this tournament. Check back soon to see if there is any
+                    space!</p>
                 {% else %}
                   <h4 class="title is-4">Signup to {{ tournament.title }}</h4>
-                  <p>Signups are open for {{ tournament.title }}! Click <a href="{% url 'tournament_signup' slug=tournament.slug %}">here</a> to sign up.</p>
+                  <p>Signups are open for {{ tournament.title }}! Click <a
+                      href="{% url 'tournament_signup' slug=tournament.slug %}">here</a> to sign up.</p>
                 {% endif %}
               {% else %}
                 <h4 class="title is-4">Signups opening soon</h4>
-                <p>Signups for {{ tournament.title }} aren't open just yet. They open at {{ tournament.signup_start|date:'P l jS F Y' }}, so check back then!</p>
+                <p>Signups for {{ tournament.title }} aren't open just yet. They open
+                  at {{ tournament.signup_start|date:'P l jS F Y' }}, so check back then!</p>
               {% endif %}
             {% endif %}
           </div>
@@ -82,7 +116,8 @@
         <div class="signup-tile">
           <div class="tile-left">
             <h4 class="title is-4">Register to sign up</h4>
-            <p>To sign up for {{ tournament.title }}, you need to have logged into your Warwick.gg account! To log in or sign up, click <a href="{% url 'account_login' %}">here</a>.</p>
+            <p>To sign up for {{ tournament.title }}, you need to have logged into your Warwick.gg account! To log in or
+              sign up, click <a href="{% url 'account_login' %}">here</a>.</p>
           </div>
         </div>
       {% endif %}
