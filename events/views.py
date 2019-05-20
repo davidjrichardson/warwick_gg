@@ -124,7 +124,7 @@ class UpdateCommentView(LoginRequiredMixin, View):
             'has_signed_up': signup,
             'is_exec': is_exec
         }
-        comments_html = render_to_string('events/partial/comments.html', context, request=request)
+        comments_html = render_to_string('events/partial/event_comments.html', context, request=request)
 
         return HttpResponse(status=200, content=comments_html)
 
@@ -319,7 +319,7 @@ class DeleteCommentView(LoginRequiredMixin, View):
                 'has_signed_up': user_signup,
                 'is_exec': is_exec
             }
-            comments_html = render_to_string('events/partial/comments.html', context, request=request)
+            comments_html = render_to_string('events/partial/event_comments.html', context, request=request)
 
             return HttpResponse(status=200, content=comments_html)
         else:
