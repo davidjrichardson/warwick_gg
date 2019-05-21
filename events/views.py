@@ -80,53 +80,97 @@ class EventView(View):
         return render(request, self.template_name, context=ctx)
 
 
+def update_event_comment(slug, request):
+    event = get_object_or_404(Event, slug=slug)
+    try:
+        signup = [x for x in EventSignup.objects.for_event(event, user=request.user) if x.is_valid()].pop()
+    except IndexError:
+        notification = render_to_string('events/partial/notification.html', {
+            'type': 'danger',
+            'message': 'You aren\'t signed up to that event.'
+        })
+
+        return 403, notification
+
+    signup_form = EventSignupForm(request.POST, instance=signup)
+    if not signup_form.is_valid():
+        notification = render_to_string('events/partial/notification.html', {
+            'type': 'danger',
+            'message': 'We couldn\'t update your comment, double check everything is in order and try again.'
+        })
+
+        return 403, notification
+
+    # Update the signup
+    signup.commented_at = timezone.now()
+    signup.save()
+
+    event = signup.event
+    signups = event.signups
+    is_exec = 'exec' in request.user.groups.values_list(Lower('name'), flat=True)
+
+    context = {
+        'event': event,
+        'comment_form': signup_form,
+        'signups': signups,
+        'has_signed_up': signup,
+        'is_exec': is_exec
+    }
+    return 200, render_to_string('events/partial/event_comments.html', context, request=request)
+
+
+def update_tournament_comment(slug, request):
+    tournament = get_object_or_404(Tournament, slug=slug)
+    try:
+        signup = TournamentSignup.objects.get(tournament=tournament, user=request.user, is_unsigned_up=False)
+    except TournamentSignup.DoesNotExist:
+        notification = render_to_string('events/partial/notification.html', {
+            'type': 'danger',
+            'message': 'You aren\'t signed up to that tournament.'
+        })
+
+        return 403, notification
+
+    signup_form = TournamentCommentForm(request.POST, instance=signup)
+    if not signup_form.is_valid():
+        notification = render_to_string('events/partial/notification.html', {
+            'type': 'danger',
+            'message': 'We couldn\'t update your comment, double check everything is in order and try again.'
+        })
+
+        return 403, notification
+
+    # Update the signup
+    signup.commented_at = timezone.now()
+    signup.save()
+
+    tournament = signup.tournament
+    signups = tournament.signups
+    is_exec = 'exec' in request.user.groups.values_list(Lower('name'), flat=True)
+
+    context = {
+        'tournament': tournament,
+        'comment_form': signup_form,
+        'signups': signups,
+        'has_signed_up': signup,
+        'is_exec': is_exec
+    }
+    return 200, render_to_string('events/partial/tournament_comments.html', context, request=request)
+
+
 class UpdateCommentView(LoginRequiredMixin, View):
     login_url = '/accounts/login/'
 
     @method_decorator(csrf_protect, name='dispatch')
     def post(self, request):
-        if not request.POST.get('event-slug'):
+        if request.POST.get('event-slug'):
+            status, content = update_event_comment(request.POST.get('event-slug'), request)
+            return HttpResponse(status=status, content=content)
+        elif request.POST.get('tournament-slug'):
+            status, content = update_tournament_comment(request.POST.get('tournament-slug'), request)
+            return HttpResponse(status=status, content=content)
+        else:
             return HttpResponseBadRequest()
-
-        event = get_object_or_404(Event, slug=request.POST.get('event-slug'))
-        try:
-            signup = [x for x in EventSignup.objects.for_event(event, user=request.user) if x.is_valid()].pop()
-        except IndexError:
-            notification = render_to_string('events/partial/notification.html', {
-                'type': 'danger',
-                'message': 'You aren\'t signed up to that event.'
-            })
-
-            return HttpResponse(status=403, content=notification)
-
-        signup_form = EventSignupForm(request.POST, instance=signup)
-
-        if not signup_form.is_valid():
-            notification = render_to_string('events/partial/notification.html', {
-                'type': 'danger',
-                'message': 'We couldn\'t update your comment, double check everything is in order and try again.'
-            })
-
-            return HttpResponse(status=403, content=notification)
-
-        # Update the signup
-        signup.commented_at = timezone.now()
-        signup.save()
-
-        event = signup.event
-        signups = event.signups
-        is_exec = 'exec' in self.request.user.groups.values_list(Lower('name'), flat=True)
-
-        context = {
-            'event': event,
-            'comment_form': signup_form,
-            'signups': signups,
-            'has_signed_up': signup,
-            'is_exec': is_exec
-        }
-        comments_html = render_to_string('events/partial/event_comments.html', context, request=request)
-
-        return HttpResponse(status=200, content=comments_html)
 
 
 class TournamentView(View):
@@ -297,49 +341,97 @@ class TournamentIndexView(LoginRequiredMixin, View):
         return render(request, self.template_name, context=ctx)
 
 
+def delete_event_comment(signup, request):
+    if signup.user == request.user \
+            or 'exec' in request.user.groups.values_list(Lower('name'), flat=True):
+        signup.comment = ''
+        signup.save()
+
+        event = signup.event
+        comment_form = EventSignupForm(instance=signup)
+        signups = event.signups
+        is_exec = 'exec' in request.user.groups.values_list(Lower('name'), flat=True)
+
+        try:
+            user_signup = [x for x in EventSignup.objects.for_event(signup.event, user=request.user) if
+                           x.is_valid()].pop()
+        except IndexError:
+            user_signup = None
+
+        context = {
+            'event': event,
+            'comment_form': comment_form,
+            'signups': signups,
+            'has_signed_up': user_signup,
+            'is_exec': is_exec
+        }
+        comments_html = render_to_string('events/partial/event_comments.html', context, request=request)
+
+        return 200, comments_html
+    else:
+        notification = render_to_string('events/partial/notification.html', {
+            'type': 'danger',
+            'message': 'You don\'t have exec privileges to delete that comment'
+        })
+
+        return 403, notification
+
+
+def delete_tournament_comment(signup, request):
+    if signup.user == request.user \
+            or 'exec' in request.user.groups.values_list(Lower('name'), flat=True):
+        signup.comment = ''
+        signup.save()
+
+        tournament = signup.tournament
+        comment_form = TournamentCommentForm(instance=signup)
+        signups = tournament.signups
+        is_exec = 'exec' in request.user.groups.values_list(Lower('name'), flat=True)
+
+        try:
+            user_signup = TournamentSignup.objects.get(tournament=tournament, user=request.user, is_unsigned_up=False)
+        except TournamentSignup.DoesNotExist:
+            user_signup = None
+
+        context = {
+            'tournament': tournament,
+            'comment_form': comment_form,
+            'signups': signups,
+            'has_signed_up': user_signup,
+            'is_exec': is_exec
+        }
+        comments_html = render_to_string('events/partial/tournament_comments.html', context, request=request)
+
+        return 200, comments_html
+    else:
+        notification = render_to_string('events/partial/notification.html', {
+            'type': 'danger',
+            'message': 'You don\'t have exec privileges to delete that comment'
+        })
+
+        return 403, notification
+
+
 class DeleteCommentView(LoginRequiredMixin, View):
     login_url = '/accounts/login/'
 
     @method_decorator(csrf_protect, name='dispatch')
     def post(self, request):
-        if not request.POST.get('comment-id'):
-            return HttpResponseBadRequest()
-
-        signup = get_object_or_404(EventSignup, id=request.POST.get('comment-id'))
-
-        if signup.user == request.user \
-                or 'exec' in self.request.user.groups.values_list(Lower('name'), flat=True):
-            signup.comment = ''
-            signup.save()
-
-            event = signup.event
-            comment_form = EventSignupForm(instance=signup)
-            signups = event.signups
-            is_exec = 'exec' in self.request.user.groups.values_list(Lower('name'), flat=True)
-
+        if request.POST.get('comment-id'):
+            comment_id = request.POST.get('comment-id')
             try:
-                user_signup = [x for x in EventSignup.objects.for_event(signup.event, user=request.user) if
-                               x.is_valid()].pop()
-            except IndexError:
-                user_signup = None
+                signup = EventSignup.objects.get(id=comment_id)
+                status, content = delete_event_comment(signup, request)
+            except EventSignup.DoesNotExist:
+                try:
+                    signup = TournamentSignup.objects.get(id=comment_id)
+                    status, content = delete_tournament_comment(signup, request)
+                except TournamentSignup.DoesNotExist:
+                    return HttpResponseBadRequest()
 
-            context = {
-                'event': event,
-                'comment_form': comment_form,
-                'signups': signups,
-                'has_signed_up': user_signup,
-                'is_exec': is_exec
-            }
-            comments_html = render_to_string('events/partial/event_comments.html', context, request=request)
-
-            return HttpResponse(status=200, content=comments_html)
+            return HttpResponse(status=status, content=content)
         else:
-            notification = render_to_string('events/partial/notification.html', {
-                'type': 'danger',
-                'message': 'You don\'t have exec privileges to delete that comment'
-            })
-
-            return HttpResponse(status=403, content=notification)
+            return HttpResponseBadRequest()
 
 
 def check_membership(api_token, profile, request, society):
