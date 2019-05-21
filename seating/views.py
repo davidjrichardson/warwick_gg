@@ -86,7 +86,8 @@ class SeatingRoomAPISubmitRevisionView(LoginRequiredMixin, View):
             revision_dict = {
                 'name': 'Revision {n}'.format(n=latest_revision.number + 1),
                 'number': latest_revision.number,
-                'created_at': latest_revision.created_at
+                'created_at': latest_revision.created_at,
+                'creator': latest_revision.creator_name
             }
 
             return JsonResponse({
@@ -182,7 +183,8 @@ class SeatingRoomRevisionListAPIView(UserPassesTestMixin, LoginRequiredMixin, Vi
             'revisions': list(map(lambda revision: {
                 'name': 'Revision {n}'.format(n=revision.number + 1),
                 'number': revision.number,
-                'created_at': revision.created_at
+                'created_at': revision.created_at,
+                'creator': revision.creator_name
             }, revisions))
         }
 

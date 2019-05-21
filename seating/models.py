@@ -3,6 +3,7 @@ from django.db import models
 from django.utils import timezone
 
 from events.models import Event
+from uwcs_auth.models import WarwickGGUser
 
 
 class RevisionManager(models.Manager):
@@ -17,6 +18,10 @@ class SeatingRevision(models.Model):
     created_at = models.DateTimeField(default=timezone.now)
 
     objects = RevisionManager()
+
+    @property
+    def creator_name(self):
+        return WarwickGGUser.objects.get(user=self.creator).long_name
 
     def prev(self):
         return SeatingRevision.objects.get(event=self.event, number=self.number - 1)

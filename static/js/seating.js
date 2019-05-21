@@ -286,8 +286,9 @@
             const listElement = document.createElement('li');
             const anchor = document.createElement('a');
             anchor.dataset.revisionId = revision.number;
+            anchor.dataset.tooltip = `Created by ${revision.creator}`;
             anchor.appendChild(document.createTextNode(revision.name));
-            anchor.classList.add('revision');
+            anchor.classList.add('revision', 'tooltip', 'is-tooltip-primary', 'is-tooltip-right');
             anchor.addEventListener('click', onClickRevision);
 
             listElement.appendChild(anchor);
