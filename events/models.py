@@ -226,6 +226,10 @@ class EventSignup(models.Model):
     def profile(self):
         return WarwickGGUser.objects.get(user=self.user)
 
+    @property
+    def tooltip(self):
+        return self.user.get_full_name() if self.profile.nickname else None
+
     def is_valid(self):
         return (not self.is_unsigned_up) and (self.ticket.is_complete() if self.ticket else True)
 
@@ -331,6 +335,13 @@ class Tournament(models.Model):
         return self.signup_limit - len(TournamentSignup.objects.all_for_tournament(self)) if self.signup_limit else \
             sys.maxsize
 
+    @property
+    def signups(self):
+        signups = TournamentSignup.objects.filter(tournament=self, is_unsigned_up=False).exclude(comment__exact='')\
+            .order_by('commented_at', '-created_at').all()
+
+        return signups
+
     def user_signed_up(self, user):
         return TournamentSignup.objects.for_tournament(self, user).exists()
 
@@ -351,8 +362,21 @@ class TournamentSignup(models.Model):
     tournament = models.ForeignKey(Tournament, on_delete=models.CASCADE)
     created_at = models.DateTimeField(default=timezone.now)
     comment = models.TextField(blank=True, max_length=1024, default='')
+    commented_at = models.DateTimeField(default=timezone.now)
 
     platform_tag = models.CharField(max_length=256)
     is_unsigned_up = models.BooleanField(default=False)
 
     objects = TournamentSignupManager()
+
+    @property
+    def profile(self):
+        return WarwickGGUser.objects.get(user=self.user)
+
+    @property
+    def tooltip(self):
+        return self.platform_tag
+
+    @property
+    def long_name(self):
+        return self.profile.long_name

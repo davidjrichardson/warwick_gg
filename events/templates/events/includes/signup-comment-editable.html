@@ -13,10 +13,9 @@
   <div class="media-content">
     <div class="content">
       <p>
-        <strong {% if signup.profile.nickname %}class="tooltip is-tooltip-primary"
-                data-tooltip="{{ signup.user.get_full_name }}"{% endif %}>{{ signup.profile.long_name }}</strong>
+        <strong {% if signup.tooltip %}class="tooltip is-tooltip-primary"
+                data-tooltip="{{ signup.tooltip }}"{% endif %}>{{ signup.long_name }}</strong>
         <small>Signed up at {{ signup.created_at|date:'P l jS F Y' }}</small>
-
       </p>
       <p class="overflow-hidden">{{ signup.comment }}</p>
     </div>
