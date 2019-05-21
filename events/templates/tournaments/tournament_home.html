@@ -8,15 +8,162 @@
 
 {% block js %}
   <script type="text/javascript">
-      document.addEventListener('DOMContentLoaded', function () {
-          {% if messages %}
-              const deleteNotification = document.getElementById('notification-close');
+      String.prototype.trimLeft = function (charlist) {
+          if (charlist === undefined)
+              charlist = "\s";
 
-              if (deleteNotification != null) {
-                  deleteNotification.addEventListener('click', function (ev) {
-                      ev.target.parentNode.parentNode.remove();
-                  })
+          return this.replace(new RegExp("^[" + charlist + "]+"), "");
+      };
+
+      function showTab(tabName) {
+          let selectedTab = document.querySelector(`li a[data-target="${tabName}-container"]`);
+          let selectedContainer = document.getElementById(`${tabName}-container`);
+
+          if (!selectedTab) {
+              selectedTab = document.querySelector('li a[data-target="info-container"]');
+              selectedContainer = document.getElementById('info-container');
+          }
+
+          // Hide all tabs and containers that aren't the ones to be shown
+          document.querySelectorAll(`#tab-container li.is-active a:not([data-target="${tabName}-container"])`)
+              .forEach(function (tab) {
+                  tab.parentNode.classList.remove('is-active');
+              });
+
+          document.querySelectorAll(`.tab-content.is-active:not(#${tabName}-container)`)
+              .forEach(function (container) {
+                  container.classList.remove('is-active');
+              });
+
+          // Show the correct tab/container
+          selectedTab.parentNode.classList.add('is-active');
+          selectedContainer.classList.add('is-active');
+      }
+
+      function bindFormSubmit() {
+          let submitButton = document.getElementById('form-save');
+          if (submitButton !== null) {
+              submitButton.addEventListener("click", function (ev) {
+                  ev.preventDefault();
+                  ev.stopImmediatePropagation();
+
+                  let textArea = document.getElementById('id_comment');
+                  if (textArea.value.length > 0) {
+                      let form = document.getElementById('comment-form');
+                      let formData = new FormData(form);
+                      sendComment(formData);
+                  }
+
+                  return false;
+              });
+          }
+      }
+
+      function bindCommentDeleteButtons() {
+          let deleteLinks = document.querySelectorAll('.comment-delete');
+          if (deleteLinks !== null) {
+              deleteLinks.forEach(function (button) {
+                  button.addEventListener("click", function (ev) {
+                      ev.preventDefault();
+                      ev.stopImmediatePropagation();
+
+                      deleteComment(button);
+
+                      return false;
+                  });
+              });
+          }
+      }
+
+      function displayNotification(message) {
+          let commentContainer = document.getElementById('comments-container');
+          let commentTitle = document.getElementById('comments-title');
+          let notification = document.createRange()
+              .createContextualFragment(message);
+
+          commentContainer.insertBefore(notification, commentTitle);
+          document.getElementById('notification-close')
+              .addEventListener('click', function (ev) {
+                  ev.target.parentNode.remove();
+              });
+      }
+
+      function sendComment(formData) {
+          const url = '/events/api/comment/update';
+          const csrf = Cookies.get('csrftoken');
+          const http = new XMLHttpRequest();
+
+          http.open('POST', url, true);
+          http.setRequestHeader('X-CSRFToken', csrf);
+          http.onreadystatechange = function () {
+              if (http.readyState === 4 && http.status === 200) {
+                  let commentContainer = document.getElementById('comments');
+                  commentContainer.innerHTML = http.responseText;
+
+                  bindFormSubmit();
+                  bindCommentDeleteButtons();
+              } else if (http.readyState === 4 && http.status === 403) {
+                  if (document.getElementById('notification-close')) {
+                      return;
+                  }
+
+                  displayNotification(http.responseText);
               }
+          };
+          http.send(formData);
+      }
+
+      function deleteComment(button) {
+          const url = '/events/api/comment/delete';
+          const csrf = Cookies.get('csrftoken');
+          const http = new XMLHttpRequest();
+
+          http.open('POST', url, true);
+          http.setRequestHeader('X-CSRFToken', csrf);
+          http.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+          http.onreadystatechange = function () {
+              if (http.readyState === 4 && http.status === 200) {
+                  let commentContainer = document.getElementById('comments');
+                  commentContainer.innerHTML = http.responseText;
+
+                  bindFormSubmit();
+                  bindCommentDeleteButtons();
+              } else if (http.readyState === 4 && http.status === 403) {
+                  if (document.getElementById('notification-close')) {
+                      return;
+                  }
+
+                  displayNotification(http.responseText);
+              }
+          };
+          http.send('comment-id=' + button.getAttribute('data-comment-id'));
+      }
+
+      document.addEventListener('DOMContentLoaded', function () {
+          bindFormSubmit();
+
+          {% if messages %}
+              const notificationClose = document.getElementById('notification-close');
+
+              if (notificationClose != null) {
+                  notificationClose.addEventListener('click', function (ev) {
+                      ev.target.parentNode.remove();
+                  });
+              }
+          {% endif %}
+
+          {% if is_exec or has_signed_up %}
+              let deleteLinks = document.querySelectorAll('.comment-delete');
+              deleteLinks.forEach(function (button) {
+                  button.addEventListener("click", function (ev) {
+                      ev.preventDefault();
+                      ev.stopImmediatePropagation();
+
+                      deleteComment(button);
+
+                      return false;
+                  });
+              });
           {% endif %}
       });
   </script>
@@ -77,7 +224,7 @@
           <li><strong>Signups open:</strong> {{ tournament.signup_start|date:'P l jS F Y' }}</li>
           <li><strong>Signups close:</strong> {{ tournament.signup_end|date:'P l jS F Y' }}</li>
         </ul>
-        {% if tournament.signups_open %}
+        {% if tournament.signups_open and not user_signup %}
           <p>Signups are open! The sign up form is available here: <a
               href="{{ tournament.signup_form }}">{{ tournament.signup_form }}</a></p>
         {% endif %}
@@ -110,7 +257,13 @@
         </div>
 
         {% if user_signup %}
-          {# TODO: Comments #}
+          <div id="comments-container" class="comment-container">
+            <hr/>
+            <h4 class="title forms is-4" id="comments-title">Signup Comments</h4>
+            <div id="comments">
+              {% include 'events/partial/tournament_comments.html' with tournament=tournament comment_form=comment_form signups=signups has_signed_up=user_signup %}
+            </div>
+          </div>
         {% endif %}
       {% else %}
         <div class="signup-tile">

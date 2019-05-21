@@ -18,7 +18,7 @@ from django.views import View
 from django.views.decorators.csrf import csrf_protect, csrf_exempt
 from stripe.error import StripeError
 
-from events.forms import EventSignupForm, TournamentSignupForm
+from events.forms import EventSignupForm, TournamentSignupForm, TournamentCommentForm
 from events.models import Event, EventSignup, Tournament, Ticket, TournamentSignup
 from seating.models import Seating
 from uwcs_auth.models import WarwickGGUser
@@ -140,9 +140,20 @@ class TournamentView(View):
         except TournamentSignup.DoesNotExist:
             user_signup = None
 
+        if user_signup:
+            signups = tournament.signups
+        else:
+            signups = []
+
+        comment_form = TournamentCommentForm(instance=user_signup)
+        is_exec = 'exec' in self.request.user.groups.values_list(Lower('name'), flat=True)
+
         ctx = {
             'tournament': tournament,
             'user_signup': user_signup,
+            'signups': signups,
+            'comment_form': comment_form,
+            'is_exec': is_exec
         }
         return render(request, self.template_name, context=ctx)
 

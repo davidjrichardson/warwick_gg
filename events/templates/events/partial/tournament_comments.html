@@ -1,0 +1,59 @@
+{% if signups and not has_signed_up.comment %}
+  <div class="content">
+    <p>Excited about {{ tournament.title }}? Leave a comment below:</p>
+    <form id="comment-form" method="post" action="{% url 'update_comment' %}">
+      {% csrf_token %}
+      <input type="hidden" name="tournament-slug" value="{{ tournament.slug }}">
+
+      <div class="columns is-multiline">
+        <div class="column is-full">
+          {% include 'allauth/account/includes/form-field.html' with field=comment_form.comment custom_label='Your comment' %}
+        </div>
+        <div class="column is-full">
+          <div class="field is-grouped is-grouped-right">
+            <div class="control">
+              <button class="button is-primary" id="form-save" type="submit">Submit</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </form>
+    <hr/>
+  </div>
+  {% for s in signups %}
+    {% include 'events/includes/signup-comment.html' with signup=s count=forloop.counter0 %}
+  {% endfor %}
+{% elif signups and has_signed_up.comment %}
+  {% for s in signups %}
+    {% if s.id != has_signed_up.id %}
+      {% include 'events/includes/signup-comment.html' with signup=s count=forloop.counter0 %}
+    {% else %}
+      {% include 'events/includes/signup-comment-editable.html' with signup=s count=forloop.counter0 %}
+    {% endif %}
+  {% endfor %}
+{% else %}
+  {% for s in signups %}
+    {% include 'events/includes/signup-comment.html' with signup=s count=forloop.counter0 %}
+  {% empty %}
+    <div class="content">
+      <p>There are no comments here - be the first:</p>
+      <form id="comment-form" method="post" action="{% url 'update_comment' %}">
+        {% csrf_token %}
+        <input type="hidden" name="tournament-slug" value="{{ tournament.slug }}">
+
+        <div class="columns is-multiline">
+          <div class="column is-full">
+            {% include 'allauth/account/includes/form-field.html' with field=comment_form.comment custom_label='Your comment' %}
+          </div>
+          <div class="column is-full">
+            <div class="field is-grouped is-grouped-right">
+              <div class="control">
+                <button class="button is-primary" id="form-save" type="submit">Submit</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </form>
+    </div>
+  {% endfor %}
+{% endif %}
