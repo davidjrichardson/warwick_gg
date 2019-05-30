@@ -224,10 +224,6 @@
           <li><strong>Signups open:</strong> {{ tournament.signup_start|date:'P l jS F Y' }}</li>
           <li><strong>Signups close:</strong> {{ tournament.signup_end|date:'P l jS F Y' }}</li>
         </ul>
-        {% if tournament.signups_open and not user_signup %}
-          <p>Signups are open! The sign up form is available here: <a
-              href="{{ tournament.signup_form }}">{{ tournament.signup_form }}</a></p>
-        {% endif %}
       </div>
       {% if request.user.is_authenticated %}
         <div class="signup-tile">
