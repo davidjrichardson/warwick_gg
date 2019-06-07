@@ -15,7 +15,8 @@ PLACEHOLDER_TEXTS = [
     'KAREN YOU WITCH. RELEASE ME FROM THIS PLACEHOLDER TEXT AT ONCE.',
     '🦀UWCS POWERLESS AGAINST A FLAMINGO🦀',
     'olives--',
-    'olives++'
+    'olives++',
+    'uwu-- awoo++ owo++ mrporky-- cheese++ cheeseheads++',
 ]
 
 
