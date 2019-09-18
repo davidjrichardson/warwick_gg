@@ -38,6 +38,10 @@ class WarwickGGUser(models.Model):
     def is_fresher(self):
         start_year = self.uni_id[:2]
 
+        # If you're an exec you get early access to freshers events
+        if self.is_exec:
+            return True
+
         # If we're in the summer months then nobody is a fresher
         if timezone.now().month in range(7, 9):
             return False
