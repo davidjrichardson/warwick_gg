@@ -36,7 +36,7 @@ class WarwickGGUser(models.Model):
 
     @property
     def is_fresher(self):
-        start_year = self.uni_id[:2]
+        start_year = self.uni_id.replace('u', '')[:2]
 
         # If you're an exec you get early access to freshers events
         if self.is_exec:
