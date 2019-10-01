@@ -249,7 +249,7 @@
             <li><strong>Signups close:</strong> {{ event.signup_end|date:'P l jS F Y' }}</li>
             <li><strong>Spaces left:</strong> {{ signups_remaining }} (of {{ event.signup_limit }})</li>
             <li><strong>Attendance cost:</strong> CompSoc/Esports members: {% if event.cost_member == 0 %}Free{% else %}
-              £{{ event.cost_member }}{% endif %}, Other*: {% if event.cost_non_member == 0 %}Free{% else %}£{{ event.cost_non_member }}</li>
+              £{{ event.cost_member }}{% endif %}, Other*: £{{ event.cost_non_member }}</li>
           </ul>
           <p>
             <small>*: Must be a current student at the University of Warwick.</small>
