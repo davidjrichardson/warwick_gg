@@ -179,9 +179,12 @@ class TournamentView(View):
     def get(self, request, slug):
         tournament = get_object_or_404(Tournament, slug=slug)
 
-        try:
-            user_signup = TournamentSignup.objects.get(tournament=tournament, user=request.user, is_unsigned_up=False)
-        except TournamentSignup.DoesNotExist:
+        if request.user.is_authenticated:
+            try:
+                user_signup = TournamentSignup.objects.get(tournament=tournament, user=request.user, is_unsigned_up=False)
+            except TournamentSignup.DoesNotExist:
+                user_signup = None
+        else:
             user_signup = None
 
         if user_signup:

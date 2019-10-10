@@ -6,6 +6,7 @@ from .base import *
 DEBUG = True
 
 ALLOWED_HOSTS += [
+    'localhost',
     f'{CHECKOUT_BASE_URL}',
     f'*.{CHECKOUT_BASE_URL}',
 ]
