@@ -8,6 +8,7 @@ from django.db import transaction, DatabaseError
 from django.http import HttpResponseForbidden, JsonResponse, HttpResponseBadRequest
 from django.http.response import HttpResponse
 from django.shortcuts import render, get_object_or_404
+from django.utils import timezone
 from django.utils.decorators import method_decorator
 from django.views import View
 from django.views.decorators.csrf import csrf_protect
@@ -78,7 +79,23 @@ class SeatingRoomAPISubmitRevisionView(LoginRequiredMixin, View):
 
         seats_obj = json.loads(request.POST.get('json'))
         try:
-            latest_revision = save_revision(seats_obj['seats'], event, request.user)
+            if event.seating_lock_time:
+                if timezone.now() > event.seating_lock_time:
+                    # Deny the revision unless the user is exec
+                    if WarwickGGUser.objects.get(user=self.request.user).is_exec:
+                        latest_revision = save_revision(seats_obj['seats'], event, request.user)
+                    else:
+                        # Error with a message saying that the plan is locked
+                        return JsonResponse({
+                            'error': 'The seating plan is now locked - contact the exec if you would like to move'
+                        }, status=403)
+                else:
+                    # It's ok to add any revision
+                    latest_revision = save_revision(seats_obj['seats'], event, request.user)
+            else:
+                # It's ok to add any revision
+                latest_revision = save_revision(seats_obj['seats'], event, request.user)
+
         except DatabaseError:
             return HttpResponseBadRequest()
 

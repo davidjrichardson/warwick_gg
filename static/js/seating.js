@@ -18,8 +18,10 @@
     let revisionLogDom;
     let commitButtonDom;
     let notificationDom;
+    let notificationDom2;
     let notificationTextDom;
     let notificationCloseDom;
+    let notificationCloseDom2;
 
     function removeUserFromOldLocation(userId) {
         const oldSeatId = Object.keys(currentSeatHasUser).find(key => currentSeatHasUser[key] === userId);
@@ -266,8 +268,16 @@
         const eventSubmitUrl = '/seating/api/submit/' + eventId;
         ajax(eventSubmitUrl, 'POST', 'json=' + JSON.stringify(layout), (status, response) => {
             if (status !== 200) {
+                clearError();
+
+                let response_json = JSON.parse(response);
+                if ("error" in response_json) {
+                    addError(response_json['error']);
+                } else {
+                    addError('There was an error saving your changes.');
+                }
+
                 enableSave();
-                addError('There was an error saving your changes.');
             }
             else {
                 finishSave('Saved');
@@ -344,6 +354,10 @@
         notificationTextDom.innerHTML = '';
     }
 
+    function clearWarning() {
+        notificationDom2.classList.add('is-hidden');
+    }
+
     function updateToRevision(revision = null) {
         let eventSeatingUrl = '/seating/api/seats/' + eventId;
         if (revision !== null)
@@ -351,6 +365,7 @@
 
         ajax(eventSeatingUrl, 'GET', null, (status, response) => {
             if (status !== 200) {
+                clearError();
                 addError('The seating configuration could not be retrieved.');
             }
             else {
@@ -393,6 +408,7 @@
         const eventRevisionsUrl = '/seating/api/revisions/' + eventId;
         ajax(eventRevisionsUrl, 'GET', null, (status, response) => {
             if (status !== 200) {
+                clearError();
                 addError('The current revision log could not be retrieved.');
             }
             else {
@@ -436,6 +452,12 @@
         }
 
         notificationCloseDom.addEventListener('click', clearError);
+
+        if (!isExec) {
+            notificationDom2 = document.getElementById('seating-locked-notification');
+            notificationCloseDom2 = notificationDom2.getElementsByClassName('delete')[0];
+            notificationCloseDom2.addEventListener('click', clearWarning);
+        }
 
         updateToRevision(null);
         updateRevisionList();

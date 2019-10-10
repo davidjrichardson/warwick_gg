@@ -75,6 +75,7 @@ class Event(models.Model):
     # Seating plan
     has_seating = models.BooleanField(default=True)
     seating_location = models.ForeignKey(SeatingRoom, on_delete=models.PROTECT, blank=True, null=True)
+    seating_lock_time = models.DateTimeField(blank=True, null=True)
 
     # Signup options
     has_photography = models.BooleanField(default=False)
@@ -109,6 +110,13 @@ class Event(models.Model):
     @property
     def signups_left(self):
         return self.signup_limit - self.signup_count
+
+    @property
+    def seating_is_locked(self):
+        if not self.seating_lock_time:
+            return False
+        else:
+            return timezone.now() > self.seating_lock_time
 
     def signup_start_for_user(self, user):
         if self.signup_start_fresher:

@@ -61,12 +61,16 @@
         <div class="column">
           <h2 class="title is-2">Seating Plan for {{ event.title }}</h2>
           <h6 class="subtitle is-6">Click <a href="{% url 'seating_faqs' %}">here</a> to see the seating plan FAQs</h6>
+          {% if event.seating_is_locked and not is_exec %}
+            <div class="notification is-warning" id="seating-locked-notification">
+              <button class="delete"></button>
+              <span>The seating plan is now locked - if you would like to move please contact a member of the Exec.</span>
+            </div>
+          {% endif %}
           <div class="notification is-danger is-hidden" id="seating-error-notification">
             <button class="delete"></button>
-            <span>
-              </span>
+            <span></span>
           </div>
-
         </div>
         <div class="column is-narrow button-wrapper">
           {% if has_signed_up or is_exec %}
