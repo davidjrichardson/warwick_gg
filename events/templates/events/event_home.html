@@ -287,16 +287,6 @@
                 </div>
               {% endif %}
             </div>
-
-            {% if has_signed_up %}
-              <div id="comments-container" class="comment-container">
-                <hr/>
-                <h4 class="title forms is-4" id="comments-title">Signup Comments</h4>
-                <div id="comments">
-                  {% include 'events/partial/event_comments.html' with event=event comment_form=comment_form signups=signups has_signed_up=has_signed_up %}
-                </div>
-              </div>
-            {% endif %}
           {% else %}
             {% if ticket_status %}
               <div class="signup-tile {% if ticket_status == 'P' %}in-progress{% endif %}">
@@ -327,6 +317,15 @@
             {% endif %}
           </div>
           </div>
+          {% endif %}
+          {% if has_signed_up or is_exec %}
+            <div id="comments-container" class="comment-container">
+              <hr/>
+              <h4 class="title forms is-4" id="comments-title">Signup Comments</h4>
+              <div id="comments">
+                {% include 'events/partial/event_comments.html' with event=event comment_form=comment_form signups=signups has_signed_up=has_signed_up %}
+              </div>
+            </div>
           {% endif %}
         {% else %}
           <div class="signup-tile">

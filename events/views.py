@@ -57,7 +57,9 @@ class EventView(View):
             except IndexError:
                 ticket_status = None
 
-        if signup:
+        is_exec = WarwickGGUser.objects.get(user=request.user).is_exec if request.user.is_authenticated else False
+
+        if signup or is_exec:
             signups = event.signups
         else:
             signups = []
@@ -74,7 +76,7 @@ class EventView(View):
             'signups': signups,
             'tournaments': Tournament.objects.for_event(event),
             'comment_form': comment_form,
-            'is_exec': WarwickGGUser.objects.get(user=request.user).is_exec if request.user.is_authenticated else False
+            'is_exec': is_exec
         }
 
         return render(request, self.template_name, context=ctx)
