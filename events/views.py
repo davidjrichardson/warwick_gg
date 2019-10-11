@@ -58,7 +58,6 @@ class EventView(View):
                 ticket_status = None
 
         is_exec = WarwickGGUser.objects.get(user=request.user).is_exec if request.user.is_authenticated else False
-
         if signup or is_exec:
             signups = event.signups
         else:
@@ -189,13 +188,13 @@ class TournamentView(View):
         else:
             user_signup = None
 
-        if user_signup:
+        is_exec = WarwickGGUser.objects.get(user=request.user).is_exec if request.user.is_authenticated else False
+        if user_signup or is_exec:
             signups = tournament.signups
         else:
             signups = []
 
         comment_form = TournamentCommentForm(instance=user_signup)
-        is_exec = 'exec' in self.request.user.groups.values_list(Lower('name'), flat=True)
 
         ctx = {
             'tournament': tournament,
