@@ -73,9 +73,13 @@
                 Finishes in <span id="countdown-output" data-countdown-to="{{ event.end|date:'c' }}"></span>
                 ({{ event.end|date:'P l jS F Y' }})
               {% elif is_open %}
-                Signups are now open! Click
-                <strong><a href="{% url 'event_home' slug=event.slug %}#signup">here</a></strong> to start signing up
-                for {{ event.title }}.
+                {% if self.signup_count < self.signup_limit %}
+                  Signups are now open! Click
+                  <strong><a href="{% url 'event_home' slug=event.slug %}#signup">here</a></strong> to start signing up
+                  for {{ event.title }}.
+                {% else %}
+                  Signups for this event are open but there are no more spaces! Check back again soon.
+                {% endif %}
               {% else %}
                 {% user_signup_date request.user event as signup_date %}
                 Signups open in
