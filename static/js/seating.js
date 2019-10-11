@@ -9,6 +9,7 @@
 
     let currentSeatHasUser;
     let dragging = false;
+    let hovering = false;
     let draggingUser;
 
     let svgDom;
@@ -89,7 +90,9 @@
             return;
 
         containerDom.classList.remove('seating-chart-dragging');
-        popupDom.classList.add('is-hidden');
+        if (!hovering) {
+            popupDom.classList.add('is-hidden');
+        }
         dragging = false;
         draggingUser = undefined;
     }
@@ -117,6 +120,52 @@
         dragStop(event);
         if (revisionNumber === null)
             commitRevision();
+    }
+
+    function onSeatHoverStart(event) {
+        if (dragging)
+            return;
+
+        if (event.target.classList.contains('user-seat')) {
+            hovering = true;
+            const seat = this;
+            const seatUserId = currentSeatHasUser[seat.dataset.seatId];
+
+            if (seatUserId !== undefined) {
+                const user = users.find(user => user.user_id === seatUserId);
+                const popupUsernameDom = popupDom.getElementsByClassName('seating-username')[0];
+
+                popupUsernameDom.innerHTML = '';
+                popupUsernameDom.appendChild(document.createTextNode(user.nickname));
+
+                popupDom.getElementsByClassName('seating-avatar')[0].src = user.avatar;
+                popupDom.dataset.userId = user.user_id;
+                popupDom.classList.remove('is-hidden');
+
+                dragSetPosition(event);
+            }
+        }
+    }
+
+    function onSeatHoverEnd() {
+        if (dragging)
+            return;
+
+        hovering = false;
+        if (!popupDom.classList.contains('is-hidden')) {
+            popupDom.classList.add('is-hidden');
+        }
+    }
+
+    function onSeatHoverMove(event) {
+        if (dragging)
+            return;
+
+        if (!hovering) {
+            onSeatHoverStart(event);
+        } else {
+            dragSetPosition(event);
+        }
     }
 
     function handleTouchEnd(event) {
@@ -446,6 +495,9 @@
         for (let i = 0; i < seats.length; ++i) {
             const seat = seats[i];
             seat.addEventListener('mousedown', dragStartOnSeat);
+            seat.addEventListener('mouseover', onSeatHoverStart);
+            seat.addEventListener('mouseout', onSeatHoverEnd);
+            seat.addEventListener('mousemove', onSeatHoverMove);
             seat.addEventListener('touchstart', dragStartOnSeat);
             seat.addEventListener('mouseup', dragStopOnSeat);
             seat.addEventListener('touchend', handleTouchEnd);
