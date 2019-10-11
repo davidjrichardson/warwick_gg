@@ -310,20 +310,20 @@
                 complete. Check back in a few minutes for any updates!</p>
               <p>If your sign up is stuck or you are having trouble, please contact CompSoc/Esports exec.</p>
             {% elif signups_open %}
-              <h4 class="is-4 title">Signup to {{ event.title }}</h4>
-              <p>Signups are open for {{ event.title }}! Click <a
-                  href="{% url 'event_signup' slug=event.slug %}">here</a>
-                to sign up.</p>
-            {% else %}
               {% if event.signup_count == event.signup_limit %}
                 <h4 class="is-4 title">Signups full</h4>
                 <p>Signups for {{ event.title }} have filled up! Check back frequently to see if anyone has opened
                   up a space.</p>
               {% else %}
-                <h4 class="is-4 title">Signups opening soon</h4>
-                <p>Signups for {{ event.title }} aren't open just yet. They open
-                  at {{ signup_start|date:'P l jS F Y' }}, so check back then!</p>
+                <h4 class="is-4 title">Signup to {{ event.title }}</h4>
+                <p>Signups are open for {{ event.title }}! Click <a
+                    href="{% url 'event_signup' slug=event.slug %}">here</a>
+                  to sign up.</p>
               {% endif %}
+            {% else %}
+              <h4 class="is-4 title">Signups opening soon</h4>
+              <p>Signups for {{ event.title }} aren't open just yet. They open
+                at {{ signup_start|date:'P l jS F Y' }}, so check back then!</p>
             {% endif %}
           </div>
           </div>
