@@ -118,6 +118,7 @@
         giveUnassignedToUser(draggingUser.user_id);
 
         dragStop(event);
+        onSeatHoverEnd();
         if (revisionNumber === null)
             commitRevision();
     }
