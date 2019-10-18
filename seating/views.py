@@ -42,7 +42,7 @@ def save_revision(seats, event, user):
 
     for seat in seats:
         user = get_user_model().objects.get(id=seat['user_id'])
-        seat_obj = Seating(user=user, seat=seat['seat_id'], revision=new_revision)
+        seat_obj = Seating(user=user, seat_id=seat['seat_id'], revision=new_revision)
         seat_obj.save()
 
     return new_revision
@@ -122,7 +122,7 @@ def seat_to_dict(seat: Seating):
 
     return {
         'nickname': profile.long_name,
-        'seat_id': seat['seat'],
+        'seat_id': seat['seat_id'],
         'user_id': seat['user_id'],
         'avatar': avatar_url(profile.user)
     }

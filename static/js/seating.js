@@ -311,7 +311,7 @@
 
         const seatsToBackendFormat = input => Object.keys(input)
             .filter(key => input[key] !== undefined)
-            .map(key => ({seat_id: parseInt(key, 10), user_id: input[key]}));
+            .map(key => ({seat_id: key, user_id: input[key]}));
         const layout = {
             seats: seatsToBackendFormat(currentSeatHasUser),
         };

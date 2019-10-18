@@ -71,6 +71,6 @@ class Seating(models.Model):
     reserved = models.BooleanField(default=False)
     revision = models.ForeignKey(SeatingRevision, on_delete=models.CASCADE)
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
-    seat = models.IntegerField()
+    seat_id = models.CharField(max_length=5)
 
     objects = SeatingManager()
