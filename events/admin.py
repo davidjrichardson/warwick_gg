@@ -1,4 +1,10 @@
+import csv
+
 from django.contrib import admin
+from django.http import HttpResponse
+from django.utils import timezone
+from django.utils.text import slugify
+from time import strftime
 
 # Register your models here.
 from events.models import Event, SeatingRoom, EventSignup, Tournament, Ticket, TournamentSignup
@@ -27,6 +33,30 @@ class EventAdmin(admin.ModelAdmin):
     list_filter = (
         'hosted_by', 'cost_member', 'cost_non_member', 'has_photography', 'has_livestream', 'seating_location')
     search_fields = ('title', 'location')
+    actions = ['export_signups']
+
+    def export_signups(self, request, queryset):
+        columns = ['event_title', 'start', 'end', 'nick']
+        entries = []
+
+        for event in queryset:
+            signups = EventSignup.objects.filter(event=event, is_unsigned_up=False).all()
+            entries = entries + list(map(lambda x: (
+                event.title, event.start.strftime('%d/%m/%y %H:%M'), event.end.strftime('%d/%m/%y %H:%M'),
+                x.profile.long_name
+            ), signups))
+
+        filename = '{time}-{events}-signups.csv'.format(time=timezone.now().strftime('%d-%m-%yT%H:%M'),
+                                                        events=(slugify('-'.join(map(lambda x: x.title, queryset)))))
+        response = HttpResponse(content_type='text/csv')
+        response['Content-Disposition'] = f'attachment; filename="{filename}"'
+
+        writer = csv.writer(response)
+        writer.writerow(columns)
+        writer.writerows(entries)
+        return response
+
+    export_signups.short_description = 'Export signups for info slips'
 
 
 @admin.register(Ticket)
