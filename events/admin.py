@@ -49,7 +49,7 @@ class EventAdmin(admin.ModelAdmin):
         filename = '{time}-{events}-signups.csv'.format(time=timezone.now().strftime('%d-%m-%yT%H:%M'),
                                                         events=(slugify('-'.join(map(lambda x: x.title, queryset)))))
         response = HttpResponse(content_type='text/csv')
-        response['Content-Disposition'] = f'attachment; filename="{filename}"'
+        response['Content-Disposition'] = 'attachment; filename="{filename}"'.format(filename=filename)
 
         writer = csv.writer(response)
         writer.writerow(columns)
