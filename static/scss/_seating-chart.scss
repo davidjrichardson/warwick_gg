@@ -13,6 +13,10 @@
 
   & .user-seat {
     cursor: move;
+
+    &.locked {
+      cursor: not-allowed;
+    }
   }
 
   & .seat {
@@ -88,6 +92,10 @@
 
     justify-content: start;
     cursor: move;
+
+    &.locked {
+      cursor: not-allowed;
+    }
 
     & span {
       margin: 5px;

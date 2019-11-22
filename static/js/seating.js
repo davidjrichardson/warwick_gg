@@ -67,6 +67,8 @@
     }
 
     function dragStart(user, event) {
+        if (!isExec && isLocked) return;
+
         containerDom.classList.add('seating-chart-dragging');
         const popupUsernameDom = popupDom.getElementsByClassName('seating-username')[0];
         popupUsernameDom.innerHTML = '';
@@ -275,6 +277,10 @@
             seat.classList.add('logged-in-user-seat');
         else
             seat.classList.remove('logged-in-user-seat');
+
+        if (!isExec && isLocked) {
+            seat.classList.add('locked');
+        }
     }
 
     function refreshUnassigned() {
@@ -289,6 +295,9 @@
             unassignedUserDiv.appendChild(nickname);
             unassignedUserDiv.classList.add('unassigned-user');
             unassignedUserDiv.classList.add('level');
+            if (!isExec && isLocked) {
+                unassignedUserDiv.classList.add('locked');
+            }
             unassignedUserDiv.dataset.userId = user.user_id;
             unassignedUserDiv.addEventListener('mousedown', dragStartOnUnassignedUser);
             unassignedUserDiv.addEventListener('touchstart', dragStartOnUnassignedUser);
@@ -506,7 +515,7 @@
 
         notificationCloseDom.addEventListener('click', clearError);
 
-        if (!isExec) {
+        if (!isExec && isLocked) {
             notificationDom2 = document.getElementById('seating-locked-notification');
             notificationCloseDom2 = notificationDom2.getElementsByClassName('delete')[0];
             notificationCloseDom2.addEventListener('click', clearWarning);

@@ -11,6 +11,7 @@
     <script type="text/javascript">
         const loggedInUserId = {{ request.user.id }};
         const isExec = {{ is_exec|lower }};
+        const isLocked = {{ event.seating_is_locked|lower }};
         const eventId = {{ event.id }};
     </script>
     <script src="{% static 'js/seating.js' %}"></script>
