@@ -17,7 +17,7 @@ django-rest-framework==0.1.0
 djangorestframework==3.9.3
 idna==2.8
 Markdown==3.1
-markdown2==2.3.7
+markdown2==2.4.0
 oauthlib==3.0.1
 Pillow==6.2.1
 psycopg2==2.8.2
